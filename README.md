@@ -39,34 +39,32 @@ A sequential suite of 6 documented Jupyter notebooks is provided in [`notebooks/
 | Notebook | Focus Area | Highlights & Outputs |
 |---|---|---|
 | [**`01_data_exploration.ipynb`**](notebooks/01_data_exploration.ipynb) | Dataset & Label Rules | SNUH atlas metadata (23 sections, 13 patients, 34,988 spots), niche priority rules, 3,000 HVG marker audit (*EGFR*, *VEGFA*, *CHI3L1*), MES state distribution. |
-| [**`02_spatial_graphs_and_splits.ipynb`**](notebooks/02_spatial_graphs_and_splits.ipynb) | Spatial Graphs & Splits | $k=6$ kNN graph construction, Gaussian edge weights, PyG `Data` structures, patient-level train/val/test splits, 6-split benchmark design. |
+| [**`02_spatial_graphs_and_splits.ipynb`**](notebooks/02_spatial_graphs_and_splits.ipynb) | Spatial Graphs & Splits | *k* = 6 kNN graph construction, Gaussian edge weights, PyG `Data` structures, patient-level train/val/test splits, 6-split benchmark design. |
 | [**`03_model_architecture_and_training.ipynb`**](notebooks/03_model_architecture_and_training.ipynb) | Model & Loss Dynamics | GraphSAGE vs GAT encoder comparisons (~870k params), real section forward pass, multi-task loss decomposition with rare-class boosting, loss convergence curves. |
-| [**`04_model_evaluation_and_inference.ipynb`**](notebooks/04_model_evaluation_and_inference.ipynb) | Evaluation & Spatial Maps | Checkpoint loading (`best_model.pt`), validation threshold tuning ($\tau_c$), test metrics, confusion matrix, true vs predicted spatial niche & MES maps. |
-| [**`05_external_and_survival_validation.ipynb`**](notebooks/05_external_and_survival_validation.ipynb) | External & Survival Analysis | 13 Greenwald Visium samples (*Cell* 2024), Neftel MES correlation ($r = 0.30$), TCGA-GBM ($n=166$) Kaplan-Meier survival curves & Cox regression ($p = 0.25$). |
+| [**`04_model_evaluation_and_inference.ipynb`**](notebooks/04_model_evaluation_and_inference.ipynb) | Evaluation & Spatial Maps | Checkpoint loading (`best_model.pt`), validation threshold tuning (τ_c), test metrics, confusion matrix, true vs predicted spatial niche & MES maps. |
+| [**`05_external_and_survival_validation.ipynb`**](notebooks/05_external_and_survival_validation.ipynb) | External & Survival Analysis | 13 Greenwald Visium samples (*Cell* 2024), Neftel MES correlation (*r* = 0.30), TCGA-GBM (*n* = 166) Kaplan-Meier survival curves & Cox regression (*p* = 0.25). |
 | [**`06_benchmarking_and_protocol_reversal.ipynb`**](notebooks/06_benchmarking_and_protocol_reversal.ipynb) | Benchmarks & Protocol Reversal | Table 1 matched baseline comparisons, paired t-tests, Protocol Reversal phenomenon (Fig. 4), 72-run multi-split variance decomposition (Fig. 5). |
 
 ---
 
 ## Model Architecture
 
-```
-Input: 10x Visium slide represented as a spatial graph
-  Nodes: Spatial spots, features = 3,000 Seurat-v3 highly variable genes (log-normalized)
-  Edges: Symmetric k-nearest neighbors (k = 6), Gaussian distance-weighted
-        │
-        ▼
-Shared Graph Encoder (GraphSAGE / GAT: 3000 → 256 → 256 → 128)
-  Produces 128-dimensional neighborhood-aware spot representations (z_i)
-        │
-        ├─► Head 1: Spatial Niche Classifier (4 classes per spot, Cross-Entropy)
-        ├─► Head 2: Mesenchymal State Regressor (0–1 continuous score, BCE)
-        └─► Head 3: Slide-Level Survival Risk (Global mean pooling, MSE)
+```mermaid
+flowchart TD
+    A["10x Visium Spatial Slide<br>(Spots = Nodes with 3,000 HVGs, k=6 Neighbors = Edges)"] --> B["Shared Graph Encoder<br>(GraphSAGE / GAT: 3000 → 256 → 256 → 128)"]
+    B --> C["128-dim Latent Spot Embedding (z_i)"]
+    C --> D["Head 1: Spatial Niche Classifier<br>(4 Classes per spot, Cross-Entropy Loss)"]
+    C --> E["Head 2: Mesenchymal State Regressor<br>(Continuous 0–1 probability, BCE Loss)"]
+    C --> F["Head 3: Slide Survival Risk Score<br>(Global Mean Pooling, MSE Loss)"]
 ```
 
 **Multi-Task Objective**:
-$$\mathcal{L}_{\text{total}} = \lambda_{\text{niche}} \mathcal{L}_{\text{CE}}(\hat{y}_{\text{niche}}, y) + \lambda_{\text{mes}} \mathcal{L}_{\text{BCE}}(\hat{y}_{\text{mes}}, y_{\text{mes}}) + \lambda_{\text{surv}} \mathcal{L}_{\text{MSE}}(\hat{r}, r)$$
 
-To mitigate severe class imbalance (`immune_hot` is ~9% of spots), loss weights are boosted for minority classes (`immune_hot` $\times 3.0$, `necrotic` $\times 1.5$).
+$$
+\mathcal{L}_{\text{total}} = \lambda_{\text{niche}} \mathcal{L}_{\text{CE}}(\hat{y}_{\text{niche}}, y) + \lambda_{\text{mes}} \mathcal{L}_{\text{BCE}}(\hat{y}_{\text{mes}}, y_{\text{mes}}) + \lambda_{\text{surv}} \mathcal{L}_{\text{MSE}}(\hat{r}, r)
+$$
+
+To mitigate severe class imbalance (`immune_hot` is ~9% of spots), loss weights are boosted for minority classes (3.0× for `immune_hot`, 1.5× for `necrotic`).
 
 ---
 

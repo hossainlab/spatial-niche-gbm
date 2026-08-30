@@ -88,6 +88,16 @@ Edit the paths in the first cell to point at `data/preprocessed` and
 
 ## 3. Full pipeline from raw data (end-to-end reproduction)
 
+```mermaid
+flowchart TD
+    D["01_download_data.sh<br>(Raw data in data/raw)"] --> B["02_build_graphs.py<br>(kNN graphs, HVGs, labels in data/preprocessed)"]
+    B --> T["03_train.py<br>(Multi-task GNN in results/models)"]
+    T --> E["04_evaluate.py<br>(Validation threshold tuning & test metrics)"]
+    T --> EXT["05_external_validation.py<br>(Greenwald Visium cohort)"]
+    T --> S["06_survival_validation.py<br>(TCGA-GBM overall survival)"]
+    E & EXT & S --> F["07_make_figures.py<br>(Figures 1–7 in results/figures)"]
+```
+
 Run from the root directory:
 
 ```bash
