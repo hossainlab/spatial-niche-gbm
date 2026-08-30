@@ -178,21 +178,6 @@ deepgraph-gbm/
 
 ---
 
-## Citation
-
-If you use DeepGraph-GBM or its benchmarks in your research, please cite:
-
-```bibtex
-@article{park2026deepgraph,
-  title={DeepGraph-GBM: A Spatially Resolved Multi-Task Graph Neural Network for Glioblastoma Microenvironment Modeling},
-  author={Park, S. and Shah, N. and Collaborators},
-  journal={Nature Communications},
-  year={2026}
-}
-```
-
----
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
