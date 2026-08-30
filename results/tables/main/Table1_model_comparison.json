@@ -1,94 +1,147 @@
 {
-  "gnn_multiseed": {
-    "macro_f1": {
-      "mean": 0.5000141492043461,
-      "std": 0.05535003718820173
-    },
-    "weighted_f1": {
-      "mean": 0.7000354975600868,
-      "std": 0.010099305913109154
-    },
-    "accuracy": {
-      "mean": 0.6548207852476033,
-      "std": 0.018495476807833356
-    },
-    "auroc_immune_cold": {
-      "mean": 0.7526832681539547,
-      "std": 0.030870874134600875
-    },
-    "auroc_immune_hot": {
-      "mean": 0.9732363663070185,
-      "std": 0.007921073032807088
-    },
-    "auroc_normal": {
-      "mean": 0.73561531034307,
-      "std": 0.08931467720123588
-    },
-    "auroc_necrotic": {
-      "mean": 0.9298360833750116,
-      "std": 0.005046649820291327
-    },
-    "f1_immune_cold": {
-      "mean": 0.7512772384494962,
-      "std": 0.009262397905213108
-    },
-    "f1_immune_hot": {
-      "mean": 0.24434333793211974,
-      "std": 0.17946638133300363
-    },
-    "f1_normal": {
-      "mean": 0.2627280285306168,
-      "std": 0.04932641256050203
-    },
-    "f1_necrotic": {
-      "mean": 0.7417079919051514,
-      "std": 0.015870132831142365
-    },
-    "mes_auroc": {
-      "mean": 0.7042402706170275,
-      "std": 0.014912066202639039
-    },
-    "mes_pearson": {
-      "mean": 0.24407787401536984,
-      "std": 0.014574958993468116
-    }
-  },
-  "baselines": {
-    "logistic": {
-      "macro_f1": 0.3496888268679975,
-      "weighted_f1": 0.4367870574792185,
-      "accuracy": 0.36923734505709227,
-      "auroc_immune_cold": 0.6044425066534311,
-      "auprc_immune_cold": 0.753764570732376,
-      "auroc_immune_hot": 0.9571576888152975,
-      "auprc_immune_hot": 0.3198604452574611,
-      "auroc_normal": 0.5717177893200426,
-      "auprc_normal": 0.09995539508958487,
-      "auroc_necrotic": 0.7816626390943883,
-      "auprc_necrotic": 0.5665149893379116,
-      "mes_auroc": 0.6705961345645878,
-      "mes_pearson": 0.21332492882887755
-    },
-    "mlp": {
-      "macro_f1": 0.44881600429956603,
-      "weighted_f1": 0.5533862716113439,
-      "accuracy": 0.4922757525798376,
-      "auroc_immune_cold": 0.7029726760057164,
-      "auprc_immune_cold": 0.8096107490656741,
-      "auroc_immune_hot": 0.9328236833671617,
-      "auprc_immune_hot": 0.340681032577694,
-      "auroc_normal": 0.6977469323874754,
-      "auprc_normal": 0.18802218044276636,
-      "auroc_necrotic": 0.8536044603031459,
-      "auprc_necrotic": 0.7000006269529023,
-      "mes_auroc": 0.6917633520274068,
-      "mes_pearson": 0.2444313967121768
-    }
-  },
-  "n_seeds": 3,
+  "protocol": "All models scored with per-class thresholds tuned on validation patients, applied to test; seeds 42/7/123; single fixed patient-level split; MLP trained with the same optimization protocol as the GNN (AdamW, cosine schedule, boosted class weights, early stopping on validation macro-F1 with best-checkpoint selection).",
   "seeds": [
     42,
     7,
     123
-  ]
+  ],
+  "gnn_multiseed": {
+    "macro_f1": {
+      "mean": 0.48899405498395954,
+      "std": 0.02690897407006226
+    },
+    "weighted_f1": {
+      "mean": 0.7067989071572439,
+      "std": 0.07123041066454137
+    },
+    "accuracy": {
+      "mean": 0.749730312837109,
+      "std": 0.050034067064989036
+    },
+    "auroc_immune_cold": {
+      "mean": 0.782377427111769,
+      "std": 0.10758930658031612
+    },
+    "auroc_immune_hot": {
+      "mean": 0.9474678853754942,
+      "std": 0.05115836957125918
+    },
+    "auroc_normal": {
+      "mean": 0.7387547741574249,
+      "std": 0.051486730264523904
+    },
+    "auroc_necrotic": {
+      "mean": 0.9510789136673868,
+      "std": 0.007365290095363009
+    },
+    "mes_auroc": {
+      "mean": 0.750813325159701,
+      "std": 0.040819833175251785
+    },
+    "mes_pearson": {
+      "mean": 0.35888243625509003,
+      "std": 0.01581613172341323
+    }
+  },
+  "mlp_multiseed": {
+    "macro_f1": {
+      "mean": 0.5782544846921348,
+      "std": 0.02135026270604946
+    },
+    "weighted_f1": {
+      "mean": 0.7636891385303906,
+      "std": 0.008254323113212468
+    },
+    "accuracy": {
+      "mean": 0.7892776454784148,
+      "std": 0.0037382250387772995
+    },
+    "auroc_immune_cold": {
+      "mean": 0.8375903711373732,
+      "std": 0.012292496474779493
+    },
+    "auroc_immune_hot": {
+      "mean": 0.9871350105045756,
+      "std": 0.0017514236036498517
+    },
+    "auroc_normal": {
+      "mean": 0.8291858020622856,
+      "std": 0.01697312948646525
+    },
+    "auroc_necrotic": {
+      "mean": 0.9427596815362235,
+      "std": 0.00701165973974269
+    },
+    "mes_auroc": {
+      "mean": 0.8261069766991213,
+      "std": 0.016281683593413185
+    },
+    "mes_pearson": {
+      "mean": 0.4588396822067912,
+      "std": 0.021464734010218405
+    }
+  },
+  "logistic_multiseed": {
+    "macro_f1": {
+      "mean": 0.553725956146355,
+      "std": 0.0
+    },
+    "weighted_f1": {
+      "mean": 0.7239370093367522,
+      "std": 0.0
+    },
+    "accuracy": {
+      "mean": 0.7484276729559748,
+      "std": 0.0
+    },
+    "auroc_immune_cold": {
+      "mean": 0.7596801304158074,
+      "std": 0.0
+    },
+    "auroc_immune_hot": {
+      "mean": 0.9910853541288325,
+      "std": 0.0
+    },
+    "auroc_normal": {
+      "mean": 0.6870419192400713,
+      "std": 0.0
+    },
+    "auroc_necrotic": {
+      "mean": 0.9246961536142528,
+      "std": 0.0
+    },
+    "mes_auroc": {
+      "mean": 0.7511645734375648,
+      "std": 1.3597399555105182e-16
+    },
+    "mes_pearson": {
+      "mean": 0.4097986815331372,
+      "std": 6.798699777552591e-17
+    }
+  },
+  "paired_test_macro_f1": {
+    "gnn_vs_mlp": {
+      "mean_diff": -0.08926042970817533,
+      "df": 2,
+      "wilcoxon_p": 0.25,
+      "ci95": [
+        -0.10521337864954973,
+        -0.07330748076680092
+      ],
+      "t": -24.07433465460604,
+      "p": 0.001720953696540199
+    },
+    "gnn_vs_logistic": {
+      "mean_diff": -0.06473190116239548,
+      "df": 2,
+      "wilcoxon_p": 0.25,
+      "ci95": [
+        -0.1315774984343489,
+        0.0021136961095579443
+      ],
+      "t": -4.166600383644297,
+      "p": 0.05305903228286247
+    }
+  },
+  "note": "Under the matched training + identical tuned-threshold scoring protocol, the no-graph MLP OUTPERFORMS the GNN on macro-F1 on every seed. The earlier GNN>baseline result was an artifact of scoring baselines with default argmax. Paired-test p-values reflect seed-to-seed variability under a single fixed patient split (n=3, low power)."
 }

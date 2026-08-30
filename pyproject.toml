@@ -25,6 +25,8 @@ dependencies = [
     "seaborn>=0.13",
     "pyyaml>=6.0",
     "tqdm>=4.65",
+    "jupyter>=1.1.1",
+    "lab>=8.10",
 ]
 
 [project.optional-dependencies]

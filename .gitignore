@@ -1,26 +1,65 @@
-# data & artifacts (too large for git; see README quickstart to regenerate)
-manuscript/
-data/
-models/seed*/
-results/
+# ==============================================================================
+# Large Data, Datasets, Models, and Manuscript
+# ==============================================================================
+/data/
+/manuscript/
+/models/
+/results/
 *.pt
+*.pth
+*.ckpt
 *.h5
 *.h5ad
+*.npy
+*.npz
+*.parquet
+*.feather
+*.pkl
+*.pickle
+*.tar
+*.tar.gz
+*.zip
+*.gz
+*.pdf
 
-# python
+# ==============================================================================
+# Python & Bytecode
+# ==============================================================================
 __pycache__/
 *.py[cod]
+*$py.class
 *.egg-info/
 .eggs/
 build/
 dist/
+
+# ==============================================================================
+# Virtual Environments & Package Managers
+# ==============================================================================
 .venv/
 venv/
+env/
+ENV/
+.conda/
 
-# notebooks
+# ==============================================================================
+# Jupyter Notebooks
+# ==============================================================================
 .ipynb_checkpoints/
+*-checkpoint.ipynb
 
-# os / editors
+# ==============================================================================
+# Operating System & IDEs
+# ==============================================================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
 .idea/
 .vscode/
+*.swp
+*.swo
+*~

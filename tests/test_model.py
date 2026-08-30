@@ -36,6 +36,16 @@ def test_loss_finite():
     assert set(parts) == {"niche", "mes", "survival"}
 
 
+def test_gat_forward_shapes():
+    model = DeepGraphGBM(in_dim=50, hidden_dims=[32, 32, 16], encoder_type="gat", gat_heads=4)
+    x, ei = _random_graph()
+    out = model(x, ei)
+    assert out["niche_logits"].shape == (100, 4)
+    assert out["mes_prob"].shape == (100,)
+    assert out["risk"].dim() == 0
+    assert out["z"].shape == (100, 16)
+
+
 def test_one_batch_overfit():
     torch.manual_seed(0)
     model = DeepGraphGBM(in_dim=50, hidden_dims=[64, 64, 32], dropout=0.0)

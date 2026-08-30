@@ -5,7 +5,7 @@ from __future__ import annotations
 import torch
 from torch import nn
 
-from .encoder import GraphSAGEEncoder
+from .encoder import GATEncoder, GraphSAGEEncoder
 from .heads import MESRegressor, NicheClassifier, SurvivalRiskHead
 
 
@@ -17,9 +17,14 @@ class DeepGraphGBM(nn.Module):
         dropout: float = 0.3,
         n_niche_classes: int = 4,
         aggr: str = "mean",
+        encoder_type: str = "graphsage",
+        gat_heads: int = 4,
     ):
         super().__init__()
-        self.encoder = GraphSAGEEncoder(in_dim, hidden_dims, dropout, aggr)
+        if encoder_type == "gat":
+            self.encoder = GATEncoder(in_dim, hidden_dims, dropout, heads=gat_heads)
+        else:
+            self.encoder = GraphSAGEEncoder(in_dim, hidden_dims, dropout, aggr)
         d = self.encoder.out_dim
         self.niche_head = NicheClassifier(d, n_niche_classes)
         self.mes_head = MESRegressor(d)
