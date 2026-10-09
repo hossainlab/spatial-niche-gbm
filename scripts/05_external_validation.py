@@ -37,6 +37,8 @@ NEFTEL_MES = [
     "CTSD", "NAMPT", "FSTL1", "B2M", "HLA-A", "HLA-B", "HLA-C",
 ]
 
+SNUH_TARGET_SUM = 1e5
+
 REGION_MAP = {
     "inf": "infiltrating", "T1": "contrast_enhancing", "nec": "necrotic", "bulk": "bulk",
 }
@@ -73,7 +75,7 @@ def _real_files(paths):
     return [p for p in paths if not p.name.startswith("._") and p.stat().st_size > 4096]
 
 
-def load_greenwald_sample(sample_dir: Path, hvg_genes: list[str]):
+def load_greenwald_sample(sample_dir: Path, hvg_genes: list[str], target_sum: float = SNUH_TARGET_SUM):
     """Load one Greenwald sample -> (X spots x HVGs, coords, sample_name)."""
     h5 = _real_files(sample_dir.rglob("*filtered_feature_bc_matrix.h5"))
     pos = _real_files(sample_dir.rglob("*tissue_positions_list.csv")) or _real_files(
@@ -95,8 +97,9 @@ def load_greenwald_sample(sample_dir: Path, hvg_genes: list[str]):
     adata = adata[in_tissue].copy()
     pos_df = pos_df[in_tissue]
 
-    # normalize like SNUH (log1p of CPM-ish)
-    sc.pp.normalize_total(adata, target_sum=1e4)
+    # normalize exactly like the SNUH training matrix: log1p of counts scaled to
+    # 100,000 per spot (expm1 of every SNUH spot sums to 1e5, not 1e4)
+    sc.pp.normalize_total(adata, target_sum=target_sum)
     sc.pp.log1p(adata)
 
     # project onto HVG set (missing genes -> 0)
@@ -106,7 +109,9 @@ def load_greenwald_sample(sample_dir: Path, hvg_genes: list[str]):
         if g in var_idx:
             col = adata.X[:, var_idx[g]]
             X[:, j] = np.asarray(col.todense()).ravel() if hasattr(col, "todense") else col
-    coords = pos_df[["array_row", "array_col"]].values.astype(float)
+    # physical hex geometry from Visium array indices (array_col is doubled):
+    # all six adjacent spots are then at distance 1, so 6-NN = true hex ring
+    coords = np.c_[pos_df["array_col"].values * 0.5, pos_df["array_row"].values * np.sqrt(3) / 2].astype(float)
     return X, coords, sample_dir.name, adata
 
 
@@ -118,6 +123,8 @@ def main():
     ap.add_argument("--ckpt", required=True)
     ap.add_argument("--hvg", required=True)
     ap.add_argument("--out", default="results/external")
+    ap.add_argument("--target-sum", type=float, default=SNUH_TARGET_SUM,
+                    help="per-spot scaling before log1p; must match the training matrix (SNUH: 1e5)")
     args = ap.parse_args()
 
     setup_logging()
@@ -142,7 +149,7 @@ def main():
     for sample_dir in sorted(Path(args.greenwald_dir).iterdir()):
         if not sample_dir.is_dir() or not sample_dir.name.startswith("GBM"):
             continue
-        res = load_greenwald_sample(sample_dir, hvg_genes)
+        res = load_greenwald_sample(sample_dir, hvg_genes, args.target_sum)
         if res is None:
             continue
         X, coords, name, adata = res

@@ -6,7 +6,7 @@ Inputs:
   --baselines results/baselines_multiseed_v2  (mlp_seed{s}.json, logistic_seed{s}.json)
   --paired    results/tables/main/Table1_paired_test.json
   --out-main  results/tables/main/Table1_model_comparison.json
-  --out-supp  results/tables/supplement/TableS6_per_seed_metrics.csv
+  --out-supp  results/tables/supplement/TableS5_per_seed_metrics.csv
 """
 
 from __future__ import annotations

@@ -1,0 +1,749 @@
+% DeepGraph-GBM preprint manuscript (bioRxiv style)
+\documentclass[11pt,letterpaper]{article}
+
+% ---------- Packages ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}      % Times-like fonts (bioRxiv look)
+\usepackage{courier}                  % Typewriter font fallback for \texttt
+\usepackage[top=0.85in,bottom=0.85in,left=0.9in,right=0.9in]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress,super]{natbib}
+\usepackage{authblk}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[hidelinks]{hyperref}
+\usepackage{iftex}
+\ifXeTeX\renewcommand{\textsuperscript}[1]{\ensuremath{^{\mbox{\fontsize{7}{8}\selectfont #1}}}}\fi
+
+% ---------- bioRxiv-style formatting ----------
+\captionsetup{font=small,labelfont={bf},labelsep=period,skip=6pt}
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{0pt}
+\renewcommand{\baselinestretch}{1.12}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.8em}{}
+\titlespacing*{\section}{0pt}{1.0em}{0.4em}
+\titlespacing*{\subsection}{0pt}{0.8em}{0.3em}
+
+% header / footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\small \thepage\ of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0pt}
+
+% niche colors (Okabe-Ito) for inline reference
+\definecolor{cold}{HTML}{D55E00}
+\definecolor{hot}{HTML}{0072B2}
+\definecolor{normal}{HTML}{009E73}
+\definecolor{necrotic}{HTML}{CC79A7}
+
+\graphicspath{{figures/}}
+
+% ---------- Title & Authors ----------
+\title{\vspace{-1.5em}\bfseries DeepGraph-GBM: Spatial Graph Structure Does Not Improve Supervised Niche Prediction in Glioblastoma Visium Data --- a Patient-Level Benchmark with Neuropathologist Validation}
+
+\author[1,2,*]{Md. Jubayer Hossain}
+\affil[1]{Center for Health Innovation, Research, Action, and Learning - Bangladesh}
+\affil[2]{DeepBio}
+\affil[*]{Corresponding author: \texttt{hossainmj.me@gmail.com}}
+\date{}
+
+
+\renewcommand\Affilfont{\small}
+\setlength{\affilsep}{0.5em}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+\begin{center}
+  \includegraphics[width=\textwidth]{figures/graphical_abstract.png}\\[0.2em]
+  {\footnotesize\textbf{Graphical abstract.} Pooled leave-one-patient-out macro-F1 (mean $\pm$ SD over three seeds) of graph-free and graph models against expression-derived (SNUH) and neuropathologist (UKF) labels; for UKF, the better of the one- and two-hop MLP + neighbors models is shown.}
+\end{center}
+
+% ============================================================
+\begin{abstract}
+\small
+\noindent\textbf{Background.} Glioblastoma (GBM) is organized into recurring spatial niches (necrotic and perinecrotic zones, cellular tumor dominated by mesenchymal-like (MES) cancer cells and immunosuppressive myeloid cells, rarer lymphocyte-infiltrated regions, and the infiltrated brain edge) that differ in biology and are linked to prognosis. Spatial transcriptomics resolves these niches, and the physical adjacency of Visium spots makes graph neural networks (GNNs) a natural modeling choice. Whether neighborhood aggregation actually improves supervised niche prediction over per-spot expression has not been tested under controlled conditions.
+
+\noindent\textbf{Methods.} We built DeepGraph-GBM, an open multi-task framework that represents each Visium section as a spatial $k$-nearest-neighbor graph and trains a shared encoder with heads for four-class niche classification (immune-cold, immune-hot, normal, necrotic), spot-level MES-state regression and a slide-level risk score. Using 100{,}488 spots (75{,}697 with rule-derived niche labels) from 28 sections of 13 IDH-wildtype GBM patients in the SNUH spatial atlas, we compared GraphSAGE and graph attention (GAT) encoders with a multilayer perceptron (MLP), an MLP given neighbor-averaged expression, and logistic regression, all trained and scored under one protocol on held-out patients. Evaluation comprised six patient-level splits (72 models) and a leave-one-patient-out (LOPO) benchmark in which every model family received the same nested hyperparameter search (715 runs), together with ablations and a label-homophily analysis. Because the SNUH labels are derived from expression, we also tested the models against neuropathologist H\&E segmentations in an independent cohort (23 sections, 18 patients), both within that cohort and after transfer from SNUH. External transfer to 13 further Visium samples and a niche-signature survival analysis in TCGA-GBM completed the evaluation.
+
+\noindent\textbf{Results.} Graph-free models matched or exceeded the graph models in every analysis. Across six patient-level splits, logistic regression exceeded GraphSAGE on every split (mean macro-F1 difference $0.086$, $p = 4 \times 10^{-4}$), and GAT did not exceed the MLP. With equal tuning in LOPO, logistic regression had the highest pooled macro-F1 (0.691) and beat GraphSAGE ($0.652 \pm 0.018$) for 12 of 13 held-out patients (95\% CI of the difference $0.009$--$0.076$; $p = 7 \times 10^{-4}$); GAT ($0.649$) and the MLP ($0.655$) were indistinguishable from GraphSAGE, and neighbor-averaged features did not help the MLP. Varying graph depth and neighborhood size, or removing the 100 or 500 most label-associated genes, did not produce a graph advantage. This was not because labels were heterophilous: edge homophily was 0.80, above chance for every class. Against neuropathologist labels, logistic regression ranked first within that cohort (LOPO macro-F1 0.419 vs.\ 0.346 for GraphSAGE); after transfer from SNUH, GraphSAGE ranked first (0.395 vs.\ 0.380 for the MLP and 0.352 for logistic regression), but no graph model was significantly better than the MLP in either setting. The held-out patient changed macro-F1 by up to 0.7, far more than the choice of model. Niche predictions did not transfer to the external cohort, and the niche-signature risk score did not stratify TCGA-GBM survival ($n = 166$; HR 1.12, 95\% CI 0.92--1.37).
+
+\noindent\textbf{Conclusions.} In GBM Visium data, spatial graph structure did not significantly improve supervised niche or histology prediction over well-matched graph-free models, against either expression-derived or pathologist labels, even though the labels are strongly spatially clustered; its only, non-significant, advantage appeared under cross-cohort transfer. We release the pipeline, splits and all run results as a benchmark, and recommend matched scoring, tuned graph-free baselines, patient-level cross-validation and independent histological ground truth as minimum standards for spatial deep-learning claims.
+
+\vspace{0.5em}
+\noindent\textbf{Keywords:} glioblastoma; spatial transcriptomics; Visium; graph neural network; benchmarking; neuropathology; tumor microenvironment; mesenchymal state; reproducibility
+\end{abstract}
+
+\vspace{1em}
+
+% ============================================================
+\section{Introduction}
+
+Glioblastoma, IDH-wildtype, is the most common malignant primary brain tumor in adults \cite{ostrom2023,louis2021}. Median survival remains around 15 months despite maximal resection, radiotherapy and temozolomide \cite{stupp2005}. Bulk expression profiling first separated GBM into proneural, classical and mesenchymal subtypes \cite{verhaak2010,tcga2008}. Single-cell studies then showed that individual tumors contain malignant cells in several plastic states (neural-progenitor-like, oligodendrocyte-progenitor-like, astrocyte-like and mesenchymal-like) whose proportions vary within and between patients \cite{neftel2019}. The mesenchymal (MES) program is of particular interest because it is associated with tumor-associated macrophages and microglia \cite{wang2017}. Macrophage-derived signals can drive cancer cells into MES-like states \cite{hara2021}. Myeloid cells make up a large share of the immune compartment in GBM, while effector T cells are scarce \cite{klemm2020,pomboantunes2021,khan2023,decordova2020,lin2024}.
+
+These cell states are spatially organized. The Ivy Glioblastoma Atlas Project defined transcriptionally distinct anatomic features, including the leading edge, infiltrating tumor, cellular tumor, pseudopalisading cells around necrosis and microvascular proliferation \cite{puchalski2018}. Spatial transcriptomics \cite{stahl2016,moses2022} has since shown that GBM is arranged into recurring niches shaped by hypoxia, tumor--host interactions and immune composition \cite{ravi2022,greenwald2024,ruizmoreno2025}. Greenwald et al.\ described a multi-layered organization in which hypoxia-associated MES programs structure the surrounding tissue \cite{greenwald2024}. The recent SNUH atlas integrated Visium with matched single-cell and protein data to characterize the cellular composition of each anatomical niche \cite{park2026}. Together, these studies suggest that a tissue section could be summarized as a map of niches that differ in immune state and prognosis.
+
+Producing such maps currently requires expert annotation, deconvolution against single-cell references \cite{kleshchevnikov2022,cable2022,li2022bench}, or unsupervised spatial clustering followed by manual interpretation. Many spatial clustering methods treat a Visium section as a graph of adjacent spots, including SpaGCN \cite{hu2021spagcn}, STAGATE \cite{dong2022stagate}, GraphST \cite{long2023graphst} and related approaches \cite{zhao2021bayesspace,xu2023spacel,peng2023,liu2023review,palla2022}. The underlying assumption is that a spot's identity depends on its neighbors, so aggregating neighborhood information with GraphSAGE \cite{hamilton2017} or graph attention \cite{velickovic2018} should improve on per-spot expression. Benchmarks of unsupervised spatial clustering show that method rankings depend strongly on the dataset \cite{yuan2024bench}. In graph machine learning more broadly, simple or graph-free models often match more complex GNNs once training procedures and data splits are controlled \cite{shchur2018,errica2020}. Mean aggregation can also over-smooth node representations \cite{li2018deeper} and performs poorly when adjacent nodes carry different labels \cite{zhu2020homophily}. Both conditions plausibly arise at niche boundaries in GBM. Graph neural networks have nevertheless been applied to supervised tasks on brain-tumor spatial transcriptomics: NePSTA combines spot graphs with expression and copy-number features to predict histological regions and methylation subclasses, and reported 87\% accuracy against neuropathological segmentation \cite{ritter2025}. Such results do not show how much of the accuracy comes from the graph itself, because the corresponding graph-free model is rarely trained and scored under the same protocol.
+
+Whether graph structure helps \emph{supervised} prediction of GBM niches has therefore not been tested directly, and the answer depends on evaluation choices. With few patients, results can depend on which patients are held out \cite{bouthillier2021,varoquaux2022}. Applying different decision rules to different models, or tuning on information that is not available at test time, can also change apparent rankings \cite{kapoor2023}. A further problem is the choice of labels. Spot-level niche labels are often derived from the same expression data that the model receives as input, so a model may score well by reproducing the labeling rules rather than tissue organization. Independent ground truth, such as a neuropathologist's annotation of the matched H\&E section, is needed to test whether a ranking holds beyond expression-derived labels.
+
+Here we present DeepGraph-GBM, an open multi-task framework for spot-level niche classification, MES-state regression and slide-level risk scoring from Visium data, together with a controlled benchmark. Our contributions are:
+\begin{enumerate}
+  \item \textbf{A matched comparison of graph-based and graph-free models.} GraphSAGE, GAT and an MLP were trained with the same features, optimizer, class weighting and early stopping, logistic regression was fitted on the same features, and all four were scored with the same validation-tuned thresholds on held-out patients.
+  \item \textbf{An assessment of patient-sampling variance.} We repeated the benchmark across six patient-level splits and three seeds (72 models) and partitioned performance variance into split and seed components.
+  \item \textbf{A leave-one-patient-out benchmark with an equal tuning budget.} Every model family, including an MLP given explicit neighbor-averaged features, received the same hyperparameter search, nested within each of 13 folds, together with ablations of graph depth and neighborhood size, removal of top marker genes, and a measurement of label homophily.
+  \item \textbf{Validation against neuropathologist annotations.} In an independent cohort with manual H\&E segmentation \cite{ravi2022,ritter2025}, we compared the same models within the cohort and after transfer from expression-derived labels.
+  \item \textbf{A reproducibility check of an earlier comparison.} An earlier version of this analysis reported a GNN advantage. Rerunning its protocol on the current features showed that the advantage came from baseline results computed on a superseded feature set, not from the graph or the decision rule.
+  \item \textbf{External and clinical validation, including negative results.} We report cross-cohort predictions on an independent Visium cohort and a survival analysis in TCGA-GBM. The survival association was not significant.
+\end{enumerate}
+
+% ============================================================
+\section{Results}
+
+\subsection{Cohort, labels and model}
+
+We used the IDH-wildtype GBM sections of the SNUH spatial atlas \cite{park2026}: 28 Visium sections (23 FFPE, 5 fresh-frozen) from 13 patients, comprising 100{,}488 spots (Supplementary Table~\ref{tab:s3}). Niche labels were derived from the atlas's per-spot anatomical-feature annotations (Ivy GAP-style categories \cite{puchalski2018}) and metaprogram annotations using priority-ordered rules (Methods). We refer to these as \emph{silver-standard} labels. Spots were labeled \emph{necrotic} (pseudopalisading or perinecrotic features), \emph{immune-hot} (immune metaprogram outside necrotic features), \emph{normal} (concordant leading-edge grey or white matter) or \emph{immune-cold} (cellular or infiltrating tumor features with tumor, infiltrating or hypoxic metaprograms). Vascular and discordant spots were excluded from classification. In total, 75{,}697 spots were labeled. The class distribution varied strongly by patient. In the primary split, the three test patients (SNU16, SNU33, SNU34) contributed 16{,}377 labeled spots: 11{,}125 immune-cold (67.9\%), 185 immune-hot (1.1\%), 1{,}455 normal and 3{,}612 necrotic. The two validation patients contributed only 15 immune-hot spots.
+
+Each section was represented as a $k$-nearest-neighbor graph ($k = 6$) over spot coordinates, with 3{,}000 highly variable genes as node features. A three-layer encoder (3000$\rightarrow$256$\rightarrow$256$\rightarrow$128) fed three heads: a four-class niche classifier, a sigmoid MES head trained to predict whether a spot's annotated malignant state is mesenchymal-like, and an attention-pooled slide-level risk head trained on a niche-composition pseudo-risk (Methods). In the matched benchmark, the MLP received the same features without edges, so the comparison isolates the effect of neighborhood aggregation.
+
+\subsection{Learned embeddings and per-class discrimination}
+
+Figure~\ref{fig:umap} shows a UMAP \cite{mcinnes2018} projection of GraphSAGE embeddings for all spots in the held-out test sections, including spots excluded from labeling. Immune-cold spots form several large, separate clusters, and necrotic spots form a dense region that partly overlaps a normal-enriched cluster. Immune-hot and normal spots lie mostly in a central area occupied largely by excluded spots. The presence of several separate immune-cold clusters suggests that the embedding also reflects section- or patient-level differences, in addition to niche identity.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.55\textwidth]{Figure1_umap_niche.png}
+  \caption{\textbf{GraphSAGE spot embeddings for held-out test sections.} UMAP projection of 128-dimensional encoder embeddings for all spots from test patients SNU16, SNU33 and SNU34 (representative seed-7 model), colored by silver-standard niche label. Grey points are spots excluded from labeling (vascular or discordant annotations).}
+  \label{fig:umap}
+\end{figure}
+
+With per-class thresholds tuned on validation patients, the representative seed-7 GraphSAGE model achieved a test macro-F1 of 0.504, weighted-F1 of 0.698 and accuracy of 0.740 (Supplementary Table~\ref{tab:s8}). One-vs-rest AUROC was 0.82 for immune-cold, 0.98 for immune-hot, 0.73 for normal and 0.96 for necrotic (Figure~\ref{fig:roc}). Because immune-hot accounted for only 1.1\% of test spots, AUROC overstates how well this class is resolved. The corresponding area under the precision--recall curve (AUPRC) was 0.57, against a chance level of 0.011 \cite{saito2015}. For normal spots, AUPRC was 0.27 against a chance level of 0.089. Test macro-F1 was lower than validation macro-F1 (0.504 vs.\ 0.584), consistent with the different class composition of the validation and test patients.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.52\textwidth]{Figure2_roc_curves.png}
+  \caption{\textbf{Per-class discrimination on held-out patients.} One-vs-rest ROC curves for the four niche classes (representative seed-7 GraphSAGE model, test patients SNU16, SNU33 and SNU34; $n = 16{,}377$ labeled spots). AUROC is shown in the legend. Because immune-hot accounts for 1.1\% of test spots, see Supplementary Table~\ref{tab:s8} for precision--recall metrics.}
+  \label{fig:roc}
+\end{figure}
+
+The confusion matrix shows the main error pattern (Figure~\ref{fig:confusion}). Under default argmax decisions, 92\% of immune-cold spots were classified correctly, but most normal (80\%) and necrotic (82\%) spots were also assigned to immune-cold, and 83\% of immune-hot spots were assigned to normal. Validation-tuned thresholds changed this substantially. With thresholds of 0.30 (immune-cold), 0.05 (immune-hot), 0.725 (normal) and 0.15 (necrotic), test recall was 0.95 for immune-cold, 0.94 for immune-hot, 0.31 for necrotic and 0.15 for normal. Normal-to-immune-cold and necrotic-to-immune-cold confusion was therefore the main remaining error. Because the immune-hot threshold was tuned on only 15 validation spots, the model's immune-hot performance depends heavily on that tuning.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.52\textwidth]{Figure3_confusion_matrix.png}
+  \caption{\textbf{Confusion matrix under argmax decisions.} Row-normalized confusion matrix for the representative seed-7 GraphSAGE model on held-out test patients, using default argmax over softmax probabilities. Rows are silver-standard labels; columns are predictions. Quantitative metrics in the text and tables use validation-tuned per-class thresholds, which shift errors substantially (see text).}
+  \label{fig:confusion}
+\end{figure}
+
+\subsection{Graph-free baselines match or exceed the GNN under matched evaluation}
+
+To test whether neighborhood aggregation adds predictive signal, we compared GraphSAGE with a four-head GAT encoder, an MLP and multinomial logistic regression. All models used identical inputs and splits. The three neural models shared the optimizer, cosine learning-rate schedule, boosted class weights and early stopping on validation macro-F1; logistic regression was fitted with balanced class weights. All four were scored with the same validation-tuned per-class thresholds applied to test (Methods). On the primary split over three seeds (Table~\ref{tab:comparison}; Supplementary Table~\ref{tab:s6}), the MLP achieved the highest macro-F1 ($0.578 \pm 0.021$), followed by logistic regression ($0.554$), GAT ($0.539 \pm 0.063$) and GraphSAGE ($0.489 \pm 0.027$). Every MLP seed exceeded every GraphSAGE seed (difference in means $0.089$, 95\% CI $0.033$ to $0.145$; Welch $t = 4.50$, $p = 0.012$). The comparison with logistic regression, which is deterministic, did not reach significance (one-sample $t$-test of the GraphSAGE seeds against the logistic value, $p = 0.053$). The MLP also had the highest MES AUROC ($0.826$ vs.\ $0.751$ for GraphSAGE) and MES Pearson correlation ($0.459$ vs.\ $0.359$). GraphSAGE was competitive only for necrotic AUROC (0.951 vs.\ 0.943 for the MLP).
+
+These seed-level tests are limited. With three seeds the Wilcoxon test cannot reach $p < 0.25$, and all seeds share one patient split, so the $p$-values reflect training-seed variability rather than patient sampling. An independent re-run of the matched MLP on the same split within the multi-split pipeline gave $0.571 \pm 0.021$, indicating run-to-run differences of about 0.007 macro-F1. We therefore treat the multi-split analysis below as the primary test.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Matched comparison on the primary patient split.} Mean $\pm$ SD over seeds 42, 7 and 123. All models were trained under the same optimization protocol and scored with per-class thresholds tuned on validation patients (SNU24, SNU51) and applied to test patients (SNU16, SNU33, SNU34). Logistic regression is deterministic, so its SD is zero. Seeds are not shared between models, so comparisons use Welch $t$-tests on per-seed macro-F1 (one-sample $t$-test against the deterministic logistic value): GraphSAGE vs.\ MLP $p = 0.012$; vs.\ logistic $p = 0.053$; vs.\ GAT $p = 0.30$. Best value per row in bold.}
+\label{tab:comparison}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Metric} & \textbf{GraphSAGE} & \textbf{GAT} & \textbf{MLP} & \textbf{Logistic} \\
+\midrule
+Macro-F1            & 0.489 $\pm$ 0.027 & 0.539 $\pm$ 0.063 & \textbf{0.578 $\pm$ 0.021} & 0.554 \\
+Weighted-F1         & 0.707 $\pm$ 0.071 & 0.738 $\pm$ 0.051 & \textbf{0.764 $\pm$ 0.008} & 0.724 \\
+Accuracy            & 0.750 $\pm$ 0.050 & 0.742 $\pm$ 0.064 & \textbf{0.789 $\pm$ 0.004} & 0.748 \\
+AUROC immune-cold   & 0.782 $\pm$ 0.108 & 0.805 $\pm$ 0.069 & \textbf{0.838 $\pm$ 0.012} & 0.760 \\
+AUROC immune-hot    & 0.947 $\pm$ 0.051 & 0.953 $\pm$ 0.018 & 0.987 $\pm$ 0.002 & \textbf{0.991} \\
+AUROC normal        & 0.739 $\pm$ 0.051 & 0.760 $\pm$ 0.074 & \textbf{0.829 $\pm$ 0.017} & 0.687 \\
+AUROC necrotic      & \textbf{0.951 $\pm$ 0.007} & 0.938 $\pm$ 0.008 & 0.943 $\pm$ 0.007 & 0.925 \\
+MES AUROC           & 0.751 $\pm$ 0.041 & 0.668 $\pm$ 0.076 & \textbf{0.826 $\pm$ 0.016} & 0.751 \\
+MES Pearson $r$     & 0.359 $\pm$ 0.016 & 0.273 $\pm$ 0.068 & \textbf{0.459 $\pm$ 0.021} & 0.410 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{An earlier apparent GNN advantage was not reproducible}
+
+An earlier version of this analysis reported that the GNN outperformed both baselines (macro-F1 0.489 vs.\ 0.449 for the MLP and 0.350 for logistic regression). In that comparison the GNN was scored with validation-tuned thresholds, whereas the baselines were trained once for a fixed 120 epochs without early stopping and scored by argmax. When we reran exactly that baseline protocol on the current feature set, both baselines exceeded the GNN (MLP 0.618, logistic regression 0.541; Figure~\ref{fig:reversal}A; Supplementary Table~\ref{tab:s1}), as they did under the matched protocol (Figure~\ref{fig:reversal}B). The earlier baseline numbers cannot have come from the same features: logistic regression is deterministic, and its threshold-independent AUROCs in the earlier run (e.g., 0.60 for immune-cold and 0.57 for normal) differ from those obtained on the current features (0.77 and 0.70). They were therefore computed on a superseded version of the preprocessed data and are not comparable with the GNN result. The decision rule itself mattered little. Scoring one logistic-regression fit by argmax and by tuned thresholds changed macro-F1 from 0.541 to 0.557 (Figure~\ref{fig:reversal}C), and the matched-protocol MLP changed from $0.557 \pm 0.050$ to $0.571 \pm 0.021$. The earlier GNN advantage was thus an artifact of comparing results produced from different inputs, a failure mode that matched reruns of every model on the same data would have caught.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_protocol_reversal.png}
+  \caption{\textbf{Original and matched protocols on the primary split, recomputed on the current features.} (A) Original protocol: GraphSAGE scored with validation-tuned thresholds (mean $\pm$ SD, three seeds); baselines trained once for 120 epochs without early stopping and scored by argmax. (B) Matched protocol: all models trained identically and scored with tuned thresholds (mean $\pm$ SD, three seeds). (C) Effect of the decision rule alone: one logistic-regression fit and the matched-protocol MLP (mean of three seeds), each scored by argmax and by tuned thresholds. The logistic value in (C) comes from a refit with the current software versions and differs from (B) by 0.003.}
+  \label{fig:reversal}
+\end{figure}
+
+\subsection{Patient-split identity dominates benchmark variance}
+
+To estimate patient-sampling variability, we repeated the full matched benchmark on six patient-level splits (8 training, 2 validation and 3 test patients; six distinct but partly overlapping test sets, split 0 being the primary split) with three seeds each, for all four models (72 trained models; Figure~\ref{fig:robustness}; Supplementary Tables~\ref{tab:s7}, \ref{tab:s9}).
+
+Split identity was the largest source of variance. Split-mean macro-F1 ranged from 0.32 to 0.63 for GraphSAGE, 0.36 to 0.70 for GAT, 0.37 to 0.69 for the MLP and 0.43 to 0.68 for logistic regression, and all four models rose and fell together across splits (Figure~\ref{fig:robustness}A). For the stochastic models, the variance of split means was 3.5$\times$ (GAT), 3.6$\times$ (GraphSAGE) and 8.1$\times$ (MLP) the mean within-split seed variance (SD across splits 0.11--0.12 vs.\ mean within-split SD 0.04--0.06). Logistic regression has no seed variance, so this ratio is undefined for it. The gap between the best and worst split (about 0.3 macro-F1) was roughly three times the largest difference between models.
+
+Averaged across splits, logistic regression had the highest macro-F1 ($0.572 \pm 0.090$), followed by the MLP ($0.526 \pm 0.108$), GAT ($0.524 \pm 0.116$) and GraphSAGE ($0.487 \pm 0.109$). Logistic regression exceeded GraphSAGE on all six splits (mean paired difference $0.086$, 95\% CI $0.059$--$0.112$; $t = 8.27$, df $= 5$, $p = 4.2 \times 10^{-4}$; Wilcoxon $p = 0.031$, the minimum attainable with six pairs). The MLP exceeded GraphSAGE on five of six splits, but the difference was not significant ($0.040$, 95\% CI $-0.018$ to $0.098$; $p = 0.14$). The fixed-split result above therefore overstated the certainty of the MLP advantage. GAT exceeded GraphSAGE on all six splits ($+0.037$, $p = 0.007$), so learned attention over neighbors performed better than mean aggregation. However, GAT was indistinguishable from the MLP ($-0.003$, $p = 0.89$) and below logistic regression ($-0.049$, $p = 0.034$). Thus the better graph encoder narrowed the gap but did not outperform graph-free models.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{Figure_split_robustness.png}
+  \caption{\textbf{Benchmark variance across six patient-level splits.} (A) Test macro-F1 for GraphSAGE, MLP, logistic regression and GAT on splits S0--S5 (S0 is the primary split). Large markers and lines show split means over three seeds; small markers show individual seeds. (B) Paired macro-F1 difference of each model relative to GraphSAGE per split (mean $\pm$ SD over seeds). Logistic regression and GAT exceed GraphSAGE on all six splits; the MLP does so on five of six.}
+  \label{fig:robustness}
+\end{figure}
+
+\subsection{Leave-one-patient-out benchmark with an equal tuning budget}
+
+The six-split analysis reuses training patients and gives every model fixed default hyperparameters, so a graph model could still be disadvantaged by an untuned configuration. We therefore ran a leave-one-patient-out (LOPO) benchmark in which every model family, including an MLP given the averaged expression of its one- or two-hop neighbors as extra input (``MLP + neighbors''), received the same budget of eight hyperparameter configurations, selected by validation macro-F1 separately within each of the 13 folds and then retrained with three seeds (Methods; 520 tuning and 195 final runs). Every labeled spot was predicted exactly once by a model that had never seen its patient.
+
+Logistic regression again had the highest pooled macro-F1 (0.691), followed by the MLP ($0.655 \pm 0.020$), GraphSAGE ($0.652 \pm 0.018$), GAT ($0.649 \pm 0.018$) and MLP + neighbors ($0.637 \pm 0.047$; Figure~\ref{fig:lopo}A, Table~\ref{tab:lopo}). Logistic regression exceeded GraphSAGE for 12 of 13 held-out patients (pooled difference $+0.039$, patient-bootstrap 95\% CI $0.009$ to $0.076$; paired Wilcoxon $p = 7 \times 10^{-4}$, $t$-test $p = 5 \times 10^{-4}$) and exceeded GAT for 12 of 13 ($p = 0.001$). The MLP was ahead of GraphSAGE for 9 of 13 patients (mean per-patient difference $+0.032$; Wilcoxon $p = 0.048$, $t$-test $p = 0.078$), but its pooled macro-F1 was essentially identical ($+0.003$, 95\% CI $-0.045$ to $0.052$). GAT did not differ from GraphSAGE ($p = 0.34$). Adding neighbor-averaged expression to the MLP did not help ($-0.018$ pooled, $p = 0.84$), so explicit access to the neighborhood, with or without learned message passing, added no predictive signal. With tuning, the gap between graph and graph-free neural models was smaller than in the fixed-hyperparameter benchmark, but no graph model exceeded the best graph-free model in pooled or per-patient macro-F1 or in any per-class AUROC; the one exception was the F1 of the normal class, where GraphSAGE (0.585) was marginally above the MLP (0.571).
+
+Logistic regression also had the highest one-vs-rest AUROC for every class (immune-cold 0.82, immune-hot 0.97, normal 0.90, necrotic 0.96; GraphSAGE 0.77, 0.92, 0.83 and 0.92) and the highest MES AUROC averaged over folds (0.90 vs.\ 0.83 for GraphSAGE). The pooled confusion matrices of the two models were similar (Figure~\ref{fig:lopo}C). Both recovered most immune-cold spots (79\% and 80\%) and labeled about half of normal spots as immune-cold (52\% and 50\%). Logistic regression recovered more immune-hot (74\% vs.\ 64\%) and necrotic spots (75\% vs.\ 66\%), the two classes that are least homophilous (see below). With per-fold tuning and thresholds, GraphSAGE recovered the necrotic region of SNU16A that the fixed-split model missed, but as a single smooth block that also absorbed surrounding immune-cold and normal spots. In SNU34A, it predicted a large contiguous normal region in the upper half and along the left edge, where the silver standard has only a few normal spots at the top, whereas logistic regression placed scattered normal predictions in the same area (Supplementary Figure~\ref{fig:s6}). In the selected configurations, GraphSAGE used $k = 12$ or 18 neighbors in all 13 folds and two or three layers in 12, that is, wider neighborhoods than the $k = 6$ default, whereas logistic regression chose strong regularization ($C \le 0.003$ in 12 of 13 folds).
+
+Performance again depended more on the held-out patient than on the model (Figure~\ref{fig:lopo}B). Per-patient macro-F1 ranged from 0.03--0.07 (SNU46, whose labeled spots are almost all one class) to 0.62--0.72 (SNU27) for every model, and all five models rose and fell together. The SD of per-patient macro-F1 across patients (0.15--0.18) was 2--5 times the SD across seeds (0.04--0.08); expressed as variance, patient identity contributed 5--21 times more than seed. Per-patient means are lower than pooled values because macro-F1 within one patient is dominated by classes with few spots in that patient.
+
+\textbf{Exact hexagonal graphs.} Because the atlas coordinates are array indices, about a quarter of the 6-NN edges join second-ring spots (Methods). Rerunning the final GraphSAGE and GAT LOPO evaluations on exact hexagonal neighborhoods, with the same folds, configurations and seeds (78 runs), did not help either model: pooled macro-F1 was $0.651 \pm 0.027$ for GraphSAGE (vs.\ $0.652$) and $0.611 \pm 0.008$ for GAT (vs.\ $0.649$), and logistic regression remained ahead of both (11 and 12 of 13 patients; Wilcoxon $p = 0.002$ and $p = 7 \times 10^{-4}$).
+
+\textbf{Labels are spatially homophilous.} A common explanation for a GNN not helping is that neighboring nodes carry different labels \cite{zhu2020homophily}. This does not apply here. The edge homophily of the silver-standard labels on 6-NN graphs was 0.80 overall, and every class was more homophilous than expected after shuffling labels within sections: immune-cold 0.82 (chance 0.67), immune-hot 0.67 (0.43), normal 0.86 (0.74) and necrotic 0.73 (0.50). Per-patient homophily ranged from 0.58 (SNU23) to 1.00 (SNU46). Graph structure was therefore informative about the labels in principle, yet models that used it did not predict held-out patients better. Because neighboring spots also have highly correlated expression, a spot's own transcriptome appears to already carry most of the information that its neighbors would add.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Leave-one-patient-out benchmark with an equal tuning budget (SNUH, 13 patients).} Pooled macro-F1 over all held-out spots (mean $\pm$ SD over seeds 42, 7 and 123; logistic regression is deterministic) and pooled per-class one-vs-rest AUROC. $\Delta$ vs.\ GraphSAGE: difference in pooled macro-F1 with patient-bootstrap 95\% CI; wins, number of held-out patients for which the model's per-patient macro-F1 exceeded GraphSAGE's; $p$, paired Wilcoxon signed-rank test on per-patient macro-F1 ($n = 13$).}
+\label{tab:lopo}
+\small
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{Model} & \textbf{Macro-F1} & \multicolumn{4}{c}{\textbf{AUROC}} & \textbf{$\Delta$ vs.\ GraphSAGE (95\% CI)} & \textbf{Wins, $p$} \\
+ & & cold & hot & normal & necr. & & \\
+\midrule
+Logistic         & \textbf{0.691}           & \textbf{0.82} & \textbf{0.97} & \textbf{0.90} & \textbf{0.96} & $+0.039$ (0.009, 0.076)  & 12/13, 0.001 \\
+MLP              & 0.655 $\pm$ 0.020        & 0.80 & 0.89 & 0.86 & 0.91 & $+0.003$ ($-0.045$, 0.052) & 9/13, 0.048 \\
+MLP + neighbors  & 0.637 $\pm$ 0.047        & 0.74 & 0.93 & 0.79 & 0.92 & $-0.015$ ($-0.065$, 0.040) & 8/13, 0.27 \\
+GraphSAGE        & 0.652 $\pm$ 0.018        & 0.77 & 0.92 & 0.83 & 0.92 & -- & -- \\
+GAT              & 0.649 $\pm$ 0.018        & 0.75 & 0.90 & 0.80 & 0.92 & $-0.004$ ($-0.032$, 0.018) & 5/13, 0.34 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{FigR1_lopo_comparison.png}\\[0.4em]
+  \includegraphics[width=0.78\textwidth]{FigR4_confusion_pooled.png}
+  \caption{\textbf{Leave-one-patient-out benchmark with an equal tuning budget.} (A) Pooled LOPO macro-F1 over all 13 held-out patients (mean $\pm$ SD over three seeds; per-fold nested hyperparameter selection, eight configurations per model family). (B) Per-patient macro-F1 (mean of three seeds), patients ordered by logistic-regression performance. All models rise and fall together. (C, bottom) Row-normalized pooled confusion matrices for logistic regression (left) and GraphSAGE (right), averaged over seeds; validation-tuned thresholds.}
+  \label{fig:lopo}
+\end{figure}
+
+\textbf{Graph depth and neighborhood size.} To check that the graph models were not limited by a particular neighborhood, we varied GraphSAGE depth (one to three layers, that is, one- to three-hop neighborhoods) and graph size ($k = 6$, 12 or 18) at default hyperparameters in all 13 LOPO folds (seed 42; Methods). These single-seed runs are summarized as the mean of per-patient macro-F1, which is lower than pooled macro-F1 (see above). Across the nine GraphSAGE settings, mean per-patient macro-F1 ranged from 0.382 to 0.425 and showed no consistent trend with depth or $k$ (Figure~\ref{fig:ablation}A). Every setting was below a one-layer MLP without graph (0.460), significantly so in three of nine (Wilcoxon $p < 0.05$, $n = 13$), and below logistic regression at its default regularization (0.448). Deeper MLPs did slightly worse (0.424 and 0.419 for two and three layers). Giving the MLP the averaged expression of its one- or two-hop neighbors did not help at any $k$ (0.383--0.425; Figure~\ref{fig:ablation}B). No combination of depth, hops and neighborhood size therefore recovered an advantage for neighborhood information.
+
+\textbf{Removing the most label-associated genes.} If a few strong marker genes let per-spot models match the labeling rules, removing them should hurt graph-free models more than graph models, which could fall back on the neighborhood. We removed the 100 or 500 genes with the highest ANOVA $F$ statistic for the niche labels, ranked on the training spots of each fold, and retrained logistic regression, the MLP, MLP + neighbors and GraphSAGE (Figure~\ref{fig:ablation}C). Removing 100 genes lowered GraphSAGE by 0.065 (from 0.404 to 0.340; $p = 0.04$) and logistic regression by 0.037 ($p = 0.001$), and barely changed the MLP ($-0.008$) or MLP + neighbors ($-0.015$). The gap between logistic regression and GraphSAGE widened from 0.043 to 0.071 (9 of 13 patients; $p = 0.03$). Removing 500 genes lowered every model by a similar amount (0.15--0.17), after which logistic regression remained highest (0.293) and the MLP (0.253), MLP + neighbors (0.271) and GraphSAGE (0.258) did not differ ($p \ge 0.27$). The loss of GraphSAGE was never significantly smaller than that of the graph-free models. Neighborhood aggregation therefore did not compensate for the information removed with the marker genes, and the graph-free advantage did not depend on a small set of label-defining genes.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.66\textwidth}\vspace{0pt}\includegraphics[width=\textwidth]{FigR2_ablation.png}\end{minipage}\hfill
+  \begin{minipage}[t]{0.02\textwidth}\vspace{0pt}\textsf{\textbf{\footnotesize C}}\end{minipage}%
+  \begin{minipage}[t]{0.3\textwidth}\vspace{0pt}\includegraphics[width=\textwidth]{FigR3_marker_removal.png}\end{minipage}
+  \caption{\textbf{Ablations and marker-gene removal in the leave-one-patient-out benchmark} (default hyperparameters, seed 42; mean per-patient macro-F1 over 13 held-out patients). (A) GraphSAGE with one to three layers and $k = 6$, 12 or 18 neighbors, compared with an MLP of the same depth without graph. (B) MLP given the averaged expression of its one- or two-hop neighbors for each $k$, compared with the three-layer MLP alone. (C) Logistic regression, MLP, MLP + neighbors (one hop, $k = 6$) and GraphSAGE (three layers, $k = 6$) after removing the 100 or 500 genes most associated with the niche labels in each training fold.}
+  \label{fig:ablation}
+\end{figure}
+
+\subsection{Spatial maps show over-assignment and smoothing}
+
+Figure~\ref{fig:spatial} and Supplementary Figures~\ref{fig:s1}--\ref{fig:s4} compare silver-standard and predicted maps for each test section (argmax decisions, seed-7 model). The maps illustrate the main failure modes more clearly than the summary metrics.
+
+In SNU16A (Figure~\ref{fig:spatial}a--b), the silver-standard map contains a large contiguous necrotic region in the lower-left and many normal spots in the upper half. The predicted map assigns nearly the whole section to immune-cold, with small normal and necrotic patches, and does not recover the necrotic region. In SNU34A (Supplementary Figure~\ref{fig:s4}), the model correctly predicts that most of the section is immune-cold. It also predicts two contiguous normal regions along the upper edge where the silver standard has only scattered normal spots, and it misses scattered necrotic spots on the left. In SNU33A (Supplementary Figure~\ref{fig:s2}), many spots are unlabeled. Predictions there are mostly normal with contiguous immune-hot patches, whereas silver-standard immune-hot spots are scattered.
+
+Across sections, the predicted maps are spatially smoother and more contiguous than the silver-standard maps. This is consistent with neighborhood averaging \cite{li2018deeper}, which can enforce local consistency but can also remove small or scattered niches. The predicted MES-probability map for SNU16A (Figure~\ref{fig:spatial}c) has its highest values in the lower-left, overlapping the silver-standard necrotic region. This pattern agrees with reports linking MES and hypoxia-associated programs to perinecrotic regions \cite{greenwald2024,neftel2019}, even though the classifier did not recover the necrotic region itself.
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{Figure4a_SNU16A_niche_true.png}
+    \caption{Silver-standard niche}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{Figure4b_SNU16A_niche_pred.png}
+    \caption{Predicted niche}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{Figure4c_SNU16A_mes.png}
+    \caption{Predicted MES probability}
+  \end{subfigure}
+  \caption{\textbf{Silver-standard and predicted maps for held-out section SNU16A.} (a) Rule-derived niche labels (grey: excluded). (b) Predicted niches (seed-7 GraphSAGE, argmax), which assign most of the section to immune-cold and miss the lower-left necrotic region. (c) Predicted per-spot MES probability, highest in the lower-left region that overlaps the silver-standard necrotic zone.}
+  \label{fig:spatial}
+\end{figure}
+
+\subsection{External cohort: strong shift in niche composition, region-dependent MES agreement}
+
+We applied the seed-7 model without retraining to 13 GBM Visium samples (25{,}488 spots) from Greenwald et al.\ \cite{greenwald2024}, annotated by sampling region (bulk, contrast-enhancing, infiltrating, necrotic; Supplementary Table~\ref{tab:s2}). Inputs were normalized exactly as the training matrix (log1p of counts scaled to 100{,}000 per spot) and graphs were built on the true hexagonal spot layout (Methods). Predicted composition differed sharply from the training cohort. Across all external spots, 77.8\% were predicted immune-hot, 20.0\% necrotic, 1.4\% normal and 0.8\% immune-cold, and 12 of 13 samples had fewer than 1\% immune-cold spots. Immune-cold was the majority class in the SNUH test patients (67.9\%) and is expected to be abundant in bulk tumor \cite{greenwald2024}. Its near-absence therefore indicates cohort shift and miscalibration rather than true biological differences. Predicted composition also did not follow the annotated sampling region. The single necrotic-region sample had a lower predicted necrotic fraction (0.15) than the bulk samples (mean 0.35), and infiltrating-edge samples were predicted to be 76--100\% immune-hot. The predicted composition was also unstable with respect to input scaling: when external counts were scaled to 10{,}000 instead of 100{,}000 per spot, as in an earlier version of this analysis, the same model predicted 56\% necrotic and 40\% immune-hot spots. A classifier whose class balance flips with a monotone rescaling of its input is not calibrated for this cohort.
+
+Agreement for the MES head depended on region. Per-sample Pearson correlation between predicted MES probability and an independent Neftel MES meta-module score \cite{neftel2019} averaged $0.21$ (median 0.15, range $-0.35$ to $0.58$). It was moderate in bulk-tumor ($r = 0.37$, $n = 4$) and contrast-enhancing samples (0.37, $n = 3$) and near zero in infiltrating-edge samples (0.01, $n = 4$). The pooled spot-level correlation was higher ($r = 0.65$), but it is driven largely by differences between samples and should not be read as within-sample agreement. Thus the MES head partly transferred where malignant cells are dense, whereas the niche classifier did not transfer.
+
+\subsection{Validation against neuropathologist annotations}
+
+All analyses above score models against labels that were themselves derived from gene expression, which could favour models that reproduce the labeling rules rather than tissue structure. We therefore repeated the comparison on an independent cohort with expert ground truth: Visium sections from the University Clinic Freiburg (UKF) \cite{ravi2022} in which a neuropathologist manually segmented the H\&E image into histological regions \cite{ritter2025}. This is the setting in which a graph neural network has been reported to classify histology accurately \cite{ritter2025}. We mapped the annotations to five classes (cellular tumor, infiltrative tumor, necrosis, microvascular proliferation (MVP) and normal grey or white matter; Methods). After excluding two non-GBM samples, the cohort comprised 23 sections (16 tumor and 7 cortex sections) from 18 patients, with 25{,}374 of 68{,}015 spots annotated (4{,}968 cellular, 5{,}507 infiltrative, 2{,}163 necrotic, 2{,}881 MVP and 9{,}855 normal). We ran two experiments with the same models, training loop and validation-tuned thresholds as in the SNUH benchmark, adding MLPs that receive the mean expression of the spot's one- or two-hop neighbors as extra features (``MLP + neighbors'').
+
+\textbf{Within-cohort, pathologist labels for training and testing.} In leave-one-patient-out evaluation (18 folds, three seeds), logistic regression achieved the highest pooled macro-F1 (0.419), followed by GraphSAGE ($0.346 \pm 0.047$), the two-hop MLP + neighbors ($0.346 \pm 0.012$), the MLP ($0.336 \pm 0.025$), the one-hop MLP + neighbors ($0.311 \pm 0.030$) and GAT ($0.291 \pm 0.023$; Figure~\ref{fig:pathology}A). No model differed significantly from GraphSAGE in paired per-patient tests ($n = 18$). Because all models used default hyperparameters in this cohort, part of the logistic-regression advantage may reflect its lower sensitivity to tuning. Logistic regression was ahead by 0.073 (patient-bootstrap 95\% CI $-0.032$ to $0.155$; Wilcoxon $p = 0.13$), and the MLP ($-0.010$, $p = 0.73$), the two-hop MLP + neighbors ($-0.001$, $p = 0.80$) and GAT ($-0.056$, $p = 0.21$) were statistically indistinguishable from it. The advantage of logistic regression came mainly from normal brain (F1 0.76 vs.\ 0.30 for GraphSAGE and 0.30 for the MLP). In the seed-42 models, GraphSAGE assigned 87\% of pathologist-annotated normal spots to infiltrative tumor and the MLP 84\%, whereas logistic regression labeled 77\% of them correctly (Figure~\ref{fig:pathology}C). This failure was therefore shared by the neural models with and without graph structure rather than caused by message passing. GraphSAGE also assigned 63\% of MVP spots to cellular tumor (logistic regression 46\%). The spatial maps show the same contrast as in the SNUH cohort (Figure~\ref{fig:pathmaps}). GraphSAGE produced smooth, contiguous regions that could cover the wrong class, whereas logistic regression was noisier at the spot level but followed the annotated region boundaries.
+
+\textbf{Transfer from expression-derived to pathologist labels.} We next trained models on the SNUH cohort, using its anatomical-feature annotations mapped to the same five classes, and applied them unchanged to all annotated UKF spots, with thresholds tuned on two SNUH validation patients. UKF counts were scaled to 100{,}000 per spot before log transformation to match the SNUH matrix (Methods). In this setting GraphSAGE had the highest macro-F1 ($0.395 \pm 0.030$), followed by the MLP ($0.380 \pm 0.037$), the one-hop MLP + neighbors ($0.377 \pm 0.010$), logistic regression (0.352), the two-hop MLP + neighbors ($0.315 \pm 0.073$) and GAT ($0.315 \pm 0.040$; Figure~\ref{fig:pathology}B). GraphSAGE also had the highest mean one-vs-rest AUROC (0.770, vs.\ 0.730 for the MLP and 0.704 for logistic regression). Its advantage over the graph-free models was small and not consistent across patients: compared with the MLP, the pooled difference was $+0.015$ (patient-bootstrap 95\% CI $-0.017$ to $0.047$; better for 11 of 18 patients, Wilcoxon $p = 0.25$), and compared with the one-hop MLP + neighbors $+0.018$ ($-0.011$ to $0.044$; $p = 0.76$). Against logistic regression the pooled difference ($+0.043$, 95\% CI $0.003$ to $0.081$) excluded zero, but the per-patient comparison did not ($p = 0.30$). GAT was worse than GraphSAGE ($p = 0.004$). Normal brain transferred best (F1 0.64--0.76 across models), and MVP was not recovered by any model (F1 $\le 0.10$). The SNUH training set contained few MVP spots (1{,}724), so its expression-defined MVP category did not correspond to the regions a neuropathologist outlined as microvascular proliferation. These transfer results were sensitive to input scaling: in an earlier run in which UKF counts were scaled to 10{,}000 rather than 100{,}000 per spot, every model scored lower (macro-F1 0.20--0.34) and logistic regression ranked first.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{FigR5_pathologist_labels.png}
+  \caption{\textbf{Graph-free models match graph models against neuropathologist annotations.} (A) Leave-one-patient-out evaluation within the UKF cohort (18 patients), trained and tested on neuropathologist H\&E annotations: pooled macro-F1 (mean $\pm$ SD over three seeds; logistic regression is deterministic). (B) Models trained on the SNUH cohort's expression-derived anatomical labels and tested on all annotated UKF spots: macro-F1 with SNUH-tuned thresholds (solid) and mean one-vs-rest AUROC (hatched). (C) Row-normalized confusion matrix of the seed-42 GraphSAGE models pooled over the 18 leave-one-patient-out folds (rows, pathologist label; columns, prediction; validation-tuned thresholds).}
+  \label{fig:pathology}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{maps_path_UKF251_T.png}
+  \caption{\textbf{Neuropathologist annotation and leave-one-patient-out predictions for UKF section 251\_T.} Left, manual H\&E segmentation; middle, logistic regression; right, GraphSAGE (seed 42; validation-tuned thresholds). Grey spots were not annotated and are shown for context only. GraphSAGE produces smooth regions but assigns the annotated infiltrative region largely to cellular tumor; logistic regression is noisier at the spot level but follows the annotated boundaries. Further sections are shown in Supplementary Figure~\ref{fig:s5}.}
+  \label{fig:pathmaps}
+\end{figure}
+
+\subsection{Niche-signature risk does not stratify TCGA-GBM survival}
+
+No Visium GBM cohort with matched survival was available. The slide-level head was therefore trained on a niche-composition pseudo-risk, and we evaluated the same biological hypothesis in bulk data. Each TCGA-GBM tumor was scored with fixed niche gene signatures (MES/myeloid, T-cell, hypoxia and normal-brain genes), and these scores were combined with the same weights that defined the pseudo-risk (Methods). This score is derived from the niche definitions, not from the trained network. In 166 expression-matched tumor samples from 165 patients (132 deaths), the score did not stratify overall survival (Figure~\ref{fig:km}; Table~\ref{tab:survival}). The univariate Cox hazard ratio per unit score was 1.12 (95\% CI 0.92--1.37, $p = 0.25$), the concordance index was 0.52 \cite{harrell1996}, the age-adjusted hazard ratio was 1.03 ($p = 0.81$), and the median-split log-rank $p$ was 0.42 (median overall survival 424 vs.\ 444 days). This hypothesis, that bulk niche composition is prognostic, was not supported in this cohort.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.52\textwidth]{Figure5_km_survival.png}
+  \caption{\textbf{Overall survival by niche-signature risk in TCGA-GBM.} Kaplan--Meier curves (95\% confidence bands) for tumors above and below the median risk score ($n = 83$ each). Log-rank $p = 0.42$.}
+  \label{fig:km}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{TCGA-GBM survival analysis of the niche-signature risk score} (166 tumor samples from 165 patients; 132 events).}
+\label{tab:survival}
+\small
+\begin{tabular}{lc}
+\toprule
+\textbf{Analysis} & \textbf{Result} \\
+\midrule
+Univariate Cox HR (95\% CI)        & 1.12 (0.92--1.37), $p = 0.25$ \\
+Age-adjusted Cox HR                & 1.03, $p = 0.81$ \\
+Concordance index                  & 0.52 \\
+Kaplan--Meier log-rank $p$ (median split) & 0.42 \\
+Median OS, high vs.\ low risk      & 424 vs.\ 444 days \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{Discussion}
+
+We set out to test whether explicitly modeling spatial adjacency improves supervised niche prediction in GBM Visium data. Under matched training and scoring, it did not. Across six fixed splits, in a leave-one-patient-out benchmark in which every model family received the same nested hyperparameter search, and against neuropathologist annotations within an independent cohort, logistic regression on per-spot expression ranked first, and GraphSAGE and GAT were at best indistinguishable from an MLP. Only under cross-cohort transfer was GraphSAGE ahead, by a margin that was not significant. The identity of the held-out patient changed performance far more than the choice of model.
+
+\textbf{Why did the graph not help?} The most common explanation for a GNN failing, that neighboring nodes carry different labels \cite{zhu2020homophily}, does not apply: label homophily was 0.80 and above chance for every class, so neighbors were informative in principle. We see three more likely explanations. First, at Visium resolution each 55-\textmu m spot already pools several cells, and neighboring spots have strongly correlated expression, so the neighborhood largely repeats information the spot already carries. The niche axes we predict are defined by cell-intrinsic programs, such as hypoxia, MES and myeloid, and T-cell genes \cite{neftel2019,greenwald2024}. Consistent with this, giving the MLP explicit neighbor-averaged expression did not improve it, no depth or neighborhood size helped GraphSAGE, and removing the most label-associated genes did not hurt the graph-free models more than GraphSAGE, as would be expected if the neighborhood supplied information that the spot lacks. Second, aggregation smooths predictions \cite{li2018deeper}. The contiguous predicted maps (Figure~\ref{fig:spatial}, Figure~\ref{fig:pathmaps}) show that smoothing can enforce plausible-looking regions while erasing small or scattered ones, and the classes that graph models recovered worst in LOPO, immune-hot and necrotic, were the least homophilous. Third, with 13 or 18 patients the extra parameters and hyperparameters of a graph encoder are hard to fit in a way that generalizes across patients, whereas a strongly regularized linear model is robust to patient shift; the tuned logistic models chose the strongest regularization in most folds. Our results do not show that spatial context is biologically unimportant in GBM. They show that, at this resolution and cohort size, standard graph encoders did not extract predictive signal beyond per-spot expression.
+
+\textbf{Expression-derived versus pathologist labels.} A specific concern with the SNUH benchmark is that its niche labels are derived from expression-based annotations, so the task partly asks models to reproduce a labeling rule, which may favor per-spot models. The neuropathologist-annotated cohort removes this concern. Its labels come from H\&E morphology, independently of expression, and this is the setting in which NePSTA, a graph neural network combining expression and copy-number features, was reported to reach 87\% accuracy \cite{ritter2025}. With pathologist labels as ground truth, the main conclusion held: within the cohort, logistic regression was first, and in neither setting was a graph model significantly better than the MLP. After transfer, however, GraphSAGE had the highest macro-F1 and AUROC, ahead of the MLP by 0.015 and of logistic regression by 0.043. The graph models' main failure, assigning annotated normal brain to infiltrative tumor, was shared by the MLP, so it reflects nonlinear neural models fitted to few patients rather than message passing. This is the one setting in which a graph model was ahead, and it is plausible that neighborhood averaging stabilizes scores under cohort shift by smoothing technical noise. The advantage was small, not consistent across patients, matched by an MLP given neighbor-averaged features, and dependent on input scaling, so it does not establish a benefit of message passing; a larger transfer study would be needed to test it. Our results do not contradict the accuracy reported for NePSTA, which used additional copy-number features, a different label set and a different evaluation design. They indicate that the graph component should be tested against an equally tuned graph-free model before accuracy is attributed to it.
+
+\textbf{Evaluation choices can produce apparent gains.} Our own earlier analysis shows how easily an architectural advantage can be produced without any modeling change. Baseline results carried over from a superseded version of the preprocessed data made the GNN appear 0.04--0.14 macro-F1 better than the baselines, the same order of magnitude as many reported improvements. Rerunning all models on identical inputs removed the advantage, and the decision rule itself changed macro-F1 by less than 0.02. Similar effects have been documented in graph learning \cite{shchur2018,errica2020} and in machine-learning-based science more broadly \cite{kapoor2023,varoquaux2022}. With 13 patients, the choice of held-out patients produced a spread of about 0.3 macro-F1, larger than any difference between models. A comparison on a single split, even with several seeds, would have reported a significant MLP advantage ($p = 0.012$) that did not hold across splits ($p = 0.14$). This agrees with Bouthillier et al., who found that data sampling is a major and often ignored source of variance in machine-learning benchmarks \cite{bouthillier2021}. Equalizing the tuning budget narrowed but did not reverse the differences between neural models, so an untuned baseline would also have overstated the graph models' disadvantage. We suggest that spatial-omics method papers report, at minimum, (i) baselines without graph structure, including a regularized linear model, given the same tuning budget, (ii) identical decision rules for all models, (iii) patient-level cross-validation rather than a single split, and (iv) where possible, evaluation against labels that are independent of the input expression.
+
+\textbf{Cohort shift.} In the external cohort, immune-cold was predicted almost nowhere, and predictions did not follow annotated regions. Cohort differences in tissue processing (the training set was mostly FFPE), sequencing depth, region sampling and normalization probably all contribute. In addition, the thresholds and class priors were learned on a cohort in which immune-cold dominates. The MES head transferred better, but only where malignant cells are dense. These results argue for multi-cohort training, explicit domain adaptation, and caution in interpreting niche fractions predicted on new cohorts.
+
+\textbf{Survival.} The niche-signature risk score did not stratify TCGA-GBM survival. Several factors limit this test: bulk expression averages over niches, the signatures are curated rather than learned, and the cohort provides moderate power. Even so, the result suggests that a simple bulk proxy for niche composition is not a strong prognostic marker. Testing spatial niche composition as a prognostic factor will require spatial cohorts with matched outcomes.
+
+\subsection{Limitations}
+
+(i) \textbf{Labels.} The SNUH labels are derived from the atlas's expression-based annotations by rules, and 25\% of spots were excluded as vascular or discordant. The neuropathologist-annotated cohort addresses this, but it is small (18 patients), only 37\% of its spots are annotated, its annotation scheme differs from the SNUH niche classes, and annotations from a single expert carry their own uncertainty. The provenance of the annotated objects is described in the data-availability statement. (ii) \textbf{Class imbalance.} Immune-hot made up 1.1\% of test spots in the primary split, and in the fixed-split analyses its threshold was tuned on 15 validation spots, so these immune-hot metrics are fragile; LOPO, which pools all patients, is less affected. (iii) \textbf{Small patient cohorts.} Thirteen and eighteen patients limit statistical power. Several comparisons between neural models were not significant, and we cannot exclude small differences between them. (iv) \textbf{Search space.} The equal-budget search used eight configurations per family. Logistic regression selected the strongest regularization in the grid in most folds, so it might perform slightly better with a wider grid, which would not change our conclusions. The UKF experiments used default hyperparameters. The ablation and marker-removal runs used one seed and default hyperparameters, and with a between-patient SD of about 0.15 they can detect only large effects. (v) \textbf{Architectures and inputs.} We tested two message-passing encoders and neighbor-averaged features. Graph designs suited to heterophily \cite{zhu2020homophily}, multi-scale neighborhoods, histology image features \cite{hu2021spagcn}, copy-number features \cite{ritter2025} or deconvolution-derived features \cite{kleshchevnikov2022} may perform differently, and higher-resolution platforms, where single spots carry less context, may favor graph models. (vi) \textbf{Qualitative figures.} The confusion matrix and maps of the primary split (Figures~\ref{fig:confusion} and \ref{fig:spatial}) use argmax decisions, whereas the LOPO and UKF figures use tuned thresholds. (vii) \textbf{Survival.} The survival analysis tested a signature-based proxy, not the trained network, on bulk data.
+
+\subsection{Conclusions}
+
+For supervised niche and histology prediction in GBM Visium data, per-spot expression with a regularized linear classifier was at least as informative as GraphSAGE or GAT encoders within each cohort. This held under matched scoring, under an equal tuning budget with leave-one-patient-out evaluation, and against independent neuropathologist annotations, even though the labels are strongly spatially clustered. Under cross-cohort transfer, GraphSAGE was modestly but not significantly ahead of the graph-free neural models. The choice of held-out patients mattered more than the architecture. We release DeepGraph-GBM, including code, splits, trained weights and all per-run results, as a reproducible benchmark for future spatial models.
+
+% ============================================================
+\section{Methods}
+
+\subsection{Data}
+
+\textbf{Training cohort.} We used the IDH-wildtype GBM Visium sections of the SNUH spatial atlas \cite{park2026}, obtained from the UCSC Cell Browser: 28 sections (23 FFPE, 5 fresh-frozen) from 13 patients, comprising 100{,}488 spots with per-spot anatomical-feature, metaprogram and malignant-state annotations (Supplementary Table~\ref{tab:s3}).
+
+\textbf{External cohort.} We used 13 GBM Visium samples from Greenwald et al.\ \cite{greenwald2024} (Zenodo record 12624108; CC-BY), annotated by sampling region.
+
+\textbf{Survival cohort.} We obtained TCGA-GBM bulk RNA-seq and clinical data from the NCI Genomic Data Commons \cite{tcga2008}. Overall survival combined \texttt{days\_to\_death} for deaths with \texttt{days\_to\_last\_follow\_up} for censored cases. The expression-matched set comprised 166 tumor samples from 165 patients (one patient contributed two aliquots), with 132 deaths. Keeping one aliquot for that patient (165 patients, 131 deaths) gave essentially the same results (univariate HR 1.13, 95\% CI 0.92--1.37, $p = 0.25$; log-rank $p = 0.33$).
+
+\subsection{Preprocessing, graphs and labels}
+
+Spots with fewer than 200 detected genes were removed. We selected 3{,}000 highly variable genes with the \texttt{seurat\_v3} method \cite{stuart2019} in scanpy \cite{wolf2018}, applied to counts reconstructed from the log-normalized matrix by \texttt{expm1}. Dispersion-based selection on the normalized matrix mostly returned housekeeping genes and reduced cross-cohort transfer. Each section was converted into a $k$-nearest-neighbor graph ($k = 6$) on the spot coordinates provided by the atlas. These coordinates are Visium array indices, in which the column index is doubled; on this grid, four of the six true neighbors lie at distance $\sqrt{2}$ and the other two at distance 2, tied with two second-ring spots. About 24\% of the resulting edges therefore join second-ring rather than adjacent spots. All analyses used these graphs; a sensitivity analysis with exact hexagonal 6-NN graphs (array column $\times\,1/2$, row $\times \sqrt{3}/2$) is reported in the Results. Gaussian edge weights $\exp(-d^2 / 2\tilde{d}^2)$, where $\tilde{d}$ is the median neighbor distance, were computed and stored but were not used by either encoder.
+
+Niche labels were assigned by the first matching rule in the order necrotic $\rightarrow$ immune-hot $\rightarrow$ normal $\rightarrow$ immune-cold. The rules were: necrotic, anatomical feature PAN or PNZ; immune-hot, immune metaprogram and anatomical feature not PAN/PNZ; normal, anatomical feature LE\_GM/LE\_WM with concordant metaprogram LE\_GM/LE\_WM; immune-cold, anatomical feature CT, IT or IGN with metaprogram CT, IT or hypoxic. Spots matching no rule (including vascular features) were labeled \emph{exclude} and masked from the classification loss. The MES target was binary: 1 if the spot's annotated malignant metaprogram was a mesenchymal-like state (MES, MES.Hyp or MES.Ast), 0 for any other annotated state, and missing where no state was annotated.
+
+\subsection{Models}
+
+\textbf{GraphSAGE.} Three SAGEConv layers \cite{hamilton2017} with mean aggregation (3000$\rightarrow$256$\rightarrow$256$\rightarrow$128), each followed by batch normalization, ReLU and dropout ($p = 0.3$), implemented in PyTorch Geometric \cite{fey2019} (1{,}751{,}815 parameters including heads).
+
+\textbf{GAT.} Three GATConv layers \cite{velickovic2018} with four heads and the same dimensions. Hidden layers concatenate four heads of width $d/4$, and the final layer averages the heads. Normalization, dropout and heads were identical to GraphSAGE (985{,}863 parameters).
+
+\textbf{Heads.} (1) A niche classifier (linear layers to four logits). (2) A MES regressor (sigmoid output). (3) A slide-level risk head that applies attention pooling over spot embeddings followed by an MLP producing a scalar.
+
+\textbf{Baselines.} The MLP used the same feature input without edges and the same niche and MES heads. Multinomial logistic regression (scikit-learn, $C = 1$, balanced class weights, L-BFGS with up to 500 iterations) was fitted on the same features, with a separate logistic model for MES status. Its fit is deterministic, so its results do not vary by seed.
+
+\subsection{Training}
+
+The multi-task loss was $\mathcal{L} = 1.0\,\mathcal{L}_\mathrm{CE}^\mathrm{niche} + 0.5\,\mathcal{L}_\mathrm{BCE}^\mathrm{MES} + 0.5\,\mathcal{L}_\mathrm{MSE}^\mathrm{risk}$. The cross-entropy used balanced class weights, multiplied by an additional 3.0 for immune-hot and 1.5 for necrotic. The pseudo-risk target for each slide was the niche-fraction-weighted sum $1.0\,f_\mathrm{cold} + 0.8\,f_\mathrm{necrotic} - 0.6\,f_\mathrm{hot} - 0.8\,f_\mathrm{normal}$ over labeled spots. We used AdamW (learning rate $10^{-3}$, weight decay $10^{-4}$) with cosine annealing, full-graph batches (one section per step), up to 200 epochs, and early stopping on validation macro-F1 (patience 40) with best-checkpoint restoration. The MLP was trained with the same protocol.
+
+\subsection{Evaluation}
+
+\textbf{Splits.} The primary split (seed 42) used training patients SNU17, 18, 21, 23, 25, 27, 43 and 46, validation patients SNU24 and 51, and test patients SNU16, 33 and 34. Five additional splits (generator seeds 1001--1005) used the same 8/2/3 design. The six test sets were all different but not disjoint: six patients were tested in two splits, and SNU43 was never tested.
+
+\textbf{Decision rule.} For every model, a threshold $t_c$ was tuned for each class $c$ on the validation patients to maximize one-vs-rest F1 (grid of 37 values from 0.05 to 0.95). Test spots were then assigned to $\arg\max_c\, p_c / t_c$ using the validation thresholds unchanged, so test labels were never used for tuning. In the scoring-rule control, the same models were also scored by argmax.
+
+\textbf{Metrics.} We report macro- and weighted-F1, accuracy, one-vs-rest AUROC and AUPRC per class, and, for the MES head, AUROC, AUPRC and Pearson correlation between predicted MES probability and the spot-level MES target.
+
+\textbf{Statistics.} On the primary split, models were compared with Welch $t$-tests on per-seed macro-F1, because seeds are not paired across models (one-sample $t$-tests against deterministic logistic regression). Across the six splits, paired $t$-tests and Wilcoxon signed-rank tests were applied to split-mean macro-F1 (df $= 5$); because test sets of different splits share patients, these tests treat the splits as more independent than they are. Variance was partitioned into the variance of split means and the mean within-split seed variance.
+
+\subsection{External and survival validation}
+
+The SNUH atlas matrix is log1p of counts scaled to 100{,}000 per spot (the back-transformed values of every spot sum to $10^5$). External samples were therefore scaled to 100{,}000 counts per spot and log-transformed, restricted to the training gene panel, converted to 6-NN graphs on their hexagonal spot layout (array column $\times\,1/2$, array row $\times \sqrt{3}/2$) and scored with the seed-7 model (argmax). The MES reference was the mean expression of Neftel MES1/MES2 meta-module markers present in the panel \cite{neftel2019}. For TCGA-GBM, genes were z-scored across samples. Four curated signatures (immune-cold/MES--myeloid, 22 genes; immune-hot/T cell, 18; necrotic/hypoxia, 16; normal brain, 16) were averaged per sample and combined with the pseudo-risk weights. Cox proportional-hazards models (univariate and age-adjusted), the concordance index and Kaplan--Meier curves with log-rank tests at the median were computed with lifelines \cite{davidsonpilon2019}.
+
+\subsection{Leave-one-patient-out benchmark with equal tuning budget}
+
+To remove the dependence on a few fixed splits, we evaluated all models with leave-one-patient-out (LOPO) cross-validation on the 13 SNUH patients. In each fold, one patient was held out for testing and two of the remaining twelve served as validation patients. Validation pairs were chosen from label counts only, never from model performance: among pairs containing at least 100 labeled spots of every class, we took the pair used least often as validation so far, so that validation duty was spread across patients. All neural models (MLP, MLP + neighbors, GraphSAGE and GAT) shared one training loop: full-section steps, AdamW with cosine annealing, the boosted class weights described above, up to 120 epochs and early stopping on validation macro-F1 (patience 25) with best-state restoration. Every model was scored identically, with per-class thresholds tuned on the fold's validation patients. All folds used the same 3{,}000 highly variable genes, selected without labels on the eight training patients of the primary split. For folds whose held-out patient was one of these eight (and likewise in the multi-split analysis), the gene panel was therefore chosen partly from that patient's expression, although never from its labels. This applies equally to every model and cannot favor one of them.
+
+Each model family received the same search budget of eight configurations, sampled once (generator seed 2026) from a shared grid: learning rate $\{3 \times 10^{-4}, 10^{-3}, 3 \times 10^{-3}\}$, dropout $\{0.1, 0.3, 0.5\}$, hidden width $\{128, 256, 512\}$, weight decay $\{10^{-5}, 10^{-4}, 10^{-3}\}$ and depth $\{1, 2, 3\}$. Graph models additionally sampled $k \in \{6, 12, 18\}$, and MLP + neighbors sampled $k$ and the number of hops $\{1, 2\}$. Logistic regression used eight values of the inverse regularization strength $C$ from $10^{-3}$ to 3 (L-BFGS, at most 500 iterations). At the most frequently selected value ($C = 10^{-3}$, 9 of 13 folds) the solver converged; at weaker regularization it could stop at the iteration limit, and refitting to convergence on two such folds changed the held-out macro-F1 by $-0.012$ and $+0.011$. All configurations were trained on every fold with seed 42. In each fold, the configuration with the best validation macro-F1 was selected (nested selection, no test information) and retrained with seeds 42, 7 and 123. The MLP + neighbors model concatenates a spot's expression with the row-normalized mean expression of its $k$ nearest neighbors over one or two hops. It therefore sees the same neighborhood information as a message-passing layer but combines it without learned aggregation.
+
+\textbf{Ablations.} At default hyperparameters (learning rate $10^{-3}$, dropout 0.3, width 256, weight decay $10^{-4}$; seed 42), we varied GraphSAGE depth (1--3 layers) and neighborhood size ($k = 6, 12, 18$), MLP depth (1--3), and the hops and $k$ of the MLP + neighbors model. To test whether results depend on a few strong marker genes, we removed the 100 or 500 genes with the highest ANOVA $F$ statistic for the niche labels, computed on the labeled training spots of each fold only, and retrained logistic regression ($C = 0.1$), the three-layer MLP, MLP + neighbors (one hop, $k = 6$) and GraphSAGE (three layers, $k = 6$). Ablation and marker-removal runs used one seed and are summarized as the mean of per-patient macro-F1, with paired Wilcoxon tests across the 13 held-out patients.
+
+\textbf{Label homophily.} For each labeled spot, we computed the fraction of its labeled 6-NN neighbors carrying the same niche label, and compared it with the fraction expected if labels were shuffled within each section.
+
+\textbf{Metrics and statistics.} The primary metric was pooled LOPO macro-F1: every labeled spot was predicted exactly once, by a model that never saw its patient. We report its mean $\pm$ SD over the three seeds. Model comparisons used paired Wilcoxon signed-rank and paired $t$-tests on per-patient macro-F1 ($n = 13$ held-out patients), and 95\% confidence intervals for differences in pooled macro-F1 were obtained by resampling patients with replacement (2{,}000 bootstrap samples). $P$ values are reported without correction for multiple comparisons and are intended as descriptive; our conclusions rest on the consistent direction of the differences across analyses rather than on any single test.
+
+\subsection{Neuropathologist-annotated cohort}
+
+\textbf{Data.} We used Visium sections from the University Clinic Freiburg (UKF) cohort of Ravi et al.\ \cite{ravi2022}, distributed as SPATA objects in which the neuropathologist's manual H\&E-based region segmentation is stored per spot \cite{ritter2025}. Objects were exported to count matrices, coordinates and per-spot annotations. Two non-GBM samples (an astrocytoma and an oligodendroglioma) were removed. Sections without any annotation and small objects without usable annotation were not used. The remaining 23 sections (16 tumor and 7 cortex sections) came from 18 patients.
+
+\textbf{Labels.} Pathologist segments were mapped to five classes: Cellular $\rightarrow$ cellular tumor; Infiltrative $\rightarrow$ infiltrative tumor; Necrosis and Necrotic\_Edge $\rightarrow$ necrotic; Vascular\_Hyper $\rightarrow$ MVP; Grey\_Matter and White\_Matter $\rightarrow$ normal. Unannotated spots were excluded from training and scoring. For the transfer experiment, SNUH anatomical-feature annotations were mapped to the same classes (CT $\rightarrow$ cellular, IT $\rightarrow$ infiltrative, PAN and PNZ $\rightarrow$ necrotic, MVP $\rightarrow$ MVP, LE\_GM and LE\_WM $\rightarrow$ normal; IGN, BV and HBV excluded). These SNUH labels are derived from expression, whereas the UKF labels come from histology.
+
+\textbf{Features and graphs.} Counts were scaled to 10{,}000 per spot and log-transformed for the within-UKF experiment, and to 100{,}000 per spot for the transfer experiment, so that UKF inputs matched the scale of the SNUH matrix on which the transferred models were trained. For the within-UKF experiment, 3{,}000 highly variable genes were selected once on the counts of all UKF sections with the \texttt{seurat\_v3} method, without using labels (and therefore partly from each held-out patient's expression, identically for all models). For the transfer experiment, genes were restricted to those measured in both cohorts, and 3{,}000 highly variable genes were selected on SNUH data only. Graphs were 6-NN graphs on spot coordinates.
+
+\textbf{Experiments.} (E1) LOPO within UKF: one fold per patient, with two validation patients chosen from label counts as above (coverage floor 50 spots per class, relaxed when no pair reached it). (E2) Transfer: models were trained on 11 SNUH patients, thresholds were tuned on two SNUH validation patients chosen from label counts (SNU21 and SNU33), and the models were applied unchanged to all 18 UKF patients. Both experiments used default hyperparameters (logistic regression $C = 0.1$) and seeds 42, 7 and 123, with the training loop and thresholding described above, except that class weights were balanced without additional boosting. E1 statistics were computed as in the SNUH LOPO benchmark ($n = 18$ patients). For E2 we also report argmax macro-F1 and one-vs-rest AUROC per class.
+
+\subsection{Software and reproducibility}
+
+The analyses use Python 3.11, PyTorch 2.7 (2.13 for the multi-split, GAT, LOPO and UKF runs), PyTorch Geometric 2.8, scanpy 1.11, scikit-learn 1.9, lifelines 0.30 and umap-learn \cite{mcinnes2018}. UKF SPATA objects were exported to count matrices with R 4.6 and the Matrix package, without SPATA itself. The LOPO benchmark ran as a shared job queue (one job per model, configuration, fold and seed) on a 14-core CPU workstation. Numbered scripts reproduce every table and figure from raw data, and unit tests cover graph construction, labeling and models. Figures use the Okabe--Ito color-blind-safe palette.
+
+% ============================================================
+\section*{Data and code availability}
+Code (MIT license), configuration files, patient splits, trained weights, per-run metrics and all figures and tables are available at \url{https://github.com/hossainlab/deepgraph-gbm}. Training data: SNUH GBM atlas \cite{park2026} (\url{https://cells.ucsc.edu/?ds=multiomic-gbm}). External cohort: Greenwald et al.\ \cite{greenwald2024} (Zenodo 12624108). Neuropathologist-annotated cohort: UKF Visium data of Ravi et al.\ \cite{ravi2022} (raw data: Dryad, \url{https://doi.org/10.5061/dryad.h70rxwdmj}); annotated SPATA objects \textcolor{red}{[source of annotated objects to be confirmed by the author before submission]}. Survival data: TCGA-GBM via the NCI Genomic Data Commons.
+
+\section*{Competing interests}
+The author declares no competing interests.
+
+\section*{Acknowledgments}
+We thank the investigators who generated and openly shared the SNUH GBM atlas, the Greenwald et al.\ cohort, the Freiburg (UKF) spatial cohort with its neuropathological annotations, and the TCGA data.
+
+% ============================================================
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+\clearpage
+\appendix
+\section*{Supplementary Material}
+
+\renewcommand{\thefigure}{S\arabic{figure}}
+\setcounter{figure}{0}
+\renewcommand{\thetable}{S\arabic{table}}
+\setcounter{table}{0}
+
+\subsection*{Supplementary Figures}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS1a_SNU16B_niche_true.png}
+    \caption{True niche}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS1b_SNU16B_niche_pred.png}
+    \caption{Predicted niche}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS1c_SNU16B_mes.png}
+    \caption{MES probability}
+  \end{subfigure}
+  \caption{\textbf{Spatial niche and MES maps for held-out test section SNU16B.} (a) Silver-standard niche labels; (b) predicted niche labels (seed-7 GraphSAGE, argmax); (c) predicted MES cancer-cell probability per spot.}
+  \label{fig:s1}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS2a_SNU33A_niche_true.png}
+    \caption{True niche}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS2b_SNU33A_niche_pred.png}
+    \caption{Predicted niche}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS2c_SNU33A_mes.png}
+    \caption{MES probability}
+  \end{subfigure}
+  \caption{\textbf{Spatial niche and MES maps for held-out test section SNU33A.} (a) Silver-standard niche labels; (b) predicted niche labels (seed-7 GraphSAGE, argmax); (c) predicted MES cancer-cell probability per spot.}
+  \label{fig:s2}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS3a_SNU33B_niche_true.png}
+    \caption{True niche}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS3b_SNU33B_niche_pred.png}
+    \caption{Predicted niche}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS3c_SNU33B_mes.png}
+    \caption{MES probability}
+  \end{subfigure}
+  \caption{\textbf{Spatial niche and MES maps for held-out test section SNU33B.} (a) Silver-standard niche labels; (b) predicted niche labels (seed-7 GraphSAGE, argmax); (c) predicted MES cancer-cell probability per spot.}
+  \label{fig:s3}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS4a_SNU34A_niche_true.png}
+    \caption{True niche}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS4b_SNU34A_niche_pred.png}
+    \caption{Predicted niche}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{FigureS4c_SNU34A_mes.png}
+    \caption{MES probability}
+  \end{subfigure}
+  \caption{\textbf{Spatial niche and MES maps for held-out test section SNU34A.} (a) Silver-standard niche labels; (b) predicted niche labels (seed-7 GraphSAGE, argmax); (c) predicted MES cancer-cell probability per spot.}
+  \label{fig:s4}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{maps_path_UKF243_T.png}\\[2pt]
+  \includegraphics[width=0.92\textwidth]{maps_path_UKF260_T.png}\\[2pt]
+  \includegraphics[width=0.92\textwidth]{maps_path_UKF269_T.png}
+  \caption{\textbf{Neuropathologist annotations and leave-one-patient-out predictions for further UKF sections} (243\_T, 260\_T, 269\_T). Left, manual H\&E segmentation; middle, logistic regression; right, GraphSAGE (seed 42; validation-tuned thresholds). Grey spots were not annotated.}
+  \label{fig:s5}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{maps_lopo_SNU16A.png}\\[2pt]
+  \includegraphics[width=0.92\textwidth]{maps_lopo_SNU34A.png}
+  \caption{\textbf{Leave-one-patient-out predictions for SNUH sections SNU16A and SNU34A.} Left, silver-standard labels; middle, logistic regression; right, GraphSAGE (seed 42, selected configuration of the fold, validation-tuned thresholds). Compare with the argmax predictions of the fixed-split model in Figure~\ref{fig:spatial} and Supplementary Figure~\ref{fig:s4}.}
+  \label{fig:s6}
+\end{figure}
+
+\clearpage
+\subsection*{Supplementary Tables}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Baseline model metrics under the original protocol on held-out test patients,} recomputed on the current features: single run trained for 120 epochs without early stopping, scored by argmax. Shown for comparison with Table~\ref{tab:comparison}; see Figure~\ref{fig:reversal}.}
+\label{tab:s1}
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{Multinomial Logistic Regression} & \textbf{Multilayer Perceptron (MLP)} \\
+\midrule
+Macro-F1          & 0.541 & 0.618 \\
+Weighted-F1       & 0.594 & 0.735 \\
+Accuracy          & 0.534 & 0.718 \\
+AUROC immune-cold & 0.768 & 0.830 \\
+AUROC immune-hot  & 0.991 & 0.976 \\
+AUROC normal      & 0.702 & 0.828 \\
+AUROC necrotic    & 0.926 & 0.949 \\
+MES AUROC         & 0.747 & 0.794 \\
+MES Pearson $r$   & 0.407 & 0.425 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{1em}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{External validation per-sample summary on the Greenwald et al.\ cohort} (13 region-labeled Visium samples). Seed-7 GraphSAGE model applied without retraining (inputs scaled to 100{,}000 counts per spot as in the training matrix; hexagonal 6-NN graphs), argmax decisions; predicted risk from slide hazard head; Pearson correlation $r$ computed against external Neftel MES meta-module expression per spot; predicted niche fractions across spots.}
+\label{tab:s2}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llccccccc}
+\toprule
+\textbf{Sample ID} & \textbf{Annotated Region} & \textbf{Spots} & \textbf{Risk} & \textbf{MES $r$} & \textbf{Cold} & \textbf{Hot} & \textbf{Normal} & \textbf{Necrotic} \\
+\midrule
+GBM\_MGH258      & Unknown            & 2{,}397 & 0.859 & $-$0.352 & 0.000 & 0.944 & 0.000 & 0.056 \\
+GBM\_ZH1007inf   & Infiltrating       & 1{,}436 & 0.750 & $-$0.006 & 0.000 & 1.000 & 0.000 & 0.000 \\
+GBM\_ZH1007nec   & Necrotic           & 955 & 0.441 & 0.437 & 0.000 & 0.849 & 0.000 & 0.151 \\
+GBM\_ZH1019T1    & Contrast-enhancing & 1{,}112 & 0.762 & 0.025 & 0.000 & 0.924 & 0.000 & 0.076 \\
+GBM\_ZH1019inf   & Infiltrating       & 1{,}726 & 0.884 & 0.125 & 0.000 & 0.941 & 0.000 & 0.059 \\
+GBM\_ZH8811Abulk & Bulk               & 2{,}486 & 0.075 & 0.400 & 0.000 & 0.613 & 0.000 & 0.387 \\
+GBM\_ZH8811Bbulk & Bulk               & 2{,}595 & 0.109 & 0.356 & 0.000 & 0.559 & 0.000 & 0.441 \\
+GBM\_ZH8812bulk  & Bulk               & 2{,}343 & 0.893 & 0.152 & 0.085 & 0.878 & 0.003 & 0.034 \\
+GBM\_ZH881T1     & Contrast-enhancing & 2{,}792 & $-$0.063 & 0.529 & 0.000 & 0.870 & 0.000 & 0.130 \\
+GBM\_ZH881\_inf  & Infiltrating       & 1{,}387 & 0.446 & 0.104 & 0.000 & 0.876 & 0.030 & 0.094 \\
+GBM\_ZH916T1     & Contrast-enhancing & 2{,}780 & $-$0.024 & 0.559 & 0.000 & 0.719 & 0.000 & 0.281 \\
+GBM\_ZH916bulk   & Bulk               & 2{,}199 & 0.128 & 0.576 & 0.000 & 0.463 & 0.004 & 0.533 \\
+GBM\_ZH916inf    & Infiltrating       & 1{,}280 & 0.070 & $-$0.201 & 0.000 & 0.759 & 0.241 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\clearpage
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Section-level metadata for the SNUH human glioblastoma atlas} (28 sections from 13 IDH-wildtype patients). Labeled spots are those assigned a niche by the label rules. Slide risk is the rule-derived pseudo-risk target used to train the slide-level head (not a prediction). Split indicates assignment in the primary benchmark split.}
+\label{tab:s3}
+\footnotesize
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{llccccc}
+\toprule
+\textbf{Section} & \textbf{Patient} & \textbf{Tissue Source} & \textbf{Total Spots} & \textbf{Labeled Spots} & \textbf{Slide Risk} & \textbf{Split} \\
+\midrule
+SNU16A         & SNU16   & FFPE   & 4{,}712 & 4{,}305 & 0.491  & Test \\
+SNU16B         & SNU16   & FFPE   & 3{,}853 & 3{,}716 & 0.885  & Test \\
+SNU17A         & SNU17   & FFPE   & 2{,}077 & 1{,}965 & 0.652  & Train \\
+SNU17B         & SNU17   & FFPE   & 2{,}278 & 2{,}069 & 0.461  & Train \\
+SNU18A         & SNU18   & FFPE   & 2{,}633 & 2{,}076 & $-$0.308 & Train \\
+SNU18B         & SNU18   & FFPE   & 2{,}638 & 2{,}203 & $-$0.075 & Train \\
+SNU18A frozen  & SNU18   & Frozen & 4{,}689 & 2{,}642 & 0.738  & Train \\
+SNU21A         & SNU21   & FFPE   & 3{,}722 & 1{,}097 & 0.227  & Train \\
+SNU21B         & SNU21   & FFPE   & 4{,}302 & 281     & 0.604  & Train \\
+SNU21A frozen  & SNU21   & Frozen & 2{,}408 & 1{,}959 & 0.726  & Train \\
+SNU21B frozen  & SNU21   & Frozen & 1{,}572 & 889     & $-$0.772 & Train \\
+SNU21C frozen  & SNU21   & Frozen & 3{,}804 & 3{,}558 & $-$0.794 & Train \\
+SNU21D frozen  & SNU21   & Frozen & 3{,}467 & 2{,}482 & 0.851  & Train \\
+SNU23A         & SNU23   & FFPE   & 4{,}888 & 4{,}061 & $-$0.032 & Train \\
+SNU24A         & SNU24   & FFPE   & 3{,}391 & 2{,}921 & 0.989  & Val \\
+SNU24B         & SNU24   & FFPE   & 4{,}208 & 3{,}646 & 0.130  & Val \\
+SNU25A         & SNU25   & FFPE   & 2{,}610 & 975     & $-$0.344 & Train \\
+SNU25B         & SNU25   & FFPE   & 4{,}221 & 3{,}576 & $-$0.412 & Train \\
+SNU27A         & SNU27   & FFPE   & 3{,}980 & 3{,}186 & 0.624  & Train \\
+SNU27B         & SNU27   & FFPE   & 3{,}851 & 3{,}247 & 0.372  & Train \\
+SNU33A         & SNU33   & FFPE   & 3{,}371 & 996     & 0.083  & Test \\
+SNU33B         & SNU33   & FFPE   & 3{,}303 & 2{,}591 & 0.990  & Test \\
+SNU34A         & SNU34   & FFPE   & 4{,}794 & 4{,}769 & 0.983  & Test \\
+SNU43A         & SNU43   & FFPE   & 4{,}701 & 3{,}493 & 0.517  & Train \\
+SNU46A         & SNU46   & FFPE   & 2{,}536 & 2{,}452 & $-$0.799 & Train \\
+SNU46B         & SNU46   & FFPE   & 3{,}836 & 3{,}713 & $-$0.796 & Train \\
+SNU51A         & SNU51   & FFPE   & 4{,}458 & 3{,}539 & 0.922  & Val \\
+SNU51B         & SNU51   & FFPE   & 4{,}185 & 3{,}290 & 0.442  & Val \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{1em}
+\noindent\textbf{Supplementary Table S4.} Spot-level model predictions and external Neftel MES reference scores across all 25{,}488 spots of the Greenwald cohort are provided as a machine-readable dataset in the project repository (\texttt{TableS4\_}\allowbreak\texttt{greenwald\_}\allowbreak\texttt{predictions.csv}, 2.5\,MB).
+
+\vspace{0.5em}
+\noindent\textbf{Supplementary Table S5.} Patient-level TCGA niche-composition risk scores and matched clinical outcome covariates are provided as a machine-readable dataset in the project repository (\texttt{TableS5\_}\allowbreak\texttt{tcga\_}\allowbreak\texttt{scores\_}\allowbreak\texttt{clinical.csv}, 26\,KB).
+
+\clearpage
+
+\setcounter{table}{5}
+\begin{table}[H]
+\centering
+\caption{\textbf{Per-seed metrics for all models under the matched protocol on the fixed split.} Seeds 42, 7, 123. All models evaluated with validation-tuned per-class thresholds applied to held-out test patients.}
+\label{tab:s6}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lccccccccccc}
+\toprule
+\textbf{Model} & \textbf{Seed} & \textbf{Macro-F1} & \textbf{W-F1} & \textbf{Acc} & \textbf{AUC Cold} & \textbf{AUC Hot} & \textbf{AUC Norm} & \textbf{AUC Necr} & \textbf{MES AUC} & \textbf{MES $r$} \\
+\midrule
+GNN & 42  & 0.458 & 0.641 & 0.705 & 0.661 & 0.975 & 0.693 & 0.943 & 0.794 & 0.375 \\
+GNN & 7   & 0.504 & 0.698 & 0.740 & 0.821 & 0.979 & 0.729 & 0.956 & 0.746 & 0.343 \\
+GNN & 123 & 0.505 & 0.782 & 0.804 & 0.865 & 0.889 & 0.795 & 0.954 & 0.713 & 0.358 \\
+\midrule
+MLP & 42  & 0.554 & 0.754 & 0.785 & 0.827 & 0.989 & 0.845 & 0.935 & 0.841 & 0.478 \\
+MLP & 7   & 0.593 & 0.771 & 0.793 & 0.851 & 0.986 & 0.831 & 0.948 & 0.809 & 0.436 \\
+MLP & 123 & 0.588 & 0.766 & 0.790 & 0.834 & 0.987 & 0.811 & 0.946 & 0.828 & 0.462 \\
+\midrule
+Logistic & 42  & 0.554 & 0.724 & 0.748 & 0.760 & 0.991 & 0.687 & 0.925 & 0.751 & 0.410 \\
+Logistic & 7   & 0.554 & 0.724 & 0.748 & 0.760 & 0.991 & 0.687 & 0.925 & 0.751 & 0.410 \\
+Logistic & 123 & 0.554 & 0.724 & 0.748 & 0.760 & 0.991 & 0.687 & 0.925 & 0.751 & 0.410 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{1.5em}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Multi-split held-out test macro-F1 across six patient-level splits and three seeds (72 trained models).} Shown as mean $\pm$ standard deviation across seeds 42, 7, and 123 for each split. Logistic regression is deterministic given the split data.}
+\label{tab:s7}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Patient Split} & \textbf{GraphSAGE GNN} & \textbf{GAT (4 heads)} & \textbf{MLP (Matched)} & \textbf{Logistic Regression} \\
+\midrule
+Split 0 (Original) & 0.489 $\pm$ 0.027 & 0.539 $\pm$ 0.063 & 0.571 $\pm$ 0.021 & 0.554 \\
+Split 1            & 0.634 $\pm$ 0.048 & 0.702 $\pm$ 0.039 & 0.690 $\pm$ 0.056 & 0.683 \\
+Split 2            & 0.321 $\pm$ 0.032 & 0.355 $\pm$ 0.053 & 0.371 $\pm$ 0.010 & 0.425 \\
+Split 3            & 0.412 $\pm$ 0.060 & 0.451 $\pm$ 0.057 & 0.506 $\pm$ 0.014 & 0.530 \\
+Split 4            & 0.543 $\pm$ 0.057 & 0.556 $\pm$ 0.091 & 0.556 $\pm$ 0.067 & 0.625 \\
+Split 5            & 0.522 $\pm$ 0.094 & 0.538 $\pm$ 0.055 & 0.465 $\pm$ 0.015 & 0.616 \\
+\midrule
+\textbf{Split Mean $\pm$ SD} & \textbf{0.487 $\pm$ 0.109} & \textbf{0.524 $\pm$ 0.116} & \textbf{0.526 $\pm$ 0.108} & \textbf{0.572 $\pm$ 0.090} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{1.5em}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Per-class validation and test metrics for the representative GraphSAGE model} (seed 7, best epoch 12). Per-class thresholds were tuned on validation patients (immune-cold 0.30, immune-hot 0.05, normal 0.725, necrotic 0.15) and applied to test. $n$ is the number of labeled spots in each class. Chance AUPRC equals class prevalence.}
+\label{tab:s8}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{\textbf{Validation (SNU24, SNU51)}} & \multicolumn{3}{c}{\textbf{Test (SNU16, SNU33, SNU34)}} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+\textbf{Class} & $n$ & \textbf{AUROC / AUPRC} & \textbf{F1} & $n$ & \textbf{AUROC / AUPRC} & \textbf{F1} \\
+\midrule
+Immune-cold & 8{,}638 & 0.866 / 0.904 & 0.874 & 11{,}125 & 0.821 / 0.913 & 0.836 \\
+Immune-hot  & 15      & 0.786 / 0.003 & 0.012 & 185     & 0.979 / 0.573 & 0.473 \\
+Normal      & 2{,}715 & 0.977 / 0.917 & 0.847 & 1{,}455 & 0.729 / 0.266 & 0.241 \\
+Necrotic    & 2{,}028 & 0.902 / 0.738 & 0.604 & 3{,}612 & 0.956 / 0.862 & 0.466 \\
+\midrule
+Macro-F1 / accuracy & \multicolumn{3}{c}{0.584 / 0.827} & \multicolumn{3}{c}{0.504 / 0.740} \\
+MES AUROC / AUPRC / $r$ & \multicolumn{3}{c}{0.795 / 0.438 / 0.400} & \multicolumn{3}{c}{0.746 / 0.388 / 0.343} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{1.5em}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Paired comparisons across six patient-level splits.} Differences in split-mean macro-F1 (model A $-$ model B; each split mean averages three seeds). $t$-test df $= 5$. The minimum attainable two-sided Wilcoxon $p$ with $n = 6$ is 0.031.}
+\label{tab:s9}
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{A vs.\ B} & \textbf{Mean diff.\ (95\% CI)} & $t$ & $p_t$ & $p_\mathrm{Wilcoxon}$ & \textbf{A wins} \\
+\midrule
+Logistic vs.\ GraphSAGE & 0.086 (0.059, 0.112)   & 8.27  & 0.0004 & 0.031 & 6/6 \\
+MLP vs.\ GraphSAGE      & 0.040 ($-$0.018, 0.098) & 1.77  & 0.137  & 0.219 & 5/6 \\
+GAT vs.\ GraphSAGE      & 0.037 (0.015, 0.059)   & 4.36  & 0.007  & 0.031 & 6/6 \\
+GAT vs.\ MLP            & $-$0.003 ($-$0.049, 0.044) & $-$0.15 & 0.886 & 0.844 & 3/6 \\
+GAT vs.\ Logistic       & $-$0.049 ($-$0.092, $-$0.005) & $-$2.90 & 0.034 & 0.094 & 1/6 \\
+Logistic vs.\ MLP       & 0.046 ($-$0.019, 0.110) & 1.82  & 0.128  & 0.156 & 4/6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

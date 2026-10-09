@@ -182,7 +182,7 @@ python scripts/09_make_table1.py \
     --baselines results/baselines_multiseed_matched \
     --paired results/tables/main/Table1_paired_test.json \
     --out-main results/tables/main/Table1_model_comparison.json \
-    --out-supp results/tables/supplement/TableS6_per_seed_metrics.csv
+    --out-supp results/tables/supplement/TableS5_per_seed_metrics.csv
 
 # Step 10 — generate the six patient-level splits (split 0 = the original split;
 #           generator seeds 1001–1005; writes configs/splits_multisplit.json)
@@ -208,7 +208,7 @@ python scripts/11_run_multisplit.py \
 python scripts/12_aggregate_multisplit.py \
     --runs results/multisplit \
     --out-dir results/multisplit \
-    --table results/tables/supplement/TableS7_per_split_metrics.csv \
+    --table results/tables/supplement/TableS6_per_split_metrics.csv \
     --fig results/figures/main/Figure_split_robustness
 
 # Step 13 — scoring-rule control: matched-protocol MLP scored by argmax vs tuned
@@ -220,7 +220,7 @@ python scripts/13_mlp_argmax_control.py \
 
 # Step 14 — protocol-reversal figure (manuscript Figure 4)
 python scripts/14_fig_protocol_reversal.py \
-    --table-s1 results/tables/supplement/TableS1_baseline_metrics.json \
+    --table-s1 results/tables/archive/baseline_original_protocol_metrics.json \
     --table1 results/tables/main/Table1_model_comparison.json \
     --control results/baselines_multiseed_matched/mlp_argmax_control.json \
     --out results/figures/main/Figure_protocol_reversal
@@ -267,13 +267,13 @@ numbering; the mapping is:
 **`results/tables/supplement/`**
 | Table | Content |
 |---|---|
-| `TableS1_baseline_metrics.json` | original argmax-scored baseline metrics (protocol-reversal panel A) |
-| `TableS2_greenwald_summary.json` | per-sample external-validation summary (13 samples) |
-| `TableS3_sections_meta.csv` | per-section spot counts, split assignment, pseudo-risk |
-| `TableS4_greenwald_predictions.csv` | per-spot external predictions + Neftel MES reference |
-| `TableS5_tcga_scores_clinical.csv` | per-patient TCGA niche scores + survival covariates |
-| `TableS6_per_seed_metrics.csv` | per-seed matched-protocol metrics, all models, fixed split |
-| `TableS7_per_split_metrics.csv` | per-split, per-seed metrics for all 4 models × 6 splits (72 runs) |
+| `archive/baseline_original_protocol_metrics.json` | original argmax-scored baseline metrics (protocol-reversal panel A) |
+| `TableS1_greenwald_summary.json` | per-sample external-validation summary (13 samples) |
+| `TableS2_sections_meta.csv` | per-section spot counts, split assignment, pseudo-risk |
+| `TableS3_greenwald_predictions.csv` | per-spot external predictions + Neftel MES reference |
+| `TableS4_tcga_scores_clinical.csv` | per-patient TCGA niche scores + survival covariates |
+| `TableS5_per_seed_metrics.csv` | per-seed matched-protocol metrics, all models, fixed split |
+| `TableS6_per_split_metrics.csv` | per-split, per-seed metrics for all 4 models × 6 splits (72 runs) |
 
 **`results/models/`**
 | File | Content |

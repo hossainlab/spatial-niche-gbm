@@ -4,13 +4,13 @@ Produces:
   1. multisplit_summary.json  — per-split per-seed macro-F1, split means, paired
      tests across splits (t-test df=5 + Wilcoxon), and a split-vs-seed variance
      decomposition per model.
-  2. TableS7_per_split_metrics.csv — long table: model x split x seed x metrics.
+  2. TableS6_per_split_metrics.csv — long table: model x split x seed x metrics.
   3. fig_split_robustness.{png,svg} — per-split paired macro-F1 differences
      (baseline - GNN) with seed-level spread.
 
 Usage: python scripts/12_aggregate_multisplit.py \
     --runs results/multisplit --out-dir results/multisplit \
-    --table results/tables/supplement/TableS7_per_split_metrics.csv \
+    --table results/tables/supplement/TableS6_per_split_metrics.csv \
     --fig results/figures/main/Figure_split_robustness
 """
 

@@ -1,0 +1,253 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/pd2cR3r030QPpbNEXc7mZd9U9t4</id>
+  <title>arXiv Query: search_query=&amp;id_list=1706.02216,1710.10903,1903.02428,1802.03426,2006.11468,1811.05868,1912.09893,2103.03098&amp;start=0&amp;max_results=10</title>
+  <updated>2026-10-09T10:28:19Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=&amp;start=0&amp;max_results=10&amp;id_list=1706.02216,1710.10903,1903.02428,1802.03426,2006.11468,1811.05868,1912.09893,2103.03098" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>8</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/1912.09893v3</id>
+    <title>A Fair Comparison of Graph Neural Networks for Graph Classification</title>
+    <updated>2022-02-17T20:19:28Z</updated>
+    <link href="https://arxiv.org/abs/1912.09893v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1912.09893v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Experimental reproducibility and replicability are critical topics in machine learning. Authors have often raised concerns about their lack in scientific publications to improve the quality of the field. Recently, the graph representation learning field has attracted the attention of a wide research community, which resulted in a large stream of works. As such, several Graph Neural Network models have been developed to effectively tackle graph classification. However, experimental procedures often lack rigorousness and are hardly reproducible. Motivated by this, we provide an overview of common practices that should be avoided to fairly compare with the state of the art. To counter this troubling trend, we ran more than 47000 experiments in a controlled and uniform framework to re-evaluate five popular models across nine common benchmarks. Moreover, by comparing GNNs with structure-agnostic baselines we provide convincing evidence that, on some datasets, structural information has not been exploited yet. We believe that this work can contribute to the development of the graph learning field, by providing a much needed grounding for rigorous evaluations of graph classification models.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2019-12-20T15:40:50Z</published>
+    <arxiv:comment>Extended version of the paper published at the International Conference on Learning Representations (ICLR), 2020. Additional results are shown in the appendix</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Federico Errica</name>
+    </author>
+    <author>
+      <name>Marco Podda</name>
+    </author>
+    <author>
+      <name>Davide Bacciu</name>
+    </author>
+    <author>
+      <name>Alessio Micheli</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1710.10903v3</id>
+    <title>Graph Attention Networks</title>
+    <updated>2018-02-04T19:13:29Z</updated>
+    <link href="https://arxiv.org/abs/1710.10903v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1710.10903v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present graph attention networks (GATs), novel neural network architectures that operate on graph-structured data, leveraging masked self-attentional layers to address the shortcomings of prior methods based on graph convolutions or their approximations. By stacking layers in which nodes are able to attend over their neighborhoods' features, we enable (implicitly) specifying different weights to different nodes in a neighborhood, without requiring any kind of costly matrix operation (such as inversion) or depending on knowing the graph structure upfront. In this way, we address several key challenges of spectral-based graph neural networks simultaneously, and make our model readily applicable to inductive as well as transductive problems. Our GAT models have achieved or matched state-of-the-art results across four established transductive and inductive graph benchmarks: the Cora, Citeseer and Pubmed citation network datasets, as well as a protein-protein interaction dataset (wherein test graphs remain unseen during training).</summary>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2017-10-30T12:41:12Z</published>
+    <arxiv:comment>To appear at ICLR 2018. 12 pages, 2 figures</arxiv:comment>
+    <arxiv:primary_category term="stat.ML"/>
+    <author>
+      <name>Petar Veličković</name>
+    </author>
+    <author>
+      <name>Guillem Cucurull</name>
+    </author>
+    <author>
+      <name>Arantxa Casanova</name>
+    </author>
+    <author>
+      <name>Adriana Romero</name>
+    </author>
+    <author>
+      <name>Pietro Liò</name>
+    </author>
+    <author>
+      <name>Yoshua Bengio</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1903.02428v3</id>
+    <title>Fast Graph Representation Learning with PyTorch Geometric</title>
+    <updated>2019-04-25T10:06:09Z</updated>
+    <link href="https://arxiv.org/abs/1903.02428v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1903.02428v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We introduce PyTorch Geometric, a library for deep learning on irregularly structured input data such as graphs, point clouds and manifolds, built upon PyTorch. In addition to general graph data structures and processing methods, it contains a variety of recently published methods from the domains of relational learning and 3D data processing. PyTorch Geometric achieves high data throughput by leveraging sparse GPU acceleration, by providing dedicated CUDA kernels and by introducing efficient mini-batch handling for input examples of different size. In this work, we present the library in detail and perform a comprehensive comparative study of the implemented methods in homogeneous evaluation scenarios.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2019-03-06T14:50:02Z</published>
+    <arxiv:comment>ICLR 2019 (RLGM Workshop)</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Matthias Fey</name>
+    </author>
+    <author>
+      <name>Jan Eric Lenssen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1706.02216v4</id>
+    <title>Inductive Representation Learning on Large Graphs</title>
+    <updated>2018-09-10T14:26:58Z</updated>
+    <link href="https://arxiv.org/abs/1706.02216v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1706.02216v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Low-dimensional embeddings of nodes in large graphs have proved extremely useful in a variety of prediction tasks, from content recommendation to identifying protein functions. However, most existing approaches require that all nodes in the graph are present during training of the embeddings; these previous approaches are inherently transductive and do not naturally generalize to unseen nodes. Here we present GraphSAGE, a general, inductive framework that leverages node feature information (e.g., text attributes) to efficiently generate node embeddings for previously unseen data. Instead of training individual embeddings for each node, we learn a function that generates embeddings by sampling and aggregating features from a node's local neighborhood. Our algorithm outperforms strong baselines on three inductive node-classification benchmarks: we classify the category of unseen nodes in evolving information graphs based on citation and Reddit post data, and we show that our algorithm generalizes to completely unseen graphs using a multi-graph dataset of protein-protein interactions.</summary>
+    <category term="cs.SI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2017-06-07T14:51:05Z</published>
+    <arxiv:comment>Published in NIPS 2017; version with full appendix and minor corrections</arxiv:comment>
+    <arxiv:primary_category term="cs.SI"/>
+    <author>
+      <name>William L. Hamilton</name>
+    </author>
+    <author>
+      <name>Rex Ying</name>
+    </author>
+    <author>
+      <name>Jure Leskovec</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2006.11468v2</id>
+    <title>Beyond Homophily in Graph Neural Networks: Current Limitations and Effective Designs</title>
+    <updated>2020-10-23T08:43:25Z</updated>
+    <link href="https://arxiv.org/abs/2006.11468v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2006.11468v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We investigate the representation power of graph neural networks in the semi-supervised node classification task under heterophily or low homophily, i.e., in networks where connected nodes may have different class labels and dissimilar features. Many popular GNNs fail to generalize to this setting, and are even outperformed by models that ignore the graph structure (e.g., multilayer perceptrons). Motivated by this limitation, we identify a set of key designs -- ego- and neighbor-embedding separation, higher-order neighborhoods, and combination of intermediate representations -- that boost learning from the graph structure under heterophily. We combine them into a graph neural network, H2GCN, which we use as the base method to empirically evaluate the effectiveness of the identified designs. Going beyond the traditional benchmarks with strong homophily, our empirical analysis shows that the identified designs increase the accuracy of GNNs by up to 40% and 27% over models without them on synthetic and real networks with heterophily, respectively, and yield competitive performance under homophily.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2020-06-20T02:05:01Z</published>
+    <arxiv:comment>Accepted to NeurIPS 2020; version with full appendix</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Jiong Zhu</name>
+    </author>
+    <author>
+      <name>Yujun Yan</name>
+    </author>
+    <author>
+      <name>Lingxiao Zhao</name>
+    </author>
+    <author>
+      <name>Mark Heimann</name>
+    </author>
+    <author>
+      <name>Leman Akoglu</name>
+    </author>
+    <author>
+      <name>Danai Koutra</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1811.05868v2</id>
+    <title>Pitfalls of Graph Neural Network Evaluation</title>
+    <updated>2019-06-18T13:15:39Z</updated>
+    <link href="https://arxiv.org/abs/1811.05868v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1811.05868v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Semi-supervised node classification in graphs is a fundamental problem in graph mining, and the recently proposed graph neural networks (GNNs) have achieved unparalleled results on this task. Due to their massive success, GNNs have attracted a lot of attention, and many novel architectures have been put forward. In this paper we show that existing evaluation strategies for GNN models have serious shortcomings. We show that using the same train/validation/test splits of the same datasets, as well as making significant changes to the training procedure (e.g. early stopping criteria) precludes a fair comparison of different architectures. We perform a thorough empirical evaluation of four prominent GNN models and show that considering different splits of the data leads to dramatically different rankings of models. Even more importantly, our findings suggest that simpler GNN architectures are able to outperform the more sophisticated ones if the hyperparameters and the training procedure are tuned fairly for all models.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.SI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2018-11-14T15:53:19Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Oleksandr Shchur</name>
+    </author>
+    <author>
+      <name>Maximilian Mumme</name>
+    </author>
+    <author>
+      <name>Aleksandar Bojchevski</name>
+    </author>
+    <author>
+      <name>Stephan Günnemann</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/1802.03426v3</id>
+    <title>UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</title>
+    <updated>2020-09-18T01:56:41Z</updated>
+    <link href="https://arxiv.org/abs/1802.03426v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/1802.03426v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>UMAP (Uniform Manifold Approximation and Projection) is a novel manifold learning technique for dimension reduction. UMAP is constructed from a theoretical framework based in Riemannian geometry and algebraic topology. The result is a practical scalable algorithm that applies to real world data. The UMAP algorithm is competitive with t-SNE for visualization quality, and arguably preserves more of the global structure with superior run time performance. Furthermore, UMAP has no computational restrictions on embedding dimension, making it viable as a general purpose dimension reduction technique for machine learning.</summary>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2018-02-09T19:39:33Z</published>
+    <arxiv:comment>Reference implementation available at http://github.com/lmcinnes/umap</arxiv:comment>
+    <arxiv:primary_category term="stat.ML"/>
+    <author>
+      <name>Leland McInnes</name>
+    </author>
+    <author>
+      <name>John Healy</name>
+    </author>
+    <author>
+      <name>James Melville</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2103.03098v1</id>
+    <title>Accounting for Variance in Machine Learning Benchmarks</title>
+    <updated>2021-03-01T22:39:49Z</updated>
+    <link href="https://arxiv.org/abs/2103.03098v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2103.03098v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Strong empirical evidence that one machine-learning algorithm A outperforms another one B ideally calls for multiple trials optimizing the learning pipeline over sources of variation such as data sampling, data augmentation, parameter initialization, and hyperparameters choices. This is prohibitively expensive, and corners are cut to reach conclusions. We model the whole benchmarking process, revealing that variance due to data sampling, parameter initialization and hyperparameter choice impact markedly the results. We analyze the predominant comparison methods used today in the light of this variance. We show a counter-intuitive result that adding more sources of variation to an imperfect estimator approaches better the ideal estimator at a 51 times reduction in compute cost. Building on these results, we study the error rate of detecting improvements, on five different deep-learning tasks/architectures. This study leads us to propose recommendations for performance comparisons.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="stat.ML" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2021-03-01T22:39:49Z</published>
+    <arxiv:comment>Submitted to MLSys2021</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Xavier Bouthillier</name>
+    </author>
+    <author>
+      <name>Pierre Delaunay</name>
+    </author>
+    <author>
+      <name>Mirko Bronzi</name>
+    </author>
+    <author>
+      <name>Assya Trofimov</name>
+    </author>
+    <author>
+      <name>Brennan Nichyporuk</name>
+    </author>
+    <author>
+      <name>Justin Szeto</name>
+    </author>
+    <author>
+      <name>Naz Sepah</name>
+    </author>
+    <author>
+      <name>Edward Raff</name>
+    </author>
+    <author>
+      <name>Kanika Madan</name>
+    </author>
+    <author>
+      <name>Vikram Voleti</name>
+    </author>
+    <author>
+      <name>Samira Ebrahimi Kahou</name>
+    </author>
+    <author>
+      <name>Vincent Michalski</name>
+    </author>
+    <author>
+      <name>Dmitriy Serdyuk</name>
+    </author>
+    <author>
+      <name>Tal Arbel</name>
+    </author>
+    <author>
+      <name>Chris Pal</name>
+    </author>
+    <author>
+      <name>Gaël Varoquaux</name>
+    </author>
+    <author>
+      <name>Pascal Vincent</name>
+    </author>
+  </entry>
+</feed>

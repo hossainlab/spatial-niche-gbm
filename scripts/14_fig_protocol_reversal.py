@@ -1,15 +1,13 @@
-"""Protocol-reversal figure: how the scoring protocol changes the GNN-vs-baseline
-ranking on the fixed split.
+"""Original vs matched protocol on the fixed split.
 
-Panel A: the comparison as originally scored (baselines: single-run argmax, Table S1;
-GNN: tuned thresholds, 3 seeds) — the GNN appears best.
-Panel B: the matched protocol (all models tuned thresholds, 3-seed mean +/- SD,
-Table 1) — the MLP is significantly best.
-Panel C: scoring-rule isolation — the deterministic logistic model and the
-matched-protocol MLP each scored by argmax vs tuned thresholds.
+Panel A: the original protocol (baselines: single run, 120 epochs without early
+stopping, argmax, Table S1; GNN: tuned thresholds, 3 seeds), recomputed on the
+current feature set. Panel B: the matched protocol (all models tuned thresholds,
+3-seed mean +/- SD, Table 1). Panel C: decision-rule isolation -- ONE logistic fit
+and the matched-protocol MLP, each scored by argmax and by tuned thresholds.
 
 Usage: python scripts/14_fig_protocol_reversal.py \
-    --table-s1 results/tables/supplement/TableS1_baseline_metrics.json \
+    --table-s1 results/tables/archive/baseline_original_protocol_metrics.json \
     --table1 results/tables/main/Table1_model_comparison.json \
     --control results/baselines_multiseed_matched/mlp_argmax_control.json \
     --out results/figures/main/Figure_protocol_reversal
@@ -44,6 +42,8 @@ def main():
     ap.add_argument("--table-s1", required=True)
     ap.add_argument("--table1", required=True)
     ap.add_argument("--control", required=True)
+    ap.add_argument("--logistic-control", default="results/baselines_multiseed_matched/logistic_decision_rule_control.json",
+                    help="ONE logistic fit scored by argmax and by tuned thresholds")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
     setup_logging()
@@ -51,6 +51,7 @@ def main():
     s1 = json.load(open(args.table_s1))
     t1 = json.load(open(args.table1))
     ctrl = json.load(open(args.control))
+    lctrl = json.load(open(args.logistic_control))
 
     models = ["GNN", "MLP", "Logistic"]
     # Panel A: original scoring (baselines argmax single-run; GNN tuned 3-seed)
@@ -71,7 +72,7 @@ def main():
                              gridspec_kw={"width_ratios": [1.2, 1.2, 1.0]})
 
     for ax, data, title in (
-        (axes[0], orig, "A  Original scoring\n(baselines: argmax, 1 run)"),
+        (axes[0], orig, "A  Original protocol\n(baselines: argmax, 1 run)"),
         (axes[1], matched, "B  Matched protocol\n(all: tuned thresholds, 3 seeds)"),
     ):
         x = np.arange(len(models))
@@ -91,8 +92,8 @@ def main():
 
     # Panel C: scoring-rule isolation (argmax vs tuned for the same models)
     axc = axes[2]
-    pairs = [("Logistic", s1["logistic"]["macro_f1"],
-              t1["logistic_multiseed"]["macro_f1"]["mean"]),
+    # both bars of a pair must come from the SAME fitted model
+    pairs = [("Logistic", lctrl["macro_f1_argmax"], lctrl["macro_f1"]),
              ("MLP", ctrl["argmax_macro_f1_mean"], ctrl["tuned_macro_f1_mean"])]
     x = np.arange(len(pairs))
     w = 0.34
