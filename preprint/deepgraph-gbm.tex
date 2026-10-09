@@ -357,7 +357,7 @@ For supervised niche and histology prediction in GBM Visium data, per-spot expre
 
 \textbf{Training cohort.} We used the IDH-wildtype GBM Visium sections of the SNUH spatial atlas \cite{park2026}, obtained from the UCSC Cell Browser: 28 sections (23 FFPE, 5 fresh-frozen) from 13 patients, comprising 100{,}488 spots with per-spot anatomical-feature, metaprogram and malignant-state annotations (Supplementary Table~\ref{tab:s3}).
 
-\textbf{External cohort.} We used 13 GBM Visium samples from Greenwald et al.\ \cite{greenwald2024} (Zenodo record 12624108; CC-BY), annotated by sampling region.
+\textbf{External cohort.} We used 13 GBM Visium samples from Greenwald et al.\ \cite{greenwald2024} (Zenodo record 12624108 \cite{greenwald2024data}; CC-BY), annotated by sampling region.
 
 \textbf{Survival cohort.} We obtained TCGA-GBM bulk RNA-seq and clinical data from the NCI Genomic Data Commons \cite{tcga2008}. Overall survival combined \texttt{days\_to\_death} for deaths with \texttt{days\_to\_last\_follow\_up} for censored cases. The expression-matched set comprised 166 tumor samples from 165 patients (one patient contributed two aliquots), with 132 deaths. Keeping one aliquot for that patient (165 patients, 131 deaths) gave essentially the same results (univariate HR 1.13, 95\% CI 0.92--1.37, $p = 0.25$; log-rank $p = 0.33$).
 
@@ -409,7 +409,7 @@ Each model family received the same search budget of eight configurations, sampl
 
 \subsection{Neuropathologist-annotated cohort}
 
-\textbf{Data.} We used Visium sections from the University Clinic Freiburg (UKF) cohort of Ravi et al.\ \cite{ravi2022}, distributed as SPATA objects in which the neuropathologist's manual H\&E-based region segmentation is stored per spot \cite{ritter2025}. Objects were exported to count matrices, coordinates and per-spot annotations. Two non-GBM samples (an astrocytoma and an oligodendroglioma) were removed. Sections without any annotation and small objects without usable annotation were not used. The remaining 23 sections (16 tumor and 7 cortex sections) came from 18 patients.
+\textbf{Data.} We used Visium sections from the University Clinic Freiburg (UKF) cohort of Ravi et al.\ \cite{ravi2022,ravi2022data,heiland2024data}, distributed as SPATA objects in which the neuropathologist's manual H\&E-based region segmentation is stored per spot \cite{ritter2025}. Objects were exported to count matrices, coordinates and per-spot annotations. Two non-GBM samples (an astrocytoma and an oligodendroglioma) were removed. Sections without any annotation and small objects without usable annotation were not used. The remaining 23 sections (16 tumor and 7 cortex sections) came from 18 patients.
 
 \textbf{Labels.} Pathologist segments were mapped to five classes: Cellular $\rightarrow$ cellular tumor; Infiltrative $\rightarrow$ infiltrative tumor; Necrosis and Necrotic\_Edge $\rightarrow$ necrotic; Vascular\_Hyper $\rightarrow$ MVP; Grey\_Matter and White\_Matter $\rightarrow$ normal. Unannotated spots were excluded from training and scoring. For the transfer experiment, SNUH anatomical-feature annotations were mapped to the same classes (CT $\rightarrow$ cellular, IT $\rightarrow$ infiltrative, PAN and PNZ $\rightarrow$ necrotic, MVP $\rightarrow$ MVP, LE\_GM and LE\_WM $\rightarrow$ normal; IGN, BV and HBV excluded). These SNUH labels are derived from expression, whereas the UKF labels come from histology.
 
@@ -423,7 +423,7 @@ The analyses use Python 3.11, PyTorch 2.7 (2.13 for the multi-split, GAT, LOPO a
 
 % ============================================================
 \section*{Data and code availability}
-Code (MIT license), configuration files, patient splits, trained weights, per-run metrics and all figures and tables are available at \url{https://github.com/hossainlab/deepgraph-gbm}. Training data: SNUH GBM atlas \cite{park2026} (\url{https://cells.ucsc.edu/?ds=multiomic-gbm}). External cohort: Greenwald et al.\ \cite{greenwald2024} (Zenodo 12624108). Neuropathologist-annotated cohort: UKF Visium data of Ravi et al.\ \cite{ravi2022} (raw data: Dryad, \url{https://doi.org/10.5061/dryad.h70rxwdmj}); annotated SPATA objects \textcolor{red}{[source of annotated objects to be confirmed by the author before submission]}. Survival data: TCGA-GBM via the NCI Genomic Data Commons.
+Code (MIT license), configuration files, patient splits, trained weights, per-run metrics and all figures and tables are available at \url{https://github.com/hossainlab/deepgraph-gbm}. Training data: SNUH GBM atlas \cite{park2026} (\url{https://cells.ucsc.edu/?ds=multiomic-gbm}). External cohort: Greenwald et al.\ \cite{greenwald2024}, Zenodo, \url{https://doi.org/10.5281/zenodo.12624108} \cite{greenwald2024data}. Neuropathologist-annotated cohort: UKF Visium data of Ravi et al.\ \cite{ravi2022} with the neuropathologist region annotations of Ritter et al.\ \cite{ritter2025}, deposited by the original authors at Dryad (\url{https://doi.org/10.5061/dryad.h70rxwdmj}) \cite{ravi2022data} and Zenodo (\url{https://doi.org/10.5281/zenodo.14064047}) \cite{heiland2024data}. Survival data: TCGA-GBM via the NCI Genomic Data Commons.
 
 \section*{Competing interests}
 The author declares no competing interests.
