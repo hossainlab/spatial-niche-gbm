@@ -1,4 +1,8 @@
-"""Controlled scoring-rule isolation on the fixed split: train the matched-protocol
+"""SUPERSEDED by the leave-one-patient-out decision-rule analysis in
+scripts/25_review_sensitivity.py (Supplementary Table S13), which compares argmax
+and tuned thresholds for every model rather than for the MLP alone.
+
+Controlled scoring-rule isolation on the fixed split: train the matched-protocol
 MLP (early stopping, 3 seeds) and report macro-F1 under BOTH argmax and tuned-threshold
 scoring. Combined with the deterministic logistic pair (Table S1 argmax vs Table 1
 tuned), this decomposes the protocol reversal into scoring-rule vs training-protocol

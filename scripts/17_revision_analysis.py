@@ -379,7 +379,7 @@ def confusion_and_maps(rev, figdir, summary, comp, data_dir, plt):
                    labels=[LABELS.get(c, "unlabeled") for c in CLASSES + ["exclude"]])
         fig.suptitle(sec, fontsize=8)
         fig.tight_layout(rect=(0, 0.07, 1, 1))
-        fig.savefig(figdir / f"maps_{sec.replace(' ', '_')}.png", dpi=200, bbox_inches="tight")
+        fig.savefig(figdir / f"maps_{sec.replace(' ', '_')}.png", dpi=300, bbox_inches="tight")
         plt.close(fig)
     (rev / "revision_summary.json").write_text(json.dumps(summary, indent=1))
 

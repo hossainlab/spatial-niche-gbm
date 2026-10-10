@@ -1,4 +1,11 @@
-"""Original vs matched protocol on the fixed split.
+"""SUPERSEDED -- kept for provenance only.
+
+The protocol-reversal claim this figure supported was withdrawn in manuscript v5
+(the baselines came from a superseded feature set; see preprint/ANALYSIS_AUDIT.md,
+finding 1) and the section, figure and table were removed in v6. Nothing in the
+current manuscript uses this output.
+
+Original vs matched protocol on the fixed split.
 
 Panel A: the original protocol (baselines: single run, 120 epochs without early
 stopping, argmax, Table S1; GNN: tuned thresholds, 3 seeds), recomputed on the

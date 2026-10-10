@@ -183,7 +183,7 @@ def figures(r1, r2, pooled1, figdir: Path, data_ukf: Path):
         fig.legend(h, ["cellular", "infiltrative", "necrotic", "MVP", "normal", "unannotated"],
                    loc="lower center", ncol=6, frameon=False, fontsize=6.5)
         fig.suptitle(sec, fontsize=8); fig.tight_layout(rect=(0, 0.07, 1, 1))
-        fig.savefig(figdir / f"maps_path_{sec}.png", dpi=200, bbox_inches="tight"); plt.close(fig)
+        fig.savefig(figdir / f"maps_path_{sec}.png", dpi=300, bbox_inches="tight"); plt.close(fig)
 
 
 def main():

@@ -1,4 +1,4 @@
-"""Build Table 1 (model comparison, mean +/- SD across seeds) and Table S6
+"""Build Table 1 (model comparison, mean +/- SD across seeds) and Table S5
 (per-seed metrics) from per-seed metric JSONs, and embed the paired-test result.
 
 Inputs:

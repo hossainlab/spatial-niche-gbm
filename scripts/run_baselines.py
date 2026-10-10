@@ -1,4 +1,6 @@
-"""Train + evaluate baselines (logistic regression, MLP) against the GNN.
+"""SUPERSEDED by run_baselines_multiseed.py, which is what Table 1 reports.
+
+Train + evaluate baselines (logistic regression, MLP) against the GNN.
 
 Usage: python scripts/run_baselines.py --config configs/default.yaml --data <processed_dir> --out results/baselines
 """
