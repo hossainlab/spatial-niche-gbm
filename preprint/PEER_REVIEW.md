@@ -1,39 +1,131 @@
-# Internal peer review: DeepGraph-GBM (manuscript v6, 2026-10-09)
+# Peer review and response: DeepGraph-GBM
 
-Reviewed: `preprint/deepgraph-gbm.tex` / `.pdf` (34 pages, 49 references, 16 figures including the graphical abstract, 9 tables). This review follows the full analysis audit in `ANALYSIS_AUDIT.md`. Every number in the text was checked against the result files, and the affected experiments were rerun.
+## Round 3 — code, modeling and evaluation audit of v7 (2026-10-10)
 
-## Summary
+Full report in `CODE_AUDIT.md`. Every module in `src/`, all 32 scripts, the test
+suite and the configuration files were read, and 99 published values were
+re-derived independently (`scripts/29_code_audit_checks.py`). **All 99 agree**, the
+18 unit tests pass, the label rules reproduce the stored labels exactly, the
+parameter counts are exact, and no run record has its held-out patient in training
+or validation. Eleven defects were found and fixed: five Methods/code mismatches in
+the manuscript (the primary benchmark omits the slide-risk head; GAT carries
+attention dropout the other encoders lack; the "normal" rule is not strict
+concordance; two homophily definitions were conflated; the niche head is one linear
+layer) and six in the repository, of which the most consequential was that
+`docs/WORKFLOW.md` still asserted the protocol-reversal result retracted in v5 and
+the pre-correction external-validation numbers.
 
-The paper tests whether spatial graph structure (GraphSAGE, GAT) improves supervised niche prediction in GBM Visium data over graph-free models (logistic regression, MLP, MLP + neighbor-averaged features). The evidence comes from:
-- a fixed patient split and six repeated splits;
-- a 13-fold leave-one-patient-out (LOPO) benchmark with equal nested tuning, ablations, marker-gene removal and an exact-hexagonal-graph sensitivity analysis;
-- neuropathologist H&E labels in an independent cohort (UKF), both within that cohort and after transfer from SNUH;
-- external transfer to the Greenwald cohort and a TCGA survival test.
+## Round 2 — independent review of v6 (2026-10-09), responded to in v7
 
-Within each cohort, no graph model beat a matched graph-free model. After cross-cohort transfer, GraphSAGE was modestly but not significantly ahead.
+The v6 manuscript was re-audited against `results/` and `scripts/` rather than
+against its own summary files. Every quantity in the Results was recomputed from
+the saved per-spot predictions; three sensitivity analyses that the manuscript
+did not contain were run. The record of the reproduction is
+`results/tables/main/v7_number_verification.csv` and the analyses are
+`scripts/25_review_sensitivity.py`–`scripts/28_verify_manuscript_numbers.py`.
 
-## Overall assessment
+### Verified, no change needed
 
-The paper is a careful negative-result benchmark with conservative claims. After the audit, the claims match the evidence. Its strengths are equal-budget nested tuning, patient-level evaluation, labels independent of the input expression, and transparent disclosure of the remaining caveats. It suits a methods or benchmarking venue (e.g., *Bioinformatics*, *Genome Biology*, *NAR Genomics and Bioinformatics*, *PLoS Comput Biol*, *Briefings in Bioinformatics*).
+Table 2 (LOPO) reproduces to three decimals for all five models from the 195
+prediction files — pooled macro-F1, all sixteen per-class AUROCs, all four
+patient-bootstrap intervals, all win counts and all Wilcoxon p values, including
+the single normal-class F1 exception (GraphSAGE 0.585 vs MLP 0.571). So do
+Supplementary Tables S6 and S8, the homophily statistics, the exact-hex
+sensitivity, both UKF experiments, the Greenwald per-sample table, the TCGA
+survival statistics and the cohort counts. The LOPO threshold-tuning blocks hold
+at least 183 spots of every class in every fold, so the primary analysis is not
+exposed to the defect described below.
 
-## Major issues
+### Major points and what was done
 
-1. **Data provenance (blocking).** The data-availability statement still has a red placeholder for the source of the annotated UKF SPATA objects. The pathologist-label analysis depends on them.
-2. **Abstract length.** At 591 words, the abstract is well above typical limits (250–350). The Methods paragraph and the external-cohort and survival sentences can be condensed.
-3. **The transfer result needs careful framing.** GraphSAGE led after SNUH→UKF transfer (0.395 vs MLP 0.380), and the result depended on input scaling. The text says so honestly. Reviewers may still ask whether graph smoothing helps under cohort shift. A brief discussion of why (noise smoothing) already exists; a dedicated transfer experiment would be future work.
+**1. The six-split analysis is tuned on blocks that cannot calibrate immune-hot.**
+Validation-block immune-hot support is 15, 2,997, 7, 10, 1 and 3,705 spots for
+splits 0–5; split 4 tunes that threshold on one positive spot and necrotic on 19.
+v6 disclosed this only for the primary split, while Section 2.3 called the
+six-split analysis "the primary test".
+*Response:* the support is now reported (Supplementary Table S10, Supplementary
+Figure S7c); the six-split analysis is explicitly demoted to the variance
+decomposition, which does not depend on the tuning block; its p values are
+declared descriptive; and a sensitivity analysis rescoring the same fitted models
+over the three adequately supported classes is reported (Supplementary Table S11:
+the logistic–GraphSAGE difference moves 0.086 → 0.070, the MLP–GraphSAGE
+difference 0.040 → 0.047, no direction changes). Section 2.3 and the Methods now
+agree that pooled LOPO macro-F1 is the primary analysis.
+*Not done:* repairing the protocol itself would require retraining all 72 models
+under a pooled out-of-fold tuning scheme. This is stated in the text.
 
-## Minor issues
+**2. The per-patient paired tests weight near-empty classes like full ones.**
+SNU25 has one immune-hot spot, SNU16 eight, SNU24 six, SNU51 nine; SNU46's
+labeled spots are 99.8% normal.
+*Response:* the primary contrast is now the difference in pooled macro-F1 with
+its patient bootstrap, which is unaffected; the per-patient tests are secondary,
+Holm-adjusted across the four contrasts, and reported with a support-floor
+sensitivity (Supplementary Table S12, Supplementary Figure S7a). The MLP-vs-
+GraphSAGE result at p = 0.048, which survives neither a 50-spot floor (p = 0.41)
+nor Holm adjustment (p = 0.14), is no longer claimed.
 
-4. **Title** (25 words): consider shortening, e.g., "Spatial graph structure does not improve supervised niche prediction in glioblastoma Visium data: a patient-level benchmark with neuropathologist validation."
-5. **Qualitative figures.** The fixed-split figures (UMAP, ROC, confusion matrix, spatial maps) use the original array-index graphs and argmax decisions; this is disclosed. Moving the fixed-split spatial-map figure to the supplement would keep the main figures consistent with LOPO.
-6. **Multiple testing.** P values are uncorrected and declared descriptive. Some reviewers will still ask for Holm or BH correction within each family of tests.
-7. **Multi-split overlap.** The six test sets share patients, so the df = 5 tests are optimistic. This is disclosed; LOPO is the primary analysis.
-8. **HVG selection.** The gene panel was chosen without labels, partly from held-out patients' expression. This is disclosed and affects all models equally; nested HVG selection would remove the caveat completely.
-9. **Bibliography.** 27 entries truncate long author lists with "others"; check the journal style.
+**3. Provenance of the neuropathologist annotations was asserted, not shown.**
+The cited Zenodo record lists 55 per-sample archives with no UKF section among
+them, and the Dryad README fetch in `sources/` returned an authorization error.
+*Response:* the annotations are no longer cited by deposit alone. The exact
+per-spot table underlying every UKF result — 68,015 rows, 25,374 annotated, 23
+sections — is released as Supplementary Table S9
+(`results/tables/supplement/TableS9_ukf_pathologist_annotations.csv`) and
+regenerated by `scripts/24_export_ukf_annotations.py`. The data-availability
+statement credits both source cohorts and states where the annotations came from
+without asserting a file-level location in either deposit.
 
-## Verification performed
+### Minor points and what was done
 
-- **Results trace:** every number in the Results was recomputed from `results/` (LOPO, UKF E1 and E2, multi-split, ablations, marker removal, homophily, hex sensitivity, external cohort, survival).
-- **Reruns after the audit:** external validation (matched normalization and hex geometry), SNUH→UKF transfer (16 jobs), exact-hex GraphSAGE and GAT LOPO (78 jobs), logistic convergence check, and the TCGA deduplicated survival analysis.
-- **Citations:** all 49 keys resolve with no unused entries. 41 DOIs were checked against Crossref and 8 entries against arXiv (logs in `sources/`).
-- **PDF:** all pages were rendered and inspected; there are no overlaps or unresolved references.
+4. **Decision rule.** Added as a Results paragraph and Supplementary Table S13 /
+   Figure S7b: tuned thresholds raise GAT by 0.034, MLP + neighbors by 0.022 and
+   GraphSAGE by 0.019 but lower logistic regression by 0.013, so the protocol used
+   throughout halves the graph-free advantage (0.071 → 0.039) and is the
+   conservative choice. This strengthens the paper's conclusion and was already
+   computable from the stored run records.
+5. **Survival power.** Hazard ratios are now per SD; age run through the same
+   pipeline gives 1.55 per SD (p < 0.001) as a positive control; the smallest
+   detectable effect at 80% power with 132 events is 1.28 per SD. Table 3 and
+   `scripts/26_survival_power.py` carry these.
+6. **Slide-level risk head.** Evaluated rather than assumed: it does not recover
+   its own pseudo-risk target on held-out sections (Pearson r = 0.40, −0.80, 0.08
+   over seeds, n = 5). Reported as a negative result, removed from the framing in
+   the Introduction, dropped from Supplementary Table S1, and added to the
+   Limitations.
+7. **Abstract.** The "up to 0.7" range is now stated as 0.03–0.72 with the
+   explanation that the low end is a patient with essentially one niche.
+8. **Multiple testing.** Holm adjustment within the four-contrast LOPO family.
+9. **Table 1 vs Supplementary Table S6.** A clause now states that the MLP row of
+   Table 1 is the dedicated fixed-split fit and Supplementary Table S6 holds the
+   independent re-run, which differ by 0.007 macro-F1.
+10. **MES correlation** labeled as point-biserial in Results and Methods.
+11. **Qualitative figures.** The main-text map figure is now the leave-one-patient-out
+    maps (tuned thresholds, selected configurations), consistent with the primary
+    analysis; the fixed-split argmax maps moved to Supplementary Figure S1.
+12. **Result-file conventions** that silently corrupt recomputation (GAT stored
+    under `model: gnn`; `y = -1` for unlabeled spots) are documented in
+    `docs/WORKFLOW.md`.
+
+### Build state
+
+39 pages, 53 references, 10 main and 7 supplementary figures, 3 main and 13
+supplementary tables. No undefined or multiply-defined references and no missing
+graphics. No overfull boxes; one underfull (loose) line of badness 1400 remains in
+a single bibliography entry, which is cosmetic and below the threshold worth
+forcing.
+
+### Still open
+
+- The six-split protocol is disclosed and demoted, not repaired; repairing it
+  needs 72 retrained models.
+- The slide-level head is reported as a negative result rather than removed from
+  the architecture, since it was part of the trained model.
+- The abstract is 353 words, above a 250–350 limit at some venues.
+
+## Round 1 — internal review of v6 (superseded)
+
+The first internal review listed the UKF data placeholder as blocking, the
+abstract at 591 words, the title at 25 words and the bibliography at 49 entries.
+All four were addressed in the final v6 commit and before this review; the
+current manuscript has no placeholder, a 353-word abstract, a 22-word title and
+53 references.

@@ -53,3 +53,91 @@ The decision-rule fact (argmax vs tuned: < 0.02 macro-F1) is kept as one sentenc
 Renumbering:
 - Supplementary tables are now S1–S8, and the repository files are renamed to match (S2→S1 … S7→S6).
 - The original-protocol baselines moved to `results/tables/archive/`.
+
+## v7 (2026-10-09): response to the independent review of v6 (`deepgraph-gbm.v6.tex`, `references.v6.bib`)
+
+No model was retrained; every new number is computed from the existing run
+records. Point-by-point response in `PEER_REVIEW.md`.
+
+**Analyses added** (`scripts/24`–`28`):
+- Supplementary Table S9: the per-spot neuropathologist annotation table (68,015 rows,
+  25,374 annotated, 23 sections), released so the UKF labels need not be re-derived
+  from the source SPATA objects.
+- Supplementary Table S10 and Supplementary Figure S7c: labeled class support of each
+  six-split threshold-tuning block (immune-hot 15, 2,997, 7, 10, 1, 3,705 for splits 0–5).
+- Supplementary Table S11: the six-split contrasts rescored over the three adequately
+  supported classes (logistic − GraphSAGE 0.086 → 0.070; MLP − GraphSAGE 0.040 → 0.047).
+- Supplementary Table S12 and Supplementary Figure S7a: per-patient contrasts under
+  class-support floors of none, 50 and 200 spots, with Holm adjustment.
+- Supplementary Table S13 and Supplementary Figure S7b: pooled LOPO macro-F1 under argmax
+  versus validation-tuned thresholds for every model.
+- `results/tables/main/slide_risk_head_eval.csv`: the slide-level head against its own
+  pseudo-risk target on held-out sections (r = 0.40, −0.80, 0.08 over seeds).
+- Table 3 rebuilt on a per-SD scale with an age positive control (HR 1.55 per SD) and the
+  minimum detectable effect (HR 1.28 per SD at 80% power, 132 events).
+
+**Text**:
+- Section 2.3 no longer calls the six-split analysis "the primary test"; it and the Methods
+  now agree that pooled LOPO macro-F1 is primary. Section 2.4 gained the tuning-support
+  disclosure and the restricted-class sensitivity, and its p values are declared descriptive.
+- Section 2.5 leads with the pooled difference and its patient bootstrap; the per-patient
+  tests follow with Holm adjustment and the support-floor sensitivity. The MLP-versus-
+  GraphSAGE result at p = 0.048 is explicitly not claimed.
+- New Section 2.5 paragraph on the decision rule (tuning helps graph models by 0.019–0.034
+  and harms the per-spot models, halving the graph-free advantage).
+- Section 2.9 opens with the slide-head negative result; the survival paragraph is per SD
+  and bounded by the positive control and the detectable effect.
+- Introduction no longer advertises slide-level risk scoring as a working capability.
+- Abstract: 591 → 353 words over v6 and v7; the "up to 0.7" range is now 0.03–0.72 with its
+  explanation; the survival sentence carries the detectable-effect bound.
+- Limitations: items on threshold calibration, per-patient scoring, survival power and the
+  slide head; renumbered (i)–(ix).
+- Discussion: the decision rule and the scoring unit are added to the "evaluation choices"
+  argument; the survival paragraph gives the bound.
+- Data availability rewritten around Supplementary Table S9; it credits both source cohorts
+  without asserting a file-level location in either deposit.
+- MES correlation labeled as point-biserial; a clause distinguishes Table 1's MLP fit from
+  Supplementary Table S6's independent re-run.
+
+**Supplementary numbering**: v6 already printed Supplementary Tables S1–S8, so the new
+v7 tables start at S9 (S9 UKF annotations, S10 tuning support, S11 restricted-class
+contrasts, S12 support floor, S13 decision rule) and the new figure is S7. The repository
+file names were set to match the printed numbers, and the `tab:s*` labels, which in v6 were
+offset by one from the numbers they printed, were realigned.
+
+**Figures**: the main-text map figure is now the leave-one-patient-out maps (tuned
+thresholds, per-fold configurations), consistent with the primary analysis; the fixed-split
+argmax maps moved to Supplementary Figure S1. Supplementary figure labels are semantic
+(`fig:maps16a`, `fig:ukfmaps`, …) and supplementary table labels now match their printed
+numbers.
+
+**References**: added Schoenfeld (1983) for the sample-size formula; 53 entries, all cited.
+
+**Build**: 39 pages; no undefined or multiply-defined references, no missing graphics and no
+overfull boxes. One underfull (loose) line of badness 1400 remains in a single bibliography
+entry; it is cosmetic and was left alone.
+
+**Not done**: repairing the six-split threshold protocol, which needs 72 retrained models.
+The defect is disclosed and the analysis demoted instead.
+
+## v7.1 (2026-10-10): code, modeling and evaluation audit
+
+No analysis changed; 99 independent re-derivations of published values all agree and the
+18 unit tests pass (`preprint/CODE_AUDIT.md`, `scripts/29_code_audit_checks.py`).
+
+**Manuscript**: Methods now state that the leave-one-patient-out and UKF benchmarks use the
+niche and MES heads only (the three-term objective applies to the fixed-split models); that
+`GATConv` applies dropout to its attention coefficients, a regularizer no other model carries,
+with a new Limitations item (ix); that the "normal" rule requires both annotations to be
+leading-edge but not to name the same tissue (3,158 of 27,553 matching spots pair grey with
+white matter); that overall homophily is edge-level while the per-class values are a per-spot
+mean; and that the niche head is a single linear layer.
+
+**Repository**: `docs/WORKFLOW.md` Section 6 rewrote the headline results against the verified
+values and states that the protocol-reversal claim was retracted in v5 — it had still been
+presented as a finding, alongside pre-correction external numbers and the withdrawn seed-paired
+p = 0.0017. The figure/table map was updated from its v4-era form. Scripts 13, 14 and
+`run_baselines.py` are labeled superseded; stale supplementary numbering was fixed in the
+docstrings of 09 and 12; `configs/labels.yaml` no longer describes the MES target as a
+fraction; and `pyproject.toml` dropped two unused dependencies (`lab`, `jupyter`) and gained
+`umap-learn`, which Figure 1 needs.

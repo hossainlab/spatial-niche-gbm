@@ -1,20 +1,41 @@
-# DeepGraph-GBM manuscript: summary (v6, 2026-10-09)
+# DeepGraph-GBM manuscript: summary (v7, 2026-10-09)
 
 ## Deliverables (`preprint/`)
 
 | File | Content |
 |---|---|
-| `deepgraph-gbm.tex` / `.pdf` | Current manuscript (v6; 34 pages, 49 references, 16 figures, 9 tables) |
+| `deepgraph-gbm.tex` / `.pdf` | Current manuscript (v7; 39 pages, 53 references, 10 main and 7 supplementary figures plus the graphical abstract, 3 main and 13 supplementary tables) |
 | `deepgraph-gbm.v1`–`v6.tex`, `references.v*.bib` | Version snapshots |
-| `ANALYSIS_AUDIT.md` | Scientific audit: errors found, reruns, disclosures |
-| `references.bib` | Bibliography (DOIs checked against Crossref, non-DOI entries checked against arXiv) |
-| `figures/` | All figures, including the new `graphical_abstract.png` and `FigR2_ablation.png` / `FigR3_marker_removal.png` |
+| `PEER_REVIEW.md` | Independent review of v6, the v7 response, and the v7.1 code audit |
+| `CODE_AUDIT.md` | Code, modeling and evaluation audit: 98/98 independent checks, 11 defects fixed |
+| `ANALYSIS_AUDIT.md` | Earlier scientific audit: errors found, reruns, disclosures |
 | `revision_notes.md` | What changed in each version |
-| `PEER_REVIEW.md` | Internal review, plus what was fixed and what is still open |
+| `references.bib` | Bibliography (53 entries; DOIs checked against Crossref, non-DOI entries against arXiv) |
+| `figures/` | All figures, including `FigS7_robustness.png` (new in v7) |
+
+## What changed in v7
+
+The v6 manuscript was re-audited against the saved run records rather than its
+own summaries. Every published number reproduced; three analysis choices that
+were not reported turned out to move results as much as the architecture did,
+and are now reported. See `PEER_REVIEW.md` for the full response. In short:
+
+- the six-split benchmark is demoted to the variance decomposition, with its
+  threshold-tuning support disclosed and a three-class sensitivity analysis;
+- the primary model contrast is the pooled macro-F1 difference with a patient
+  bootstrap; per-patient tests are secondary, Holm-adjusted, and reported with a
+  class-support floor;
+- the argmax-versus-tuned-threshold comparison is reported and shows the
+  protocol is conservative for the paper's conclusion;
+- survival results are per SD, with an age positive control and a detectable-effect bound;
+- the slide-level risk head is evaluated, fails, and is reported as a negative result;
+- the neuropathologist annotations are released as Supplementary Table S9 rather
+  than cited by deposit alone.
 
 ## Compute status
 
-All benchmark runs are complete, with no failures:
+All benchmark runs are complete, with no failures. v7 added no model training;
+every new analysis is computed from the records below.
 
 | Queue | Runs | Done |
 |---|---|---|
@@ -37,6 +58,16 @@ cd deepgraph-gbm
 .venv/bin/python scripts/05_external_validation.py --greenwald-dir data/raw/greenwald \
     --ckpt results/models/best_model.pt --hvg data/preprocessed/hvg_genes.json --out results/external_v2
 .venv/bin/python scripts/22_graphical_abstract.py          # graphical abstract
+
+# v7 review-response analyses (no retraining; all read results/)
+.venv/bin/python scripts/24_export_ukf_annotations.py data/raw/ukf_spata \
+    results/tables/supplement/TableS9_ukf_pathologist_annotations.csv
+.venv/bin/python scripts/25_review_sensitivity.py          # Tables S10-S13 + slide-risk eval
+.venv/bin/python scripts/26_survival_power.py              # Table 3
+.venv/bin/python scripts/27_fig_robustness.py              # Supplementary Figure S7
+.venv/bin/python scripts/28_verify_manuscript_numbers.py   # checks every v7 number against its source
+PYTHONPATH=src .venv/bin/python scripts/29_code_audit_checks.py  # 98 independent re-derivations
+
 cd preprint && tectonic deepgraph-gbm.tex                  # compile (pdflatex is not installed)
 ```
 
@@ -45,7 +76,9 @@ To rerun the benchmark from scratch, use the worker queue (finished runs are ski
 
 ## Before submission
 
-1. Fill in the UKF annotated-object source (red placeholder in the data-availability statement).
-2. Shorten the abstract (591 words) to the target venue's limit.
-3. Commit and push the code, results and preprint (nothing is committed yet).
-4. Consider the minor points in PEER_REVIEW.md (title length; fixed-split spatial-map figure to the supplement; multiple-testing correction).
+1. Commit and push the code, results and preprint (nothing is committed yet).
+2. Decide whether to trim the abstract from 353 words if the target venue caps it at 350.
+3. Optional, and the one substantive item left open: repair the six-split
+   threshold protocol by retraining its 72 models with thresholds tuned on pooled
+   out-of-fold predictions. v7 discloses the defect and demotes the analysis
+   instead; the leave-one-patient-out benchmark already carries the conclusion.
