@@ -25,7 +25,8 @@ niche_rules:
 # priority order when rules overlap (first match wins)
 priority: [necrotic, immune_hot, normal, immune_cold]
 
-# Head 2: MES probability target = fraction of MES malignant states
+# Head 2: MES target is BINARY -- 1 if the spot's annotated malignant state is one of the
+# mesenchymal-like states below, 0 for any other annotated state, missing if unannotated.
 mes_states:
   - "MES (malig.)"
   - "MES.Hyp (malig.)"

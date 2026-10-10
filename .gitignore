@@ -1,30 +1,27 @@
 # ==============================================================================
-# Large Data, Datasets, Models, and Manuscript
+# What this repository tracks
 # ==============================================================================
-/data/
-/manuscript/
-/models/
-/results/
-*.pt
-*.pth
-*.ckpt
-*.h5
-*.h5ad
-*.npy
-*.npz
-*.parquet
-*.feather
-*.pkl
-*.pickle
-*.tar
-*.tar.gz
-*.zip
-*.gz
-*.pdf
+# Tracked:   code (src/, scripts/, tests/), configuration and patient splits,
+#            the manuscript and its figures, trained weights, and every per-run
+#            metric record and result table needed to re-derive the published
+#            numbers without retraining (see results/README.md).
+# Not tracked: the raw datasets (11 GB, all publicly available from the sources
+#            cited in the manuscript), the per-spot probability arrays (~90 MB),
+#            intermediate figure renders, and build/editor artifacts.
+# ==============================================================================
 
-# ==============================================================================
-# Python & Bytecode
-# ==============================================================================
+# ------------------------------------------------------------------ raw data
+/data/
+
+# --------------------------------------------- large or regenerable results
+# per-spot probability arrays from every benchmark run (~90 MB)
+*.npz
+# intermediate figure renders; the published versions live in preprint/figures/
+/results/figures/
+# worker scratch logs
+/results/**/logs/
+
+# ----------------------------------------------------- Python and packaging
 __pycache__/
 *.py[cod]
 *$py.class
@@ -32,25 +29,35 @@ __pycache__/
 .eggs/
 build/
 dist/
+.pytest_cache/
 
-# ==============================================================================
-# Virtual Environments & Package Managers
-# ==============================================================================
+# ------------------------------------------- environments and editor config
 .venv/
 venv/
 env/
 ENV/
 .conda/
+*.code-workspace
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
 
-# ==============================================================================
-# Jupyter Notebooks
-# ==============================================================================
+# --------------------------------------------------------- LaTeX build files
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.toc
+preprint/*.log
+preprint/*.out
+
+# -------------------------------------------------------------- notebooks/OS
 .ipynb_checkpoints/
 *-checkpoint.ipynb
-
-# ==============================================================================
-# Operating System & IDEs
-# ==============================================================================
 .DS_Store
 .DS_Store?
 ._*
@@ -58,8 +65,3 @@ ENV/
 .Trashes
 Thumbs.db
 ehthumbs.db
-.idea/
-.vscode/
-*.swp
-*.swo
-*~

@@ -1,16 +1,33 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
-title: "DeepGraph-GBM: Graph Neural Network for Predicting Immunosuppressive Spatial Niches in Glioblastoma"
+message: "If you use this software or the benchmark results, please cite it as below."
+title: "DeepGraph-GBM: a patient-level benchmark of spatial graph structure for supervised niche prediction in glioblastoma"
+abstract: >-
+  Code, configurations, per-run metric records and manuscript for a controlled benchmark
+  testing whether spatial graph neural networks improve supervised niche prediction in
+  glioblastoma Visium data over matched graph-free models. Under leave-one-patient-out
+  evaluation with an equal tuning budget, they do not.
+type: software
 authors:
   - family-names: Hossain
-    given-names: Jubayer
-version: 0.1.0
-date-released: 2026-08-05
+    given-names: Md. Jubayer
+    email: hossainmj.me@gmail.com
+    affiliation: "Center for Health Innovation, Research, Action, and Learning - Bangladesh"
+version: 0.7.1
+date-released: 2026-10-10
 license: MIT
-repository-code: https://github.com/jubayer-hossain/deepgraph-gbm
+repository-code: https://github.com/hossainlab/deepgraph-gbm
 keywords:
   - glioblastoma
   - spatial transcriptomics
-  - graph neural network
   - Visium
-  - tumor microenvironment
+  - graph neural network
+  - benchmarking
+  - reproducibility
+  - neuropathology
+preferred-citation:
+  type: article
+  title: "Spatial graph structure does not improve supervised niche prediction in glioblastoma"
+  authors:
+    - family-names: Hossain
+      given-names: Md. Jubayer
+  year: 2026

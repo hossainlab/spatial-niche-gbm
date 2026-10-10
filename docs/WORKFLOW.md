@@ -17,7 +17,7 @@ deepgraph-gbm/
 ├── notebooks/                # 03_demo_inference.ipynb
 ├── results/
 │   ├── figures/              # Figures 1–7 (main) + Figure S1–S4 (supplement)
-│   ├── tables/               # Table 1–3 (main) + Table S1–S7 (supplement)
+│   ├── tables/               # Table 1–3 (main) + Table S1–S13 (supplement)
 │   ├── models/               # best_model.pt + per-seed metrics + history
 │   ├── baselines_multiseed_matched/  # matched-protocol baseline runs (Table 1)
 │   ├── baselines_multiseed/          # earlier multi-seed run (superseded; kept for provenance)
@@ -171,7 +171,7 @@ python scripts/run_baselines_multiseed.py \
     --data data/preprocessed \
     --out results/baselines_multiseed_matched
 
-# Step 9 — paired tests (GNN vs baselines) and Table 1 / Table S6
+# Step 9 — paired tests (GNN vs baselines) and Table 1 / Table S5 (per-seed metrics)
 python scripts/08_paired_test.py \
     --gnn results/models \
     --baselines results/baselines_multiseed_matched \
@@ -204,7 +204,7 @@ python scripts/11_run_multisplit.py \
 #           GAT arm: add --encoder gat --tag gat (output files are gat_split*_seed*.json).
 #           Baselines: --model mlp or --model logistic.
 
-# Step 12 — aggregate the 72 runs: multisplit_summary.json + Table S7 + Figure 5
+# Step 12 — aggregate the 72 runs: multisplit_summary.json + Table S6 + Figure 4
 python scripts/12_aggregate_multisplit.py \
     --runs results/multisplit \
     --out-dir results/multisplit \
@@ -218,7 +218,8 @@ python scripts/13_mlp_argmax_control.py \
     --data data/preprocessed \
     --out results/baselines_multiseed_matched/mlp_argmax_control.json
 
-# Step 14 — protocol-reversal figure (manuscript Figure 4)
+# Step 14 — protocol-reversal figure (SUPERSEDED: claim retracted in v5, figure removed in v6;
+#           kept for provenance only, not part of the manuscript)
 python scripts/14_fig_protocol_reversal.py \
     --table-s1 results/tables/archive/baseline_original_protocol_metrics.json \
     --table1 results/tables/main/Table1_model_comparison.json \
@@ -245,11 +246,16 @@ numbering; the mapping is:
 |---|---|---|
 | `Figure1_umap_niche` | Figure 1 | UMAP of test-spot embeddings colored by niche |
 | `Figure2_roc_curves` | Figure 2 | one-vs-rest ROC for the 4 niche classes (with AUCs) |
-| `Figure3_confusion_matrix` | Figure 3 | row-normalized confusion matrix |
-| `Figure_protocol_reversal` | Figure 4 | identical scoring reverses the model ranking (3 panels) |
-| `Figure_split_robustness` | Figure 5 | per-split macro-F1 for 4 models + paired differences vs GraphSAGE |
-| `Figure4a/b/c` | Figure 6 | representative test section SNU16A: true niche map, predicted niche map, MES probability map |
-| `Figure5_km_survival` | Figure 7 | TCGA Kaplan–Meier curves, high vs low predicted risk (log-rank p annotated in-plot) |
+| `Figure3_confusion_matrix` | Figure 3 | row-normalized confusion matrix (argmax) |
+| `Figure_split_robustness` | Figure 4 | per-split macro-F1 for 4 models + paired differences vs GraphSAGE |
+| `FigR1_lopo_comparison` + `FigR4_confusion_pooled` | Figure 5 | LOPO benchmark: pooled and per-patient macro-F1, pooled confusion matrices |
+| `FigR2_ablation` + `FigR3_marker_removal` | Figure 6 | depth/neighborhood ablations and marker-gene removal |
+| `maps_lopo_SNU16A/SNU34A` | Figure 7 | LOPO predictions vs silver standard (tuned thresholds) |
+| `FigR5_pathologist_labels` | Figure 8 | UKF within-cohort and transfer results |
+| `maps_path_UKF251_T` | Figure 9 | pathologist annotation vs LOPO predictions |
+| `Figure5_km_survival` | Figure 10 | TCGA Kaplan–Meier curves, high vs low signature risk |
+| `Figure4a/b/c` | Figure S1 | fixed-split SNU16A maps (argmax): true niche, predicted niche, MES probability |
+| `FigS7_robustness` | Figure S7 | support floor, decision rule, six-split tuning support |
 
 **`results/figures/supplement/`** — remaining test sections (SNU16B, SNU33A, SNU33B, SNU34A)
 | Figure | Content |
@@ -292,43 +298,55 @@ numbering; the mapping is:
 
 ## 6. Headline results (for reference when you re-run)
 
-**Held-out test patients (SNU16, SNU33, SNU34), fixed split, 3 seeds, matched protocol:**
-- GNN (GraphSAGE): macro-F1 **0.489 ± 0.027**, accuracy 0.750 ± 0.050
-- GAT encoder: macro-F1 0.539 ± 0.063
-- MLP (no graph): macro-F1 **0.578 ± 0.021** — significantly above the GNN (paired p = 0.0017)
-- Logistic regression: macro-F1 0.554 (vs GNN p = 0.053)
-- Representative GNN (seed 7): per-class AUROC immune_cold **0.82**, immune_hot **0.98**,
-  normal **0.73**, necrotic **0.96**; MES probability AUROC **0.75**, Pearson r **0.34**
+All values below are the ones in manuscript v7 and are re-derived from `results/` by
+`scripts/29_code_audit_checks.py` (99/99 checks agree).
 
-**Repeated-split benchmark (6 patient-level splits × 3 seeds × 4 models = 72 runs):**
-- Logistic regression outperforms the GraphSAGE GNN on **all six splits** (split-mean
-  macro-F1 0.572 ± 0.090 vs 0.487 ± 0.109; paired p = 0.0004).
-- GAT significantly improves over GraphSAGE on all six splits (+0.037, p = 0.007) but ties
-  the MLP (p = 0.89) and remains below logistic regression (p = 0.034).
-- Patient-split identity dominates: split means span 0.32–0.70 for every model, and
-  across-split variance is 3.6–8.1× the within-split seed variance.
+**Primary analysis — leave-one-patient-out, equal tuning budget (13 patients, 3 seeds):**
+- Logistic regression pooled macro-F1 **0.691**; MLP 0.655 ± 0.020; GraphSAGE 0.652 ± 0.018;
+  GAT 0.649 ± 0.018; MLP + neighbors 0.637 ± 0.047.
+- Logistic − GraphSAGE = **+0.039** (patient-bootstrap 95% CI 0.009 to 0.076) — the only one of
+  the four contrasts whose interval excludes zero. MLP, GAT and MLP + neighbors are level with
+  GraphSAGE.
+- Decision rule matters: under plain argmax the logistic lead is +0.071, under the tuned
+  thresholds used throughout it is +0.039, so the reported protocol is the conservative one.
 
-**Protocol-reversal control (manuscript Figure 4).** Under the original mismatched scoring
-(GNN tuned thresholds, baselines argmax) the GNN appeared best (0.489 vs 0.449 MLP, 0.350
-logistic). Scoring all models identically inverts the ranking. The deterministic logistic
-model gains +0.20 macro-F1 from tuned thresholds alone (0.350 → 0.554); the matched MLP gains
-only +0.014 (0.557 → 0.571). Scoring rules, not graph structure, created the apparent GNN
-advantage.
+**Fixed split (SNU16, SNU33, SNU34), 3 seeds, matched protocol:**
+- GraphSAGE 0.489 ± 0.027; GAT 0.539 ± 0.063; MLP 0.578 ± 0.021 (Welch *t*, p = 0.012 vs
+  GraphSAGE — the earlier seed-paired p = 0.0017 was inflated and was withdrawn in v5);
+  logistic regression 0.554 (p = 0.053).
 
-**External validation (Greenwald Cell 2024, 13 samples):** predicted niche compositions
-transfer at the level of global composition but do **not** track the annotated sampling
-region, and MES probability correlates only variably with the Neftel MES meta-module
-(mean r = 0.30, range −0.34 to 0.65).
+**Repeated-split benchmark (6 splits × 3 seeds × 4 models = 72 runs):** used for the variance
+decomposition only. Split identity dominates: split means span 0.32–0.70 and across-split
+variance is 3.5–8.1× the within-split seed variance. The model ranking from these runs is
+**not** used, because four of the six threshold-tuning blocks contain fewer than 20 immune-hot
+spots (one block contains a single spot); see Supplementary Tables S10–S11.
 
-**TCGA survival validation — an honest negative result.** The niche-composition risk score
-does **not** significantly stratify TCGA-GBM overall survival. On the expression-matched cohort
-(n = 166; 132 deaths, 34 censored): univariate Cox HR = 1.12 (95% CI 0.92–1.37, p = 0.25),
-C-index = 0.52, KM log-rank p = 0.42 (median OS 424 vs 444 days, high vs low risk). Treat the
-survival head as **discovery-level / non-significant** — it is trained on a niche-composition
-pseudo-risk (no Visium cohort has matched survival), and this TCGA analysis is the validation,
-which is negative.
+**Protocol-reversal claim — RETRACTED.** Earlier versions of this repository reported that
+identical scoring reverses the model ranking. That analysis used a superseded feature set and
+is not reproducible on the current data; it was withdrawn in manuscript v5 and the section,
+figure and table were removed in v6. See `preprint/ANALYSIS_AUDIT.md`, finding 1. Scoring the
+same fits by argmax instead of tuned thresholds changes macro-F1 by less than 0.02 on the fixed
+split. `scripts/14_fig_protocol_reversal.py` is kept only for provenance.
 
----
+**Neuropathologist-annotated cohort (UKF, 18 patients):** within the cohort, logistic regression
+0.419 vs GraphSAGE 0.346 (not significant, p = 0.13); after transfer from SNUH, GraphSAGE 0.395
+vs MLP 0.380 (p = 0.25) — the one setting in which a graph model leads, by a margin that is not
+significant and that depends on input scaling.
+
+**External validation (Greenwald *Cell* 2024, 13 samples, matched CP100k normalization):** niche
+composition does **not** transfer — 77.8% of external spots are predicted immune-hot and
+immune-cold is near-absent (12 of 13 samples below 1%), and predictions do not track the
+annotated sampling region. The MES head transfers partially: per-sample Pearson r against the
+Neftel MES meta-module averages 0.21 (median 0.15, range −0.35 to 0.58), moderate in bulk and
+contrast-enhancing samples and near zero at the infiltrating edge.
+
+**TCGA survival validation — a bounded negative result.** The niche-composition signature score
+does not stratify TCGA-GBM overall survival (n = 166, 132 events): Cox HR **1.12 per SD**
+(95% CI 0.92–1.36, p = 0.25), c-index 0.52, KM log-rank p = 0.42 (median OS 424 vs 444 days).
+Age through the identical pipeline gives HR 1.55 per SD (p < 0.001) as a positive control, and
+the smallest effect detectable at 80% power is HR 1.28 per SD — so effects below that size were
+not excluded. The slide-level risk head itself does not recover its own target on held-out
+sections (r = 0.40, −0.80, 0.08 across seeds) and no result depends on it.
 
 ## 7. Known limitations (read before extending)
 
@@ -369,6 +387,41 @@ The `notebooks/` directory contains an interactive, sequential exploration serie
 | `06_benchmarking_and_protocol_reversal.ipynb` | Matched baseline comparison, Protocol Reversal analysis, 72-run multi-split variance |
 
 All core result figures and tables can also be generated directly via the numbered `scripts/` pipeline.
+
+---
+
+---
+
+## Result-file conventions (read before recomputing any table)
+
+Two conventions in `results/` will silently give wrong numbers if ignored.
+
+1. **`results/multisplit/` does not name the architecture in the `model` field.**
+   GraphSAGE and GAT runs are both stored with `"model": "gnn"`; they are
+   distinguished only by the `"encoder"` field (`"gat"` for the attention arm,
+   absent for GraphSAGE). Anyone who groups these files by `model` will average
+   the two architectures into one arm. `scripts/25_review_sensitivity.py`
+   (`multisplit_scores`) shows the correct split.
+
+2. **Prediction files in `results/revision/preds/` contain unlabeled spots.**
+   `y` is `-1` for spots excluded by the label rules; mask with `y >= 0` before
+   scoring, as `scripts/17_revision_analysis.py` (`pooled`) does. Scoring without
+   the mask depresses macro-F1 by roughly 0.1.
+
+## Review-response analyses (v7)
+
+- `scripts/24_export_ukf_annotations.py` — writes the per-spot neuropathologist
+  annotation table released as Supplementary Table S9.
+- `scripts/25_review_sensitivity.py` — threshold-tuning support of the six
+  splits, the three-class re-scoring of those contrasts, the per-patient
+  support-floor and Holm analysis, the argmax-versus-tuned decision-rule
+  comparison, and the slide-level risk-head evaluation (Tables S10–S13 and
+  `results/tables/main/slide_risk_head_eval.csv`).
+- `scripts/26_survival_power.py` — per-SD hazard ratios, the age positive
+  control and the minimum detectable effect; rewrites Table 3.
+- `scripts/27_fig_robustness.py` — Supplementary Figure S7.
+- `scripts/28_verify_manuscript_numbers.py` — re-checks every number changed in
+  the v7 revision against the file that produced it.
 
 ---
 

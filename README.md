@@ -1,181 +1,138 @@
 # DeepGraph-GBM
 
-**Graph Neural Network for predicting immunosuppressive spatial niches in glioblastoma from 10x Visium spatial transcriptomics.**
+**A patient-level benchmark asking whether spatial graph structure improves supervised niche
+prediction in glioblastoma Visium data. It does not.**
 
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/)
-[![PyTorch 2.7](https://img.shields.io/badge/PyTorch-2.7-ee4c2c.svg)](https://pytorch.org/)
-[![PyG 2.8](https://img.shields.io/badge/PyG-2.8-3c8dbc.svg)](https://pyg.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.7%2B-ee4c2c.svg)](https://pytorch.org/)
+[![PyG](https://img.shields.io/badge/PyG-2.8-3c8dbc.svg)](https://pyg.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
----
-
-## Graphical Abstract
-
-![DeepGraph-GBM Graphical Abstract](assets/graphical_abstract.png)
-
-*Figure: Overview of DeepGraph-GBM spatial graph construction from 10x Visium hexagonal coordinates, multi-task graph encoder architecture (GraphSAGE / GAT), spatial cellular niche classification, mesenchymal (MES) state regression, and cross-cohort external validation.*
+![Graphical abstract](assets/graphical_abstract.png)
 
 ---
 
-## The Problem
+## What this is
 
-Glioblastoma (GBM) is marked by extreme spatial heterogeneity. Within a single tumor, distinct cellular microenvironments govern tumor progression, treatment resistance, and immunosuppression:
+Visium spots are physically adjacent, so graph neural networks are a natural choice for
+predicting spatial niches, and many spatial methods assume the neighbourhood helps. This
+repository tests that assumption directly: GraphSAGE and graph-attention encoders against a
+multilayer perceptron, an MLP given neighbour-averaged expression, and multinomial logistic
+regression — same features, same splits, same optimiser, same decision rule, same tuning budget.
 
-| Niche | Cellular & Anatomical Composition | Clinical Prognosis |
+**The graph does not help.** With an equal nested hyperparameter search and leave-one-patient-out
+evaluation over 13 patients, logistic regression on per-spot expression has the highest pooled
+macro-F1 and no graph model exceeds the best graph-free model. The result holds against
+neuropathologist H&E annotations in an independent cohort, and survives ablations of graph depth
+and neighbourhood size, exact-hexagonal graph geometry, and removal of the most label-associated
+genes — even though the labels are strongly spatially clustered (edge homophily 0.80).
+
+## Headline results
+
+**Primary analysis — leave-one-patient-out, equal tuning budget (13 patients, 3 seeds, 715 runs):**
+
+| Model | Pooled macro-F1 | Δ vs GraphSAGE (95% CI) |
 |---|---|---|
-| **Immune Cold** | Mesenchymal tumor cells, immunosuppressive myeloid cells, absent T cells | Poorest outcomes |
-| **Immune Hot** | Infiltrating T lymphocytes, activated microglia/macrophages | Relatively improved (rare in GBM, ~9% of spots) |
-| **Normal Brain** | Peritumoral non-neoplastic cortex and white matter | Baseline reference |
-| **Necrotic Core** | Ischemic necrosis and perinecrotic pseudopalisading zones | Poor (hypoxic transition zone) |
+| **Logistic regression** | **0.691** | **+0.039 (0.009, 0.076)** |
+| MLP | 0.655 ± 0.020 | +0.003 (−0.045, 0.052) |
+| GraphSAGE | 0.652 ± 0.018 | — |
+| GAT | 0.649 ± 0.018 | −0.004 (−0.032, 0.018) |
+| MLP + neighbours | 0.637 ± 0.047 | −0.015 (−0.065, 0.040) |
 
-DeepGraph-GBM models 10x Visium tissue slides as **spatial graphs** (spots as nodes with 3,000 highly variable gene expressions, physical neighbors as edges weighted by Euclidean distance decay) to predict spatial niches, continuous mesenchymal tumor states, and slide-level hazard scores.
+Confidence intervals are patient-level bootstraps; only the logistic interval excludes zero.
 
----
+- **Against pathologist labels** (UKF, 18 patients): logistic regression first within the cohort
+  (0.419 vs 0.346 for GraphSAGE, p = 0.13). After transfer from SNUH, GraphSAGE leads
+  (0.395 vs 0.380, p = 0.25) — the one setting where a graph model is ahead, by a margin that is
+  not significant and that depends on input scaling.
+- **The held-out patient matters more than the model**: per-patient macro-F1 spans 0.03–0.72 for
+  every model, and across-split variance is 3.5–8.1× the within-split seed variance.
+- **The decision rule is not neutral**: tuned per-class thresholds raise the graph models by
+  0.019–0.034 macro-F1 and lower the per-spot models, so the protocol used throughout is the
+  conservative choice with respect to this conclusion.
+- **Negative results reported as such**: niche predictions do not transfer to an external cohort,
+  and a niche-signature score does not stratify TCGA-GBM survival (HR 1.12 per SD; effects below
+  about 1.28 per SD were not detectable at this event count).
 
-## Interactive Exploration Notebooks
+> **Retracted claim.** Earlier versions of this repository reported that identical scoring
+> *reverses* the model ranking ("the protocol-reversal phenomenon"). That analysis used a
+> superseded feature set, was withdrawn in manuscript v5, and the corresponding section, figure
+> and table were removed in v6. See `preprint/ANALYSIS_AUDIT.md`.
 
-A sequential suite of 6 documented Jupyter notebooks is provided in [`notebooks/`](notebooks/):
+## Verification status
 
-| Notebook | Focus Area | Highlights & Outputs |
-|---|---|---|
-| [**`01_data_exploration.ipynb`**](notebooks/01_data_exploration.ipynb) | Dataset & Label Rules | SNUH atlas metadata (23 sections, 13 patients, 34,988 spots), niche priority rules, 3,000 HVG marker audit (*EGFR*, *VEGFA*, *CHI3L1*), MES state distribution. |
-| [**`02_spatial_graphs_and_splits.ipynb`**](notebooks/02_spatial_graphs_and_splits.ipynb) | Spatial Graphs & Splits | *k* = 6 kNN graph construction, Gaussian edge weights, PyG `Data` structures, patient-level train/val/test splits, 6-split benchmark design. |
-| [**`03_model_architecture_and_training.ipynb`**](notebooks/03_model_architecture_and_training.ipynb) | Model & Loss Dynamics | GraphSAGE vs GAT encoder comparisons (~870k params), real section forward pass, multi-task loss decomposition with rare-class boosting, loss convergence curves. |
-| [**`04_model_evaluation_and_inference.ipynb`**](notebooks/04_model_evaluation_and_inference.ipynb) | Evaluation & Spatial Maps | Checkpoint loading (`best_model.pt`), validation threshold tuning (τ_c), test metrics, confusion matrix, true vs predicted spatial niche & MES maps. |
-| [**`05_external_and_survival_validation.ipynb`**](notebooks/05_external_and_survival_validation.ipynb) | External & Survival Analysis | 13 Greenwald Visium samples (*Cell* 2024), Neftel MES correlation (*r* = 0.30), TCGA-GBM (*n* = 166) Kaplan-Meier survival curves & Cox regression (*p* = 0.25). |
-| [**`06_benchmarking_and_protocol_reversal.ipynb`**](notebooks/06_benchmarking_and_protocol_reversal.ipynb) | Benchmarks & Protocol Reversal | Table 1 matched baseline comparisons, paired t-tests, Protocol Reversal phenomenon (Fig. 4), 72-run multi-split variance decomposition (Fig. 5). |
+| | |
+|---|---|
+| Unit tests | 18/18 pass (`PYTHONPATH=src pytest -q tests`) |
+| Independent re-derivation of published values | 99/99 agree (`scripts/29_code_audit_checks.py`) |
+| Manuscript numbers against source files | 35/35 (`scripts/28_verify_manuscript_numbers.py`) |
+| Label rules vs stored labels | reproduce exactly |
+| Test-label leakage | none; no run has its held-out patient in train or validation |
 
----
-
-## Model Architecture
-
-```mermaid
-flowchart TD
-    A["10x Visium Spatial Slide<br>(Spots = Nodes with 3,000 HVGs, k=6 Neighbors = Edges)"] --> B["Shared Graph Encoder<br>(GraphSAGE / GAT: 3000 → 256 → 256 → 128)"]
-    B --> C["128-dim Latent Spot Embedding (z_i)"]
-    C --> D["Head 1: Spatial Niche Classifier<br>(4 Classes per spot, Cross-Entropy Loss)"]
-    C --> E["Head 2: Mesenchymal State Regressor<br>(Continuous 0–1 probability, BCE Loss)"]
-    C --> F["Head 3: Slide Survival Risk Score<br>(Global Mean Pooling, MSE Loss)"]
-```
-
-**Multi-Task Objective**:
-
-$$
-\mathcal{L}_{\text{total}} = \lambda_{\text{niche}} \mathcal{L}_{\text{CE}}(\hat{y}_{\text{niche}}, y) + \lambda_{\text{mes}} \mathcal{L}_{\text{BCE}}(\hat{y}_{\text{mes}}, y_{\text{mes}}) + \lambda_{\text{surv}} \mathcal{L}_{\text{MSE}}(\hat{r}, r)
-$$
-
-To mitigate severe class imbalance (`immune_hot` is ~9% of spots), loss weights are boosted for minority classes (3.0× for `immune_hot`, 1.5× for `necrotic`).
-
----
-
-## Datasets
-
-| Dataset | Role | Content |
-|---|---|---|
-| **SNUH 2026 Atlas** ([Nat Commun 2026](https://www.nature.com/articles/s41467-026-69716-2), PRJNA1337938) | **Train / Val / Test** | 23 sections, 13 IDH-wildtype GBM patients, 34,988 spots with anatomical features and single-cell metaprogram annotations. |
-| **Greenwald et al.** ([Cell 2024](https://www.cell.com/cell/fulltext/S0092-8674(24)00320-9), [Zenodo](https://zenodo.org/records/12624108)) | **External Validation** | 13 glioblastoma Visium sections, diverse tumor regions, Neftel single-cell meta-modules. |
-| **TCGA-GBM** (NCI GDC) | **Clinical Survival** | Bulk RNA-seq + overall survival follow-up ($n=166$ patients, 132 events). |
-
-**Niche Label Definition**: Derived by audited rules in [`configs/labels.yaml`](configs/labels.yaml):
-- `necrotic`: Perinecrotic and pseudopalisading zones.
-- `normal`: Non-neoplastic cortical grey matter and white matter.
-- `immune_hot`: Microglia / macrophage / myeloid infiltration signatures.
-- `immune_cold`: Dense malignant cellular tumor core.
-- Ambiguous / discordant boundary spots are marked `exclude` and masked out during loss calculation.
-
----
+Audit reports: [`preprint/CODE_AUDIT.md`](preprint/CODE_AUDIT.md),
+[`preprint/ANALYSIS_AUDIT.md`](preprint/ANALYSIS_AUDIT.md),
+[`preprint/PEER_REVIEW.md`](preprint/PEER_REVIEW.md).
 
 ## Quickstart
 
-### 1. Environment Installation
 ```bash
-# Clone the repository
-git clone https://github.com/hossainlab/deepgraph-gbm.git
-cd deepgraph-gbm
+git clone https://github.com/hossainlab/deepgraph-gbm && cd deepgraph-gbm
+python -m venv .venv && .venv/bin/pip install -e ".[dev]"
+PYTHONPATH=src .venv/bin/pytest -q tests          # 18 tests, no data needed
 
-# Install dependencies using pip or uv
-pip install -e .
+bash scripts/01_download_data.sh                  # public datasets (~11 GB)
+.venv/bin/python scripts/02_build_graphs.py       # per-section PyG graphs
 ```
 
-### 2. End-to-End Pipeline
-```bash
-# Download datasets (~4.0 GB)
-bash scripts/01_download_data.sh data
+The full pipeline, step by step, is in [`docs/WORKFLOW.md`](docs/WORKFLOW.md). To re-derive the
+published numbers without retraining anything, run `scripts/28` and `scripts/29`; both read the
+records in `results/` (see [`results/README.md`](results/README.md)).
 
-# Build spatial kNN graphs and preprocessed bundles
-python scripts/02_build_graphs.py --data-dir data/raw --out-dir data/preprocessed
+## Datasets
 
-# Train the multi-task model
-python scripts/03_train.py --config configs/default.yaml
+| Cohort | Use | Source |
+|---|---|---|
+| SNUH GBM spatial atlas | training and the primary benchmark (28 sections, 13 patients, 100,488 spots) | UCSC Cell Browser, `multiomic-gbm` |
+| Freiburg (UKF) Visium | neuropathologist H&E labels (23 sections, 18 patients) | Dryad `10.5061/dryad.h70rxwdmj`; annotations per Ritter et al. |
+| Greenwald et al. 2024 | external cohort (13 samples, 25,488 spots) | Zenodo `10.5281/zenodo.12624108` |
+| TCGA-GBM | bulk survival validation (166 samples, 132 events) | NCI Genomic Data Commons |
 
-# Evaluate on held-out test patients with validation threshold tuning
-python scripts/04_evaluate.py --data-dir data/preprocessed --ckpt results/models/best_model.pt
+The per-spot pathologist annotations used here are released as
+`results/tables/supplement/TableS9_ukf_pathologist_annotations.csv`.
 
-# Run external cohort validation (Greenwald et al.)
-python scripts/05_external_validation.py --greenwald-dir data/raw/greenwald \
-    --ckpt results/models/best_model.pt --hvg data/preprocessed/hvg_genes.json
-
-# Run TCGA clinical overall survival validation
-python scripts/06_survival_validation.py --tcga-dir data/raw/tcga
-
-# Generate publication figures and summary tables
-python scripts/07_make_figures.py
-```
-
----
-
-## Key Benchmarking Insights
-
-### 1. Matched-Protocol Baseline Comparison (Table 1)
-When non-graph baselines (MLP, Logistic Regression) are trained under identical conditions (matched early stopping) and scored with identical validation-tuned decision thresholds, single-spot gene expression contains sufficient signal to achieve competitive or superior performance:
-
-| Architecture | Macro-F1 (Mean ± Std) | Weighted-F1 | Accuracy | MES AUROC |
-|---|---|---|---|---|
-| **MLP (No-Graph Baseline)** | **0.578 ± 0.021** | **0.793 ± 0.003** | **0.789 ± 0.004** | **0.826 ± 0.016** |
-| **Logistic Regression** | 0.554 | 0.761 | 0.748 | 0.751 |
-| **GAT (4-Head Attention)** | 0.539 ± 0.038 | 0.768 ± 0.020 | 0.762 ± 0.022 | 0.760 ± 0.027 |
-| **GraphSAGE GNN** | 0.489 ± 0.027 | 0.746 ± 0.025 | 0.750 ± 0.050 | 0.751 ± 0.041 |
-
-### 2. The Protocol Reversal Phenomenon
-Under mismatched scoring protocols (GNN evaluated with tuned thresholds while baselines used default `argmax`), the GNN appeared superior ($0.489$ vs $0.449$). Scoring all models with identical validation-tuned thresholds **inverts the ranking** ($0.578$ for MLP vs $0.489$ for GNN).
-
-### 3. Patient Variance Dominates Seed Variance (72 Runs)
-Across 6 patient-level splits and 3 random seeds (72 trained models), across-split variance is **3.6–8.1× larger** than within-split seed variance. Robust conclusions in spatial biology necessitate repeated patient-level split resampling rather than single-split evaluations.
-
----
-
-## Repository Layout
+## Repository layout
 
 ```
 deepgraph-gbm/
-├── assets/                  # Graphical abstract and documentation images
-├── configs/                 # Hyperparameters, label rules, and patient splits
-│   ├── default.yaml
-│   ├── labels.yaml
-│   ├── splits.json
-│   └── splits_multisplit.json
-├── data/                    # Raw and preprocessed dataset directories
-├── notebooks/               # Sequential interactive exploration notebooks (01 to 06)
-├── results/                 # Metrics tables, models, figures, and benchmark logs
-├── scripts/                 # Execution pipeline scripts (01_download to 14_fig_protocol_reversal)
-├── src/deepgraph_gbm/       # Core Python library
-│   ├── data/                # Dataset loaders, kNN graph builders, label rules
-│   ├── models/              # GraphSAGE, GAT, multi-task architecture, baselines
-│   ├── training/            # Training loop, multi-task loss, evaluation metrics
-│   └── interpret/           # Spatial map rendering and neighbor importance
-└── tests/                   # Pytest test suite (labels, graphs, model shapes, splits)
+├── assets/                  # graphical abstract and documentation images
+├── configs/                 # model config, label rules, patient splits
+├── data/                    # raw and preprocessed datasets (not tracked; see Datasets)
+├── docs/                    # WORKFLOW.md (step-by-step pipeline) and topic notes
+├── notebooks/               # exploratory notebooks (01-06)
+├── preprint/                # manuscript, figures, audit reports, revision history
+├── results/                 # tables, per-run metric records, trained weights
+├── scripts/                 # numbered pipeline, 01 to 29
+├── src/deepgraph_gbm/       # library: data, models, training, interpret
+└── tests/                   # pytest suite (labels, graphs, model shapes, splits)
 ```
-
----
 
 ## Limitations
 
-- **Silver-Standard Labels**: Niche annotations are derived from algorithmic rule hierarchies on single-cell metaprograms and anatomical features rather than manual pathologist annotations.
-- **Discovery-Level Survival Validation**: Spatial Visium datasets currently lack long-term clinical survival follow-up; the survival head is trained on a niche-composition pseudo-risk proxy and validated on bulk TCGA-GBM.
-- **Hardware Efficiency**: Optimized for standard CPU and single GPU environments using PyTorch and PyG.
+- **Silver-standard labels.** SNUH niche labels are rule-derived from the atlas's own anatomical
+  and metaprogram annotations. The pathologist-annotated UKF cohort is the independent check.
+- **Cohort size.** Thirteen and eighteen patients limit power; several differences between neural
+  models are not significant.
+- **Six-split threshold protocol.** Four of its six threshold-tuning blocks contain fewer than 20
+  immune-hot spots, so that analysis is used for variance decomposition only, not for ranking.
+- **Scope.** Two message-passing encoders at Visium resolution. Heterophily-aware designs,
+  image or copy-number features, and higher-resolution platforms may behave differently.
 
----
+## Citation
+
+Hossain MJ. *Spatial graph structure does not improve supervised niche prediction in
+glioblastoma.* Preprint, 2026. See [`CITATION.cff`](CITATION.cff).
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+MIT — see [LICENSE](LICENSE). The author declares no competing interests and received no
+specific funding for this work.
