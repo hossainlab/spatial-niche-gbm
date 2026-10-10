@@ -1,0 +1,96 @@
+{
+  "metric": "macro_f1",
+  "seeds": [
+    42,
+    7,
+    123
+  ],
+  "gnn": {
+    "per_seed": {
+      "42": 0.4579277933271568,
+      "7": 0.5040188301233165,
+      "123": 0.5050355415014053
+    },
+    "mean": 0.48899405498395954,
+    "std": 0.02690897407006226
+  },
+  "mlp": {
+    "per_seed": {
+      "42": 0.5537652300103539,
+      "7": 0.5929569609839335,
+      "123": 0.5880412630821171
+    },
+    "mean": 0.5782544846921348,
+    "std": 0.02135026270604946
+  },
+  "logistic": {
+    "per_seed": {
+      "42": 0.553725956146355,
+      "7": 0.553725956146355,
+      "123": 0.553725956146355
+    },
+    "mean": 0.553725956146355,
+    "std": 0.0
+  },
+  "gnn_vs_mlp": {
+    "n_seeds": 3,
+    "df": 2,
+    "gnn_per_seed": [
+      0.4579277933271568,
+      0.5040188301233165,
+      0.5050355415014053
+    ],
+    "baseline_per_seed": [
+      0.5537652300103539,
+      0.5929569609839335,
+      0.5880412630821171
+    ],
+    "diff_per_seed": [
+      -0.09583743668319716,
+      -0.08893813086061697,
+      -0.08300572158071184
+    ],
+    "mean_diff": -0.08926042970817533,
+    "sd_diff": 0.006421926154059274,
+    "ci95": [
+      -0.10521337864954973,
+      -0.07330748076680092
+    ],
+    "t_stat": -24.07433465460604,
+    "t_p": 0.001720953696540199,
+    "wilcoxon_stat": 0.0,
+    "wilcoxon_p": 0.25
+  },
+  "gnn_vs_logistic": {
+    "n_seeds": 3,
+    "df": 2,
+    "gnn_per_seed": [
+      0.4579277933271568,
+      0.5040188301233165,
+      0.5050355415014053
+    ],
+    "baseline_per_seed": [
+      0.553725956146355,
+      0.553725956146355,
+      0.553725956146355
+    ],
+    "diff_per_seed": [
+      -0.09579816281919823,
+      -0.049707126023038506,
+      -0.04869041464494972
+    ],
+    "mean_diff": -0.06473190116239548,
+    "sd_diff": 0.02690897407006226,
+    "ci95": [
+      -0.1315774984343489,
+      0.0021136961095579443
+    ],
+    "t_stat": -4.166600383644297,
+    "t_p": 0.05305903228286247,
+    "wilcoxon_stat": 0.0,
+    "wilcoxon_p": 0.25
+  },
+  "protocol": "All models scored with per-class thresholds tuned on validation patients, applied to test; seeds 42/7/123; single fixed patient-level split; MLP trained with the same optimization protocol as the GNN (AdamW, cosine schedule, boosted class weights, early stopping on validation macro-F1 with best-checkpoint selection).",
+  "notes": "Paired t-test and Wilcoxon signed-rank on per-seed macro-F1 (GNN - baseline). n=3 seeds, df=2: very low power; a non-significant result does not imply no effect. Wilcoxon min achievable two-sided p at n=3 is 0.25. Two pre-specified comparisons; Bonferroni alpha=0.025 as sensitivity. IMPORTANT: all seeds share a single fixed patient-level split, so p-values quantify training-seed variability only, NOT patient-sampling (split) variability, which is likely the dominant source of uncertainty with three held-out patients.",
+  "table_note": "Under the matched training + identical tuned-threshold scoring protocol, the no-graph MLP OUTPERFORMS the GNN on macro-F1 on every seed. The earlier GNN>baseline result was an artifact of scoring baselines with default argmax. Paired-test p-values reflect seed-to-seed variability under a single fixed patient split (n=3, low power)."
+}

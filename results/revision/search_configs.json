@@ -1,0 +1,292 @@
+{
+ "logistic": [
+  {
+   "C": 0.001
+  },
+  {
+   "C": 0.003
+  },
+  {
+   "C": 0.01
+  },
+  {
+   "C": 0.03
+  },
+  {
+   "C": 0.1
+  },
+  {
+   "C": 0.3
+  },
+  {
+   "C": 1.0
+  },
+  {
+   "C": 3.0
+  }
+ ],
+ "mlp": [
+  {
+   "lr": 0.003,
+   "dropout": 0.1,
+   "hidden": 128,
+   "wd": 0.0001,
+   "layers": 2
+  },
+  {
+   "lr": 0.001,
+   "dropout": 0.1,
+   "hidden": 256,
+   "wd": 0.0001,
+   "layers": 2
+  },
+  {
+   "lr": 0.003,
+   "dropout": 0.5,
+   "hidden": 512,
+   "wd": 0.001,
+   "layers": 3
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.5,
+   "hidden": 256,
+   "wd": 1e-05,
+   "layers": 1
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.5,
+   "hidden": 512,
+   "wd": 0.001,
+   "layers": 1
+  },
+  {
+   "lr": 0.001,
+   "dropout": 0.3,
+   "hidden": 512,
+   "wd": 1e-05,
+   "layers": 2
+  },
+  {
+   "lr": 0.001,
+   "dropout": 0.5,
+   "hidden": 256,
+   "wd": 0.0001,
+   "layers": 2
+  },
+  {
+   "lr": 0.001,
+   "dropout": 0.1,
+   "hidden": 128,
+   "wd": 1e-05,
+   "layers": 1
+  }
+ ],
+ "mlpnbr": [
+  {
+   "lr": 0.003,
+   "dropout": 0.3,
+   "hidden": 128,
+   "wd": 0.0001,
+   "layers": 1,
+   "hops": 2,
+   "k": 18
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.3,
+   "hidden": 256,
+   "wd": 0.001,
+   "layers": 2,
+   "hops": 1,
+   "k": 6
+  },
+  {
+   "lr": 0.001,
+   "dropout": 0.3,
+   "hidden": 128,
+   "wd": 0.0001,
+   "layers": 2,
+   "hops": 1,
+   "k": 18
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.5,
+   "hidden": 512,
+   "wd": 0.001,
+   "layers": 3,
+   "hops": 2,
+   "k": 12
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.3,
+   "hidden": 256,
+   "wd": 0.001,
+   "layers": 3,
+   "hops": 2,
+   "k": 12
+  },
+  {
+   "lr": 0.001,
+   "dropout": 0.3,
+   "hidden": 512,
+   "wd": 1e-05,
+   "layers": 1,
+   "hops": 1,
+   "k": 18
+  },
+  {
+   "lr": 0.001,
+   "dropout": 0.1,
+   "hidden": 128,
+   "wd": 1e-05,
+   "layers": 1,
+   "hops": 2,
+   "k": 12
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.3,
+   "hidden": 256,
+   "wd": 0.0001,
+   "layers": 2,
+   "hops": 2,
+   "k": 6
+  }
+ ],
+ "sage": [
+  {
+   "lr": 0.0003,
+   "dropout": 0.5,
+   "hidden": 512,
+   "wd": 0.0001,
+   "layers": 2,
+   "k": 12
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.3,
+   "hidden": 256,
+   "wd": 0.0001,
+   "layers": 3,
+   "k": 12
+  },
+  {
+   "lr": 0.003,
+   "dropout": 0.3,
+   "hidden": 128,
+   "wd": 0.001,
+   "layers": 3,
+   "k": 12
+  },
+  {
+   "lr": 0.003,
+   "dropout": 0.3,
+   "hidden": 512,
+   "wd": 1e-05,
+   "layers": 1,
+   "k": 18
+  },
+  {
+   "lr": 0.003,
+   "dropout": 0.3,
+   "hidden": 512,
+   "wd": 1e-05,
+   "layers": 3,
+   "k": 12
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.1,
+   "hidden": 128,
+   "wd": 0.001,
+   "layers": 2,
+   "k": 18
+  },
+  {
+   "lr": 0.001,
+   "dropout": 0.1,
+   "hidden": 128,
+   "wd": 0.0001,
+   "layers": 3,
+   "k": 18
+  },
+  {
+   "lr": 0.003,
+   "dropout": 0.1,
+   "hidden": 256,
+   "wd": 0.0001,
+   "layers": 2,
+   "k": 12
+  }
+ ],
+ "gat": [
+  {
+   "lr": 0.0003,
+   "dropout": 0.5,
+   "hidden": 256,
+   "wd": 0.001,
+   "layers": 3,
+   "k": 18
+  },
+  {
+   "lr": 0.003,
+   "dropout": 0.3,
+   "hidden": 128,
+   "wd": 1e-05,
+   "layers": 1,
+   "k": 18
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.1,
+   "hidden": 128,
+   "wd": 1e-05,
+   "layers": 3,
+   "k": 6
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.5,
+   "hidden": 128,
+   "wd": 0.0001,
+   "layers": 1,
+   "k": 6
+  },
+  {
+   "lr": 0.001,
+   "dropout": 0.1,
+   "hidden": 512,
+   "wd": 0.0001,
+   "layers": 3,
+   "k": 12
+  },
+  {
+   "lr": 0.001,
+   "dropout": 0.3,
+   "hidden": 256,
+   "wd": 0.0001,
+   "layers": 2,
+   "k": 18
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.5,
+   "hidden": 128,
+   "wd": 1e-05,
+   "layers": 1,
+   "k": 18
+  },
+  {
+   "lr": 0.0003,
+   "dropout": 0.5,
+   "hidden": 256,
+   "wd": 0.0001,
+   "layers": 1,
+   "k": 12
+  }
+ ]
+}

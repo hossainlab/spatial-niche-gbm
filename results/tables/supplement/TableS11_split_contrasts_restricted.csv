@@ -1,0 +1,7 @@
+contrast,published_diff,published_wins,published_p_t,restricted_diff,restricted_wins,restricted_p_t
+Logistic - GraphSAGE,0.0856,6/6,0.0004,0.0702,6/6,0.0282
+MLP - GraphSAGE,0.0398,5/6,0.1369,0.0474,5/6,0.046
+GAT - GraphSAGE,0.037,6/6,0.0073,0.0387,6/6,0.0178
+GAT - MLP,-0.0027,3/6,0.8855,-0.0086,3/6,0.626
+GAT - Logistic,-0.0485,1/6,0.034,-0.0314,2/6,0.3105
+Logistic - MLP,0.0458,4/6,0.1282,0.0228,4/6,0.2909

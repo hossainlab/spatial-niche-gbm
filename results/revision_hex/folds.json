@@ -1,0 +1,275 @@
+{
+ "SNU16": {
+  "train": [
+   "SNU17",
+   "SNU23",
+   "SNU24",
+   "SNU25",
+   "SNU27",
+   "SNU33",
+   "SNU34",
+   "SNU43",
+   "SNU46",
+   "SNU51"
+  ],
+  "val": [
+   "SNU18",
+   "SNU21"
+  ],
+  "test": [
+   "SNU16"
+  ]
+ },
+ "SNU17": {
+  "train": [
+   "SNU16",
+   "SNU18",
+   "SNU21",
+   "SNU24",
+   "SNU25",
+   "SNU33",
+   "SNU34",
+   "SNU43",
+   "SNU46",
+   "SNU51"
+  ],
+  "val": [
+   "SNU23",
+   "SNU27"
+  ],
+  "test": [
+   "SNU17"
+  ]
+ },
+ "SNU18": {
+  "train": [
+   "SNU17",
+   "SNU21",
+   "SNU23",
+   "SNU24",
+   "SNU25",
+   "SNU27",
+   "SNU33",
+   "SNU34",
+   "SNU46",
+   "SNU51"
+  ],
+  "val": [
+   "SNU16",
+   "SNU43"
+  ],
+  "test": [
+   "SNU18"
+  ]
+ },
+ "SNU21": {
+  "train": [
+   "SNU16",
+   "SNU18",
+   "SNU23",
+   "SNU24",
+   "SNU25",
+   "SNU27",
+   "SNU33",
+   "SNU34",
+   "SNU43",
+   "SNU46"
+  ],
+  "val": [
+   "SNU17",
+   "SNU51"
+  ],
+  "test": [
+   "SNU21"
+  ]
+ },
+ "SNU23": {
+  "train": [
+   "SNU16",
+   "SNU17",
+   "SNU18",
+   "SNU21",
+   "SNU25",
+   "SNU27",
+   "SNU34",
+   "SNU43",
+   "SNU46",
+   "SNU51"
+  ],
+  "val": [
+   "SNU24",
+   "SNU33"
+  ],
+  "test": [
+   "SNU23"
+  ]
+ },
+ "SNU24": {
+  "train": [
+   "SNU16",
+   "SNU17",
+   "SNU18",
+   "SNU21",
+   "SNU23",
+   "SNU33",
+   "SNU34",
+   "SNU43",
+   "SNU46",
+   "SNU51"
+  ],
+  "val": [
+   "SNU25",
+   "SNU27"
+  ],
+  "test": [
+   "SNU24"
+  ]
+ },
+ "SNU25": {
+  "train": [
+   "SNU16",
+   "SNU17",
+   "SNU21",
+   "SNU23",
+   "SNU24",
+   "SNU27",
+   "SNU33",
+   "SNU34",
+   "SNU43",
+   "SNU51"
+  ],
+  "val": [
+   "SNU18",
+   "SNU46"
+  ],
+  "test": [
+   "SNU25"
+  ]
+ },
+ "SNU27": {
+  "train": [
+   "SNU16",
+   "SNU17",
+   "SNU18",
+   "SNU23",
+   "SNU24",
+   "SNU25",
+   "SNU33",
+   "SNU43",
+   "SNU46",
+   "SNU51"
+  ],
+  "val": [
+   "SNU21",
+   "SNU34"
+  ],
+  "test": [
+   "SNU27"
+  ]
+ },
+ "SNU33": {
+  "train": [
+   "SNU17",
+   "SNU18",
+   "SNU21",
+   "SNU23",
+   "SNU24",
+   "SNU25",
+   "SNU27",
+   "SNU34",
+   "SNU46",
+   "SNU51"
+  ],
+  "val": [
+   "SNU16",
+   "SNU43"
+  ],
+  "test": [
+   "SNU33"
+  ]
+ },
+ "SNU34": {
+  "train": [
+   "SNU16",
+   "SNU18",
+   "SNU21",
+   "SNU24",
+   "SNU25",
+   "SNU27",
+   "SNU33",
+   "SNU43",
+   "SNU46",
+   "SNU51"
+  ],
+  "val": [
+   "SNU17",
+   "SNU23"
+  ],
+  "test": [
+   "SNU34"
+  ]
+ },
+ "SNU43": {
+  "train": [
+   "SNU16",
+   "SNU17",
+   "SNU18",
+   "SNU21",
+   "SNU23",
+   "SNU24",
+   "SNU25",
+   "SNU27",
+   "SNU34",
+   "SNU46"
+  ],
+  "val": [
+   "SNU33",
+   "SNU51"
+  ],
+  "test": [
+   "SNU43"
+  ]
+ },
+ "SNU46": {
+  "train": [
+   "SNU16",
+   "SNU17",
+   "SNU18",
+   "SNU21",
+   "SNU23",
+   "SNU25",
+   "SNU33",
+   "SNU34",
+   "SNU43",
+   "SNU51"
+  ],
+  "val": [
+   "SNU24",
+   "SNU27"
+  ],
+  "test": [
+   "SNU46"
+  ]
+ },
+ "SNU51": {
+  "train": [
+   "SNU16",
+   "SNU18",
+   "SNU21",
+   "SNU23",
+   "SNU24",
+   "SNU27",
+   "SNU33",
+   "SNU34",
+   "SNU43",
+   "SNU46"
+  ],
+  "val": [
+   "SNU17",
+   "SNU25"
+  ],
+  "test": [
+   "SNU51"
+  ]
+ }
+}

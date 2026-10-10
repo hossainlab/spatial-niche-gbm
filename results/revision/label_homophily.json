@@ -1,0 +1,44 @@
+{
+ "per_class": {
+  "immune_cold": {
+   "n_spots": 32290,
+   "homophily": 0.8162788561185899,
+   "chance": 0.6720096747538615,
+   "frac_spots_majority_neighbors_differ": 0.12059461133477857
+  },
+  "immune_hot": {
+   "n_spots": 6614,
+   "homophily": 0.6652075639980085,
+   "chance": 0.43174133137473103,
+   "frac_spots_majority_neighbors_differ": 0.27169640157242214
+  },
+  "normal": {
+   "n_spots": 21776,
+   "homophily": 0.8586980877977847,
+   "chance": 0.7417514582656747,
+   "frac_spots_majority_neighbors_differ": 0.1036921381337252
+  },
+  "necrotic": {
+   "n_spots": 14686,
+   "homophily": 0.7261887542375761,
+   "chance": 0.4975170408138881,
+   "frac_spots_majority_neighbors_differ": 0.19229197875527712
+  }
+ },
+ "overall_edge_homophily": 0.8035573461340648,
+ "per_patient_edge_homophily": {
+  "SNU16": 0.6737364104520313,
+  "SNU17": 0.807669307818807,
+  "SNU18": 0.7565286073949746,
+  "SNU21": 0.8651500386437716,
+  "SNU23": 0.5823255078649909,
+  "SNU24": 0.8393172454384933,
+  "SNU25": 0.8038800705467373,
+  "SNU27": 0.7063616421184582,
+  "SNU33": 0.9447329740323371,
+  "SNU34": 0.9254332438369539,
+  "SNU43": 0.7410211808042566,
+  "SNU46": 0.996685242121445,
+  "SNU51": 0.7810997074718627
+ }
+}

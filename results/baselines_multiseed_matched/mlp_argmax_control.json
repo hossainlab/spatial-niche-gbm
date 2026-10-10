@@ -1,0 +1,24 @@
+{
+  "note": "Matched-protocol MLP (early stopping) on the fixed split, scored two ways. Isolates the scoring-rule effect for the current model; compare with the original 120-epoch no-early-stop MLP scored by argmax (Table S1: 0.4488).",
+  "per_seed": {
+    "42": {
+      "argmax_macro_f1": 0.5208988822526752,
+      "tuned_macro_f1": 0.5534926525384006,
+      "best_epoch": 45
+    },
+    "7": {
+      "argmax_macro_f1": 0.6144591619743879,
+      "tuned_macro_f1": 0.5948044109655675,
+      "best_epoch": 70
+    },
+    "123": {
+      "argmax_macro_f1": 0.5363080668329432,
+      "tuned_macro_f1": 0.5658969980453838,
+      "best_epoch": 42
+    }
+  },
+  "argmax_macro_f1_mean": 0.5572220370200021,
+  "argmax_macro_f1_std": 0.05016400200482584,
+  "tuned_macro_f1_mean": 0.5713980205164507,
+  "tuned_macro_f1_std": 0.021198143368147456
+}

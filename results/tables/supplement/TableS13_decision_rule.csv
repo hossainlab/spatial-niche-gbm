@@ -1,0 +1,8 @@
+model,pooled_macro_f1_tuned,pooled_macro_f1_argmax,tuned_minus_argmax
+Logistic,0.691141,0.703931,-0.01279
+MLP,0.654744,0.661211,-0.006467
+MLP + neighbors,0.636741,0.614647,0.022093
+GraphSAGE,0.65213,0.632843,0.019287
+GAT,0.648512,0.61411,0.034402
+Logistic - GraphSAGE,0.039011,0.071088,-0.032077
+MLP - GraphSAGE,0.002614,0.028368,-0.025754

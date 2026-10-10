@@ -1,0 +1,32 @@
+{
+ "sage": {
+  "pooled_orig": [
+   0.6521298522945499,
+   0.017887533317696824
+  ],
+  "pooled_hex": [
+   0.6512069627816827,
+   0.027292314242331552
+  ],
+  "per_patient_hex_minus_orig": 0.0032246561506881883,
+  "wilcoxon_p_hex_vs_orig": 0.9697265625,
+  "logistic_minus_hex_pooled": 0.0399340602595214,
+  "logistic_wins_vs_hex": 11,
+  "wilcoxon_p_logistic_vs_hex": 0.00244140625
+ },
+ "gat": {
+  "pooled_orig": [
+   0.6485119930174083,
+   0.018008387910712305
+  ],
+  "pooled_hex": [
+   0.6114736134653528,
+   0.0077119374518321085
+  ],
+  "per_patient_hex_minus_orig": -0.02157862337588431,
+  "wilcoxon_p_hex_vs_orig": 0.146484375,
+  "logistic_minus_hex_pooled": 0.07966740957585128,
+  "logistic_wins_vs_hex": 12,
+  "wilcoxon_p_logistic_vs_hex": 0.000732421875
+ }
+}

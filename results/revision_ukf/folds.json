@@ -1,0 +1,470 @@
+{
+ "UKF241": {
+  "train": [
+   "UKF242",
+   "UKF243",
+   "UKF248",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF304"
+  ],
+  "val": [
+   "UKF313",
+   "UKF334"
+  ],
+  "test": [
+   "UKF241"
+  ]
+ },
+ "UKF242": {
+  "train": [
+   "UKF241",
+   "UKF243",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF260",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF248",
+   "UKF259"
+  ],
+  "test": [
+   "UKF242"
+  ]
+ },
+ "UKF243": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF248",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF266",
+   "UKF269",
+   "UKF296",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF265",
+   "UKF275"
+  ],
+  "test": [
+   "UKF243"
+  ]
+ },
+ "UKF248": {
+  "train": [
+   "UKF241",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF242",
+   "UKF243"
+  ],
+  "test": [
+   "UKF248"
+  ]
+ },
+ "UKF251": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF243",
+   "UKF248",
+   "UKF256",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF275",
+   "UKF296",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF255",
+   "UKF269"
+  ],
+  "test": [
+   "UKF251"
+  ]
+ },
+ "UKF255": {
+  "train": [
+   "UKF242",
+   "UKF243",
+   "UKF248",
+   "UKF251",
+   "UKF256",
+   "UKF259",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF241",
+   "UKF260"
+  ],
+  "test": [
+   "UKF255"
+  ]
+ },
+ "UKF256": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF243",
+   "UKF255",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF248",
+   "UKF251"
+  ],
+  "test": [
+   "UKF256"
+  ]
+ },
+ "UKF259": {
+  "train": [
+   "UKF241",
+   "UKF243",
+   "UKF248",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF260",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF242",
+   "UKF304"
+  ],
+  "test": [
+   "UKF259"
+  ]
+ },
+ "UKF260": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF248",
+   "UKF251",
+   "UKF255",
+   "UKF259",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF243",
+   "UKF256"
+  ],
+  "test": [
+   "UKF260"
+  ]
+ },
+ "UKF262": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF243",
+   "UKF248",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF259",
+   "UKF260",
+   "UKF265",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF304"
+  ],
+  "val": [
+   "UKF313",
+   "UKF334"
+  ],
+  "test": [
+   "UKF262"
+  ]
+ },
+ "UKF265": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF243",
+   "UKF248",
+   "UKF251",
+   "UKF256",
+   "UKF260",
+   "UKF262",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF255",
+   "UKF259"
+  ],
+  "test": [
+   "UKF265"
+  ]
+ },
+ "UKF266": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF243",
+   "UKF248",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF269",
+   "UKF296",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF265",
+   "UKF275"
+  ],
+  "test": [
+   "UKF266"
+  ]
+ },
+ "UKF269": {
+  "train": [
+   "UKF242",
+   "UKF243",
+   "UKF248",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF259",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF275",
+   "UKF296",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF241",
+   "UKF260"
+  ],
+  "test": [
+   "UKF269"
+  ]
+ },
+ "UKF275": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF243",
+   "UKF248",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF296",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF269",
+   "UKF304"
+  ],
+  "test": [
+   "UKF275"
+  ]
+ },
+ "UKF296": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF243",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF265",
+   "UKF269",
+   "UKF275",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF248",
+   "UKF266"
+  ],
+  "test": [
+   "UKF296"
+  ]
+ },
+ "UKF304": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF243",
+   "UKF248",
+   "UKF255",
+   "UKF256",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF313",
+   "UKF334"
+  ],
+  "val": [
+   "UKF251",
+   "UKF265"
+  ],
+  "test": [
+   "UKF304"
+  ]
+ },
+ "UKF313": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF248",
+   "UKF251",
+   "UKF255",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF304",
+   "UKF334"
+  ],
+  "val": [
+   "UKF243",
+   "UKF256"
+  ],
+  "test": [
+   "UKF313"
+  ]
+ },
+ "UKF334": {
+  "train": [
+   "UKF241",
+   "UKF242",
+   "UKF243",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF304",
+   "UKF313"
+  ],
+  "val": [
+   "UKF248",
+   "UKF296"
+  ],
+  "test": [
+   "UKF334"
+  ]
+ }
+}

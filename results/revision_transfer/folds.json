@@ -1,0 +1,41 @@
+{
+ "SNUH_to_UKF": {
+  "train": [
+   "SNU16",
+   "SNU17",
+   "SNU18",
+   "SNU23",
+   "SNU24",
+   "SNU25",
+   "SNU27",
+   "SNU34",
+   "SNU43",
+   "SNU46",
+   "SNU51"
+  ],
+  "val": [
+   "SNU21",
+   "SNU33"
+  ],
+  "test": [
+   "UKF241",
+   "UKF242",
+   "UKF243",
+   "UKF248",
+   "UKF251",
+   "UKF255",
+   "UKF256",
+   "UKF259",
+   "UKF260",
+   "UKF262",
+   "UKF265",
+   "UKF266",
+   "UKF269",
+   "UKF275",
+   "UKF296",
+   "UKF304",
+   "UKF313",
+   "UKF334"
+  ]
+ }
+}

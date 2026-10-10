@@ -1,0 +1,51 @@
+{
+  "split": "split5",
+  "seed": 42,
+  "model": "mlp",
+  "train_patients": [
+    "SNU16",
+    "SNU21",
+    "SNU23",
+    "SNU27",
+    "SNU34",
+    "SNU43",
+    "SNU46",
+    "SNU51"
+  ],
+  "val_patients": [
+    "SNU17",
+    "SNU18"
+  ],
+  "test_patients": [
+    "SNU24",
+    "SNU25",
+    "SNU33"
+  ],
+  "best_epoch": 6,
+  "best_val_macro_f1": 0.6810445461365123,
+  "test": {
+    "macro_f1": 0.48149677548389036,
+    "weighted_f1": 0.8079737765556395,
+    "accuracy": 0.8171370282216933,
+    "thresholds": [
+      0.125,
+      0.42500001192092896,
+      0.5,
+      0.3499999940395355
+    ],
+    "auroc_immune_cold": 0.9183158456447188,
+    "auprc_immune_cold": 0.9448322518254937,
+    "f1_immune_cold": 0.8351689147382749,
+    "auroc_immune_hot": 0.9751327163358614,
+    "auprc_immune_hot": 0.5628560860859343,
+    "f1_immune_hot": 0.26291079812206575,
+    "auroc_normal": 0.9339076137360471,
+    "auprc_normal": 0.8770033609342434,
+    "f1_normal": 0.8203602192638998,
+    "auroc_necrotic": 0.7394186851211074,
+    "auprc_necrotic": 0.0647106112013732,
+    "f1_necrotic": 0.007547169811320755,
+    "mes_auroc": 0.8131230042380948,
+    "mes_pearson": 0.4138433918999646
+  }
+}

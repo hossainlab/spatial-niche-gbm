@@ -1,0 +1,100 @@
+section,quantity,published,recomputed,agrees,source
+Methods,rule-derived niche labels reproduce stored labels,1,1,True,configs/labels.yaml + data/raw/snuh/meta.tsv
+Methods,rule-derived MES target reproduces stored,1,1,True,configs/labels.yaml
+Section 2.1,labeled spots,7.57e+04,7.57e+04,True,data/preprocessed/*_spot_labels.csv
+Section 2.1,total spots,1.005e+05,1.005e+05,True,data/preprocessed/*_spot_labels.csv
+Methods,fraction of 6-NN edges joining non-adjacent spots,0.24,0.2441,True,data/preprocessed/*_coords.npy
+Methods,"of those, fraction of all edges in the second ring",0.2441,0.242,True,data/preprocessed/*_coords.npy
+Methods,graphsage parameter count,1.752e+06,1.752e+06,True,src/deepgraph_gbm/models
+Methods,gat parameter count,9.859e+05,9.859e+05,True,src/deepgraph_gbm/models
+Table 2,"pooled LOPO macro-F1, logistic",0.691,0.6911,True,results/revision/preds
+Table 2,"pooled LOPO macro-F1, mlp",0.655,0.6547,True,results/revision/preds
+Table 2,"pooled LOPO macro-F1, mlpnbr",0.637,0.6367,True,results/revision/preds
+Table 2,"pooled LOPO macro-F1, sage",0.652,0.6521,True,results/revision/preds
+Table 2,"pooled LOPO macro-F1, gat",0.649,0.6485,True,results/revision/preds
+Table 2,pooled AUROC logistic / cold,0.82,0.8209,True,results/revision/preds
+Table 2,pooled AUROC logistic / hot,0.97,0.9678,True,results/revision/preds
+Table 2,pooled AUROC logistic / normal,0.9,0.8956,True,results/revision/preds
+Table 2,pooled AUROC logistic / necrotic,0.96,0.9573,True,results/revision/preds
+Table 2,pooled AUROC mlp / cold,0.8,0.8034,True,results/revision/preds
+Table 2,pooled AUROC mlp / hot,0.89,0.8923,True,results/revision/preds
+Table 2,pooled AUROC mlp / normal,0.86,0.8612,True,results/revision/preds
+Table 2,pooled AUROC mlp / necrotic,0.91,0.9119,True,results/revision/preds
+Table 2,pooled AUROC mlpnbr / cold,0.74,0.7405,True,results/revision/preds
+Table 2,pooled AUROC mlpnbr / hot,0.93,0.9299,True,results/revision/preds
+Table 2,pooled AUROC mlpnbr / normal,0.79,0.7857,True,results/revision/preds
+Table 2,pooled AUROC mlpnbr / necrotic,0.92,0.9153,True,results/revision/preds
+Table 2,pooled AUROC sage / cold,0.77,0.7687,True,results/revision/preds
+Table 2,pooled AUROC sage / hot,0.92,0.916,True,results/revision/preds
+Table 2,pooled AUROC sage / normal,0.83,0.8278,True,results/revision/preds
+Table 2,pooled AUROC sage / necrotic,0.92,0.9235,True,results/revision/preds
+Table 2,pooled AUROC gat / cold,0.75,0.746,True,results/revision/preds
+Table 2,pooled AUROC gat / hot,0.9,0.8973,True,results/revision/preds
+Table 2,pooled AUROC gat / normal,0.8,0.8029,True,results/revision/preds
+Table 2,pooled AUROC gat / necrotic,0.92,0.9178,True,results/revision/preds
+Table 2,logistic vs GraphSAGE: patients won,12,12,True,results/revision/preds
+Table 2,logistic vs GraphSAGE: Wilcoxon p,0.0007,0.0007324,True,results/revision/preds
+Table 2,mlp vs GraphSAGE: patients won,9,9,True,results/revision/preds
+Table 2,mlp vs GraphSAGE: Wilcoxon p,0.048,0.04785,True,results/revision/preds
+Table 2,mlpnbr vs GraphSAGE: patients won,8,8,True,results/revision/preds
+Table 2,mlpnbr vs GraphSAGE: Wilcoxon p,0.27,0.2734,True,results/revision/preds
+Table 2,gat vs GraphSAGE: patients won,5,5,True,results/revision/preds
+Table 2,gat vs GraphSAGE: Wilcoxon p,0.34,0.3396,True,results/revision/preds
+Table 2,logistic - GraphSAGE pooled difference,0.039,0.03901,True,results/revision/preds
+Table 2,bootstrap CI lower,0.009,0.00859,True,results/revision/preds
+Table 2,bootstrap CI upper,0.076,0.0756,True,results/revision/preds
+Section 2.5,"edge homophily, overall",0.8,0.8037,True,recomputed from coords + labels
+Section 2.5,edge homophily vs stored,0.8036,0.8037,True,label_homophily.json
+Section 2.5,homophily immune_cold (per-spot mean),0.8163,0.8165,True,recomputed
+Section 2.5,chance homophily immune_cold,0.672,0.6774,True,recomputed (one shuffle)
+Section 2.5,homophily immune_hot (per-spot mean),0.6652,0.6662,True,recomputed
+Section 2.5,chance homophily immune_hot,0.4317,0.4321,True,recomputed (one shuffle)
+Section 2.5,homophily normal (per-spot mean),0.8587,0.8588,True,recomputed
+Section 2.5,chance homophily normal,0.7418,0.7537,True,recomputed (one shuffle)
+Section 2.5,homophily necrotic (per-spot mean),0.7262,0.7263,True,recomputed
+Section 2.5,chance homophily necrotic,0.4975,0.5063,True,recomputed (one shuffle)
+Section 2.5,GraphSAGE ablation min,0.382,0.3823,True,revision_summary.json
+Section 2.5,GraphSAGE ablation max,0.425,0.4251,True,revision_summary.json
+Section 2.5,MLP+neighbors ablation min,0.383,0.3827,True,revision_summary.json
+Section 2.5,MLP+neighbors ablation max,0.425,0.4252,True,revision_summary.json
+Section 2.5,one-layer MLP,0.46,0.4596,True,revision_summary.json
+Section 2.5,two-layer MLP,0.424,0.4244,True,revision_summary.json
+Section 2.5,three-layer MLP,0.419,0.4186,True,revision_summary.json
+Section 2.5,logistic at default regularization,0.448,0.4476,True,revision_summary.json
+Section 2.5,GraphSAGE before marker removal,0.404,0.4045,True,revision_summary.json
+Section 2.5,GraphSAGE after removing 100 genes,0.34,0.3399,True,revision_summary.json
+Section 2.5,logistic after removing 500 genes,0.293,0.2935,True,revision_summary.json
+Section 2.5,MLP after removing 500 genes,0.253,0.2535,True,revision_summary.json
+Section 2.5,MLP+neighbors after removing 500,0.271,0.2712,True,revision_summary.json
+Section 2.5,GraphSAGE after removing 500 genes,0.258,0.2578,True,revision_summary.json
+Section 2.5,"GraphSAGE folds with k in {12,18}",13,13,True,chosen_configs
+Section 2.5,GraphSAGE folds with 2 or 3 layers,12,12,True,chosen_configs
+Section 2.5,logistic folds with C <= 0.003,12,12,True,chosen_configs
+Section 2.5,exact-hex GraphSAGE pooled,0.651,0.6512,True,hex_sensitivity.json
+Section 2.5,exact-hex GAT pooled,0.611,0.6115,True,hex_sensitivity.json
+Section 2.8 (E1),"UKF within-cohort macro-F1, logistic",0.419,0.4194,True,histology_summary.json
+Section 2.8 (E1),"UKF within-cohort macro-F1, sage",0.346,0.3463,True,histology_summary.json
+Section 2.8 (E1),"UKF within-cohort macro-F1, mlpnbr2",0.346,0.3457,True,histology_summary.json
+Section 2.8 (E1),"UKF within-cohort macro-F1, mlp",0.336,0.3361,True,histology_summary.json
+Section 2.8 (E1),"UKF within-cohort macro-F1, mlpnbr",0.311,0.3108,True,histology_summary.json
+Section 2.8 (E1),"UKF within-cohort macro-F1, gat",0.291,0.2906,True,histology_summary.json
+Section 2.8 (E2),"UKF transfer macro-F1, sage",0.395,0.3946,True,histology_summary.json
+Section 2.8 (E2),"UKF transfer macro-F1, mlp",0.38,0.3798,True,histology_summary.json
+Section 2.8 (E2),"UKF transfer macro-F1, mlpnbr",0.377,0.3774,True,histology_summary.json
+Section 2.8 (E2),"UKF transfer macro-F1, logistic",0.352,0.3521,True,histology_summary.json
+Section 2.8 (E2),"UKF transfer macro-F1, mlpnbr2",0.315,0.3153,True,histology_summary.json
+Section 2.8 (E2),"UKF transfer macro-F1, gat",0.315,0.3146,True,histology_summary.json
+Table 1,"fixed-split macro-F1, GraphSAGE",0.489,0.489,True,Table1_model_comparison.json
+Table 1,"fixed-split macro-F1, MLP",0.578,0.5783,True,Table1_model_comparison.json
+Table 1,"fixed-split macro-F1, Logistic",0.554,0.5537,True,Table1_model_comparison.json
+Section 2.7,external predicted immune-hot fraction,0.778,0.7778,True,greenwald_summary.json
+Section 2.7,external predicted necrotic fraction,0.2,0.2,True,greenwald_summary.json
+Section 2.7,external predicted normal fraction,0.014,0.0144,True,greenwald_summary.json
+Section 2.7,external predicted immune-cold fraction,0.008,0.007808,True,greenwald_summary.json
+Section 2.7,external samples with <1% immune-cold,12,12,True,greenwald_summary.json
+Section 2.7,"external MES r, mean",0.21,0.208,True,greenwald_summary.json
+Section 2.7,"external MES r, median",0.15,0.1516,True,greenwald_summary.json
+Section 2.7,external spots,2.549e+04,2.549e+04,True,greenwald_summary.json
+Table 3,Cox HR per SD,1.12,1.121,True,Table3_survival_results.json
+Table 3,age positive control HR per SD,1.55,1.554,True,Table3_survival_results.json
+Table 3,smallest detectable HR per SD,1.28,1.276,True,Table3_survival_results.json

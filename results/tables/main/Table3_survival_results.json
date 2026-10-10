@@ -1,20 +1,59 @@
 {
   "n": 166,
+  "n_patients": 165,
   "events": 132,
+  "score_sd": 0.9783,
+  "age_sd": 14.3425,
   "cox_univariate": {
-    "HR": 1.1239824248472983,
-    "p": 0.25007744413174204,
+    "HR": 1.124,
+    "p": 0.2501,
     "ci": [
-      0.921003676406387,
-      1.3716953837740962
+      0.921,
+      1.372
     ]
   },
-  "c_index": 0.5192184789555373,
-  "cox_age_adjusted": {
-    "HR": 1.025356473543094,
-    "p": 0.8130737588247618
+  "cox_univariate_per_sd": {
+    "HR": 1.121,
+    "p": 0.2501,
+    "ci": [
+      0.923,
+      1.362
+    ]
   },
-  "km_logrank_p": 0.41881969839945177,
+  "cox_age_adjusted_per_sd": {
+    "HR": 1.025,
+    "p": 0.8131,
+    "ci": [
+      0.836,
+      1.256
+    ]
+  },
+  "positive_control_age_per_sd": {
+    "HR": 1.554,
+    "p": 0.0,
+    "ci": [
+      1.279,
+      1.888
+    ]
+  },
+  "c_index": 0.5192,
+  "km_logrank_p": 0.4188,
   "km_median_os_high": 424.0,
-  "km_median_os_low": 444.0
+  "km_median_os_low": 444.0,
+  "km_n_high": 83,
+  "km_n_low": 83,
+  "min_detectable_HR_per_sd_80pct_power": 1.276,
+  "deduplicated_one_aliquot_per_patient": {
+    "n": 165,
+    "events": 131,
+    "cox_univariate_per_sd": {
+      "HR": 1.122,
+      "p": 0.2467,
+      "ci": [
+        0.923,
+        1.364
+      ]
+    },
+    "km_logrank_p": 0.334
+  }
 }

@@ -1,0 +1,36 @@
+quantity,value,source,present_in_manuscript
+"tuning-block immune-hot support, splits 0-5","15, 2{,}997, 7, 10, 1 and 3{,}705",TableS10_split_tuning_support.csv,True
+split 4 necrotic tuning support,19,TableS10_split_tuning_support.csv,True
+Logistic - GraphSAGE: four-class diff,$0.086$,TableS11_split_contrasts_restricted.csv,True
+Logistic - GraphSAGE: three-class diff,$0.070$,TableS11_split_contrasts_restricted.csv,True
+MLP - GraphSAGE: four-class diff,$0.040$,TableS11_split_contrasts_restricted.csv,True
+MLP - GraphSAGE: three-class diff,$0.047$,TableS11_split_contrasts_restricted.csv,True
+"logistic vs GraphSAGE, Holm-adjusted p (no floor)",0.003,TableS12_lopo_support_floor.csv,True
+"logistic vs GraphSAGE at a 50-spot floor, wins",11 of 13,TableS12_lopo_support_floor.csv,True
+"logistic vs GraphSAGE at a 50-spot floor, p",0.017,TableS12_lopo_support_floor.csv,True
+"MLP vs GraphSAGE at a 50-spot floor, p",0.41,TableS12_lopo_support_floor.csv,True
+"logistic vs GraphSAGE at a 200-spot floor, p",0.068,TableS12_lopo_support_floor.csv,True
+Logistic: pooled LOPO macro-F1 under argmax,0.704,TableS13_decision_rule.csv,True
+MLP: pooled LOPO macro-F1 under argmax,0.661,TableS13_decision_rule.csv,True
+GraphSAGE: pooled LOPO macro-F1 under argmax,0.633,TableS13_decision_rule.csv,True
+MLP + neighbors: pooled LOPO macro-F1 under argmax,0.615,TableS13_decision_rule.csv,True
+GAT: pooled LOPO macro-F1 under argmax,0.614,TableS13_decision_rule.csv,True
+logistic - GraphSAGE gap under argmax,$0.071$,TableS13_decision_rule.csv,True
+MLP - GraphSAGE gap under argmax,$0.028$,TableS13_decision_rule.csv,True
+Cox HR per SD,1.12,Table3_survival_results.json,True
+"Cox HR per SD, CI",0.92--1.36,Table3_survival_results.json,True
+age positive control HR per SD,1.55,Table3_survival_results.json,True
+age positive control CI,1.28--1.89,Table3_survival_results.json,True
+smallest detectable HR per SD,1.28,Table3_survival_results.json,True
+"slide head Pearson r, seed 7",0.40,slide_risk_head_eval.csv,True
+"slide head Spearman rho, seed 42",-0.4,slide_risk_head_eval.csv,True
+"slide head Pearson r, seed 42",-0.80,slide_risk_head_eval.csv,True
+"slide head Pearson r, seed 123",0.08,slide_risk_head_eval.csv,True
+UKF rows in the released annotation table,"68{,}015",TableS9_ukf_pathologist_annotations.csv,True
+UKF annotated spots,"25{,}374",TableS9_ukf_pathologist_annotations.csv,True
+UKF sections,23,TableS9_ukf_pathologist_annotations.csv,True
+SNU25 immune-hot spots,1 (one),data/preprocessed/*_spot_labels.csv,True
+SNU16 immune-hot spots,8 (eight),data/preprocessed/*_spot_labels.csv,True
+SNU24 immune-hot spots,6 (six),data/preprocessed/*_spot_labels.csv,True
+SNU51 immune-hot spots,9 (nine),data/preprocessed/*_spot_labels.csv,True
+SNU46 fraction normal,99.8\%,data/preprocessed/*_spot_labels.csv,True
