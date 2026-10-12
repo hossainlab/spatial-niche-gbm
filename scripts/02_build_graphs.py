@@ -27,12 +27,12 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from deepgraph_gbm.data.dataset import build_graph_data
-from deepgraph_gbm.data.labels import assign_niche_labels, mes_target
-from deepgraph_gbm.training.survival import slide_pseudo_risk
-from deepgraph_gbm.utils import load_config, load_label_rules, set_seed, setup_logging
+from spatial_niche_gbm.data.dataset import build_graph_data
+from spatial_niche_gbm.data.labels import assign_niche_labels, mes_target
+from spatial_niche_gbm.training.survival import slide_pseudo_risk
+from spatial_niche_gbm.utils import load_config, load_label_rules, set_seed, setup_logging
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 
 def make_patient_splits(meta_gbm: pd.DataFrame, seed: int = 42) -> dict:

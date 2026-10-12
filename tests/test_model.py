@@ -2,7 +2,7 @@
 
 import torch
 
-from deepgraph_gbm.models.multitask import DeepGraphGBM, multitask_loss
+from spatial_niche_gbm.models.multitask import MultiTaskGNN, multitask_loss
 
 
 def _random_graph(n=100, f=50, k=6):
@@ -13,7 +13,7 @@ def _random_graph(n=100, f=50, k=6):
 
 
 def test_forward_shapes():
-    model = DeepGraphGBM(in_dim=50, hidden_dims=[32, 32, 16])
+    model = MultiTaskGNN(in_dim=50, hidden_dims=[32, 32, 16])
     x, ei = _random_graph()
     out = model(x, ei)
     assert out["niche_logits"].shape == (100, 4)
@@ -23,7 +23,7 @@ def test_forward_shapes():
 
 
 def test_loss_finite():
-    model = DeepGraphGBM(in_dim=50, hidden_dims=[32, 32, 16])
+    model = MultiTaskGNN(in_dim=50, hidden_dims=[32, 32, 16])
     x, ei = _random_graph()
     out = model(x, ei)
     niche_y = torch.randint(0, 4, (100,))
@@ -37,7 +37,7 @@ def test_loss_finite():
 
 
 def test_gat_forward_shapes():
-    model = DeepGraphGBM(in_dim=50, hidden_dims=[32, 32, 16], encoder_type="gat", gat_heads=4)
+    model = MultiTaskGNN(in_dim=50, hidden_dims=[32, 32, 16], encoder_type="gat", gat_heads=4)
     x, ei = _random_graph()
     out = model(x, ei)
     assert out["niche_logits"].shape == (100, 4)
@@ -48,7 +48,7 @@ def test_gat_forward_shapes():
 
 def test_one_batch_overfit():
     torch.manual_seed(0)
-    model = DeepGraphGBM(in_dim=50, hidden_dims=[64, 64, 32], dropout=0.0)
+    model = MultiTaskGNN(in_dim=50, hidden_dims=[64, 64, 32], dropout=0.0)
     x, ei = _random_graph(n=60, f=50)
     niche_y = torch.randint(0, 4, (60,))
     mes_y = torch.rand(60)

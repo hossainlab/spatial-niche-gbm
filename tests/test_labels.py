@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 
-from deepgraph_gbm.data.labels import NICHE_CLASSES, assign_niche_labels, encode_niche, mes_target
+from spatial_niche_gbm.data.labels import NICHE_CLASSES, assign_niche_labels, encode_niche, mes_target
 
 
 @pytest.fixture()

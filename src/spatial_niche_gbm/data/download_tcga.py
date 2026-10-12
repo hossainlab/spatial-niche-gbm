@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pandas as pd
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 GDC_FILES = "https://api.gdc.cancer.gov/files"
 GDC_DATA = "https://api.gdc.cancer.gov/data"

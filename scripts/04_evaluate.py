@@ -16,11 +16,11 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from deepgraph_gbm.models.multitask import DeepGraphGBM
-from deepgraph_gbm.training.evaluate import NICHE_CLASSES, classification_metrics, mes_metrics, predict_graphs
-from deepgraph_gbm.utils import load_config, load_json, save_json, set_seed, setup_logging
+from spatial_niche_gbm.models.multitask import MultiTaskGNN
+from spatial_niche_gbm.training.evaluate import NICHE_CLASSES, classification_metrics, mes_metrics, predict_graphs
+from spatial_niche_gbm.utils import load_config, load_json, save_json, set_seed, setup_logging
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 
 def main():
@@ -39,7 +39,7 @@ def main():
     splits = load_json(cfg["data"]["splits_file"])
     test_data = [d for d in data_list if d.patient in splits["test"]]
 
-    model = DeepGraphGBM(
+    model = MultiTaskGNN(
         in_dim=data_list[0].x.shape[1],
         hidden_dims=cfg["model"]["hidden_dims"],
         dropout=cfg["model"]["dropout"],

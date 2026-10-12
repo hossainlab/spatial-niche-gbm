@@ -13,7 +13,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 # pseudo-risk weights per niche (biology: cold/necrotic -> worse, hot/normal -> better)
 RISK_WEIGHTS = {"immune_cold": 1.0, "necrotic": 0.8, "immune_hot": -0.6, "normal": -0.8}

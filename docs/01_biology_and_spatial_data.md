@@ -36,7 +36,7 @@ This project predicts four niche classes for every spot of the SNUH cohort:
 Rules are applied in priority order (necrotic → immune-hot → normal → immune-cold; first match
 wins). Spots matching no rule, including vascular features, are labelled `exclude` and masked from
 training and scoring. The rules live in [`configs/labels.yaml`](../configs/labels.yaml) and
-[`src/deepgraph_gbm/data/labels.py`](../src/deepgraph_gbm/data/labels.py), and the unit tests in
+[`src/spatial_niche_gbm/data/labels.py`](../src/spatial_niche_gbm/data/labels.py), and the unit tests in
 `tests/test_labels.py` check them.
 
 Of 100,488 SNUH spots, **75,697 are labelled**; about 25% are excluded. The class balance differs

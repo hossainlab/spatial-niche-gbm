@@ -1,6 +1,6 @@
-# DeepGraph-GBM documentation
+# spatial-niche-gbm documentation
 
-DeepGraph-GBM is a **controlled comparison of graph-based and graph-free models**. It asks whether
+spatial-niche-gbm is a **controlled comparison of graph-based and graph-free models**. It asks whether
 spatial graph neural networks improve supervised niche prediction in glioblastoma Visium data over
 matched graph-free models. **They do
 not.** These chapters explain the biology, the design and the results for readers without a
@@ -22,7 +22,7 @@ confusion when reading older material.
 | **07** | [References](07_references_and_citations.md) | Verified references from the manuscript bibliography |
 | — | [WORKFLOW.md](WORKFLOW.md) | Script-by-script reproduction, result-file layout, and the conventions that silently break re-analysis |
 
-Every number in these chapters comes from manuscript v7.1 (`preprint/deepgraph-gbm.tex`).
+Every number in these chapters comes from manuscript v7.1 (`preprint/spatial-niche-gbm.tex`).
 `scripts/28_verify_manuscript_numbers.py` and `scripts/29_code_audit_checks.py` re-derive them
 from `results/`.
 

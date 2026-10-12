@@ -1,6 +1,6 @@
 # Reproduction workflow
 
-This guide reproduces every table and figure of manuscript v7.1 (`preprint/deepgraph-gbm.tex`).
+This guide reproduces every table and figure of manuscript v7.1 (`preprint/spatial-niche-gbm.tex`).
 For *what* the analyses mean, read the chapters in this folder. This page covers *how* to run them.
 
 There are two ways to reproduce the results.
@@ -225,7 +225,7 @@ Figure 10 (Kaplan–Meier) is drawn by step B6 from `TableS4_tcga_scores_clinica
 ```bash
 PYTHONPATH=src python scripts/28_verify_manuscript_numbers.py
 PYTHONPATH=src python scripts/29_code_audit_checks.py
-cd preprint && tectonic deepgraph-gbm.tex     # or: pdflatex, bibtex, pdflatex, pdflatex
+cd preprint && tectonic spatial-niche-gbm.tex     # or: pdflatex, bibtex, pdflatex, pdflatex
 ```
 
 Published figures live in `preprint/figures/`. Steps B6, C, D3 and E4 write intermediate renders to

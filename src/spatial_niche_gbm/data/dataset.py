@@ -14,7 +14,7 @@ from torch_geometric.data import Data, InMemoryDataset
 from ..data.graph import build_knn_graph
 from ..data.labels import encode_niche, mes_target
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 
 class VisiumGraphDataset(InMemoryDataset):

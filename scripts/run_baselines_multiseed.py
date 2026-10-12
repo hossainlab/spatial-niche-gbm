@@ -2,7 +2,7 @@
 scored identically to the GNN: per-class decision thresholds tuned on VALIDATION
 patients, then applied to TEST patients (no test-label leakage).
 
-This mirrors deepgraph_gbm.training.evaluate.classification_metrics with
+This mirrors spatial_niche_gbm.training.evaluate.classification_metrics with
 thr=tune_thresholds(val) then applied to test, so baseline metrics are directly
 comparable to the GNN multi-seed summary in Table 1.
 
@@ -23,13 +23,13 @@ from sklearn.metrics import average_precision_score, f1_score, roc_auc_score
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from deepgraph_gbm.models.baselines import LogisticBaseline, MLPBaseline
-from deepgraph_gbm.models.multitask import multitask_loss
-from deepgraph_gbm.training.evaluate import NICHE_CLASSES, tune_thresholds, apply_thresholds
-from deepgraph_gbm.training.train import make_class_weights
-from deepgraph_gbm.utils import load_config, load_json, save_json, set_seed, setup_logging
+from spatial_niche_gbm.models.baselines import LogisticBaseline, MLPBaseline
+from spatial_niche_gbm.models.multitask import multitask_loss
+from spatial_niche_gbm.training.evaluate import NICHE_CLASSES, tune_thresholds, apply_thresholds
+from spatial_niche_gbm.training.train import make_class_weights
+from spatial_niche_gbm.utils import load_config, load_json, save_json, set_seed, setup_logging
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 
 def _stack(data_list):

@@ -32,14 +32,14 @@ layers with four attention heads and the same dimensions; 985,863 parameters. `G
 applies dropout to its attention coefficients, a mild extra regulariser that no other model has.
 The paper discloses this as limitation (ix).
 
-Code: [`src/deepgraph_gbm/models/encoder.py`](../src/deepgraph_gbm/models/encoder.py) and
-[`baselines.py`](../src/deepgraph_gbm/models/baselines.py). The LOPO benchmark builds its models
+Code: [`src/spatial_niche_gbm/models/encoder.py`](../src/spatial_niche_gbm/models/encoder.py) and
+[`baselines.py`](../src/spatial_niche_gbm/models/baselines.py). The LOPO benchmark builds its models
 in [`scripts/15_revision_benchmark.py`](../scripts/15_revision_benchmark.py).
 
 ## 3. Heads and the multi-task model
 
-The encoders feed task heads ([`heads.py`](../src/deepgraph_gbm/models/heads.py),
-[`multitask.py`](../src/deepgraph_gbm/models/multitask.py)):
+The encoders feed task heads ([`heads.py`](../src/spatial_niche_gbm/models/heads.py),
+[`multitask.py`](../src/spatial_niche_gbm/models/multitask.py)):
 
 1. a **niche classifier** (four logits);
 2. an **MES head** (sigmoid; binary mesenchymal-state target);

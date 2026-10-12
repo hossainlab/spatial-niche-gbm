@@ -198,3 +198,13 @@ metadata), `CITATION.cff`, `README.md` and `SUBMISSION.md`.
 a description of the benchmark rather than of a GNN method; `configs/default.yaml` documents that
 its `paths` block is informational. The notebooks were revised to the current results (see
 `notebooks/`).
+
+**Rename (v7.2).** The project, repository and package are renamed from DeepGraph-GBM /
+`deepgraph-gbm` / `deepgraph_gbm` to `spatial-niche-gbm` / `spatial_niche_gbm`, since the work
+is no longer presented as a GNN method. The model class `DeepGraphGBM` is now `MultiTaskGNN`, and
+the manuscript source is `preprint/spatial-niche-gbm.tex` (repository URL in the availability
+statement updated; two sentences that named "DeepGraph-GBM" as the contribution reworded).
+Saved checkpoints and graphs contain only state dicts and tensors, so they load unchanged.
+`uv.lock` was regenerated against the current `pyproject.toml`. The GitHub Actions CI workflow was
+removed. Audit records and archived versions keep the old name as historical documents.
+

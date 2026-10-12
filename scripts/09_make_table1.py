@@ -22,9 +22,9 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from deepgraph_gbm.utils import save_json, setup_logging
+from spatial_niche_gbm.utils import save_json, setup_logging
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 SEEDS = [42, 7, 123]
 METRICS = ["macro_f1", "weighted_f1", "accuracy",

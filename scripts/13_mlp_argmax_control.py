@@ -30,10 +30,10 @@ from sklearn.metrics import f1_score
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from deepgraph_gbm.utils import load_config, load_json, save_json, setup_logging
+from spatial_niche_gbm.utils import load_config, load_json, save_json, setup_logging
 from run_baselines_multiseed import _mlp_prob, _stack, _train_mlp
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 
 def main():
@@ -54,7 +54,7 @@ def main():
     Xva, yva, mva = _stack(val_data)
     Xte, yte, mte = _stack(test_data)
 
-    from deepgraph_gbm.training.evaluate import tune_thresholds, apply_thresholds
+    from spatial_niche_gbm.training.evaluate import tune_thresholds, apply_thresholds
 
     per_seed = {}
     for seed in cfg["evaluation"]["seeds"]:

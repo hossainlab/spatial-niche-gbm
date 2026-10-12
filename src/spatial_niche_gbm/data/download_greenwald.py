@@ -12,7 +12,7 @@ import tarfile
 import urllib.request
 from pathlib import Path
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 ZENODO_API = "https://zenodo.org/api/records/12624108"
 

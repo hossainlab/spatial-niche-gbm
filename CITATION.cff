@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software or its results, please cite it as below."
-title: "DeepGraph-GBM: comparing graph-based and graph-free models for spatial niche prediction in glioblastoma"
+title: "spatial-niche-gbm: comparing graph-based and graph-free models for spatial niche prediction in glioblastoma"
 abstract: >-
   Code, configurations, per-run metric records and manuscript for a controlled comparison
   testing whether spatial graph neural networks improve supervised niche prediction in
@@ -15,7 +15,7 @@ authors:
 version: 0.7.1
 date-released: 2026-10-10
 license: MIT
-repository-code: https://github.com/hossainlab/deepgraph-gbm
+repository-code: https://github.com/hossainlab/spatial-niche-gbm
 keywords:
   - glioblastoma
   - spatial transcriptomics

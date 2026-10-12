@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Download the public datasets for DeepGraph-GBM into data/raw (the location the
+# Download the public datasets for spatial-niche-gbm into data/raw (the location the
 # pipeline scripts expect). Usage: bash scripts/01_download_data.sh [data/raw]
 #
 # The UKF (Freiburg) neuropathologist-annotated cohort is not fetched here: download
@@ -10,12 +10,12 @@ set -euo pipefail
 DATA_DIR=${1:-data/raw}
 
 echo "=== SNUH 2026 GBM atlas (UCSC Cell Browser) ==="
-python -m deepgraph_gbm.data.download_snuh "$DATA_DIR/snuh"
+python -m spatial_niche_gbm.data.download_snuh "$DATA_DIR/snuh"
 
 echo "=== Greenwald et al. Cell 2024 (Zenodo) ==="
-python -m deepgraph_gbm.data.download_greenwald "$DATA_DIR/greenwald"
+python -m spatial_niche_gbm.data.download_greenwald "$DATA_DIR/greenwald"
 
 echo "=== TCGA-GBM expression + clinical (GDC) ==="
-python -m deepgraph_gbm.data.download_tcga "$DATA_DIR/tcga"
+python -m spatial_niche_gbm.data.download_tcga "$DATA_DIR/tcga"
 
 echo "All downloads complete under $DATA_DIR"

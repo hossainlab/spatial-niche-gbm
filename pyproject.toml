@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "deepgraph-gbm"
+name = "spatial-niche-gbm"
 version = "0.7.1"
 description = "Comparing graph-based and graph-free models for spatial niche prediction in glioblastoma Visium data"
 readme = "README.md"

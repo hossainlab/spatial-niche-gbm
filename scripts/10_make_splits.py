@@ -22,9 +22,9 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from deepgraph_gbm.utils import load_config, load_json, save_json, setup_logging
+from spatial_niche_gbm.utils import load_config, load_json, save_json, setup_logging
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 N_TEST, N_VAL = 3, 2
 GEN_SEEDS = [1001, 1002, 1003, 1004, 1005]  # splits 1-5; split 0 = original

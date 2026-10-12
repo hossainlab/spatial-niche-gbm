@@ -4,7 +4,7 @@ Each check recomputes or re-reads a value from `results/` (or from the per-spot
 label files) and asserts that the manuscript source contains exactly that value,
 formatted as the manuscript formats it.  Run after editing the .tex.
 
-Usage: python scripts/28_verify_manuscript_numbers.py [--tex preprint/deepgraph-gbm.tex]
+Usage: python scripts/28_verify_manuscript_numbers.py [--tex preprint/spatial-niche-gbm.tex]
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ CLASSES = ["immune_cold", "immune_hot", "normal", "necrotic"]
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--tex", default="preprint/deepgraph-gbm.tex")
+    ap.add_argument("--tex", default="preprint/spatial-niche-gbm.tex")
     ap.add_argument("--sup", default="results/tables/supplement")
     ap.add_argument("--main", default="results/tables/main")
     ap.add_argument("--log", default="results/tables/main/v7_number_verification.csv")

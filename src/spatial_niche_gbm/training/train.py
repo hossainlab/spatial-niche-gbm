@@ -10,9 +10,9 @@ import numpy as np
 import torch
 from sklearn.utils.class_weight import compute_class_weight
 
-from ..models.multitask import DeepGraphGBM, multitask_loss
+from ..models.multitask import MultiTaskGNN, multitask_loss
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 
 def make_class_weights(train_data: list, n_classes: int = 4, boost: dict | None = None) -> torch.Tensor:
@@ -30,7 +30,7 @@ def make_class_weights(train_data: list, n_classes: int = 4, boost: dict | None 
 
 
 def train_model(
-    model: DeepGraphGBM,
+    model: MultiTaskGNN,
     train_data: list,
     val_data: list,
     cfg: dict,

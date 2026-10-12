@@ -95,7 +95,8 @@ The paper's recommendation for spatial deep-learning papers:
 
 ## 5. How the project got here (read this if older material confused you)
 
-The repository started in August 2026 as **"DeepGraph-GBM", a multi-task GNN** proposed as a
+The repository started in August 2026 as **"DeepGraph-GBM", a multi-task GNN** (renamed
+`spatial-niche-gbm` in v7.2, with the package `spatial_niche_gbm`) proposed as a
 method. It had three heads: spot niche, mesenchymal (MES) state, and slide-level survival risk.
 The matched baselines added during revision showed that graph-free models did as well or better,
 so the project was reframed as the controlled comparison described above. In order:

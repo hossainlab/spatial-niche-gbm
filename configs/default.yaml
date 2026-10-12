@@ -1,4 +1,4 @@
-# DeepGraph-GBM default configuration
+# spatial-niche-gbm default configuration
 seed: 42
 
 # Informational only: every script takes its paths as command-line arguments

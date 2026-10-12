@@ -1,4 +1,4 @@
-# Niche label rules for DeepGraph-GBM.
+# Niche label rules for spatial-niche-gbm.
 # Labels are derived from the SNUH 2026 GBM atlas per-spot annotations:
 #   - AF: anatomical feature (Ivy GAP-style: LE_GM/LE_WM leading edge, CT cellular tumor,
 #         IT infiltrating tumor, PAN pseudopalisading around necrosis, PNZ perinecrotic zone,

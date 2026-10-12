@@ -7,7 +7,7 @@ Each Visium section becomes one graph:
 - **edges** join each spot to its k nearest spots by coordinate.
 
 Edges are symmetrised, so a spot can end up with more than k neighbours. The builder is
-[`src/deepgraph_gbm/data/graph.py`](../src/deepgraph_gbm/data/graph.py) (`build_knn_graph`), and
+[`src/spatial_niche_gbm/data/graph.py`](../src/spatial_niche_gbm/data/graph.py) (`build_knn_graph`), and
 the default is k = 6, because an interior spot on a hexagonal grid has six immediate neighbours.
 
 Gaussian edge weights exp(−d² / 2·median(d)²) are computed and stored, **but neither encoder uses

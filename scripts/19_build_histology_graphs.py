@@ -41,7 +41,7 @@ import torch
 from torch_geometric.data import Data
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from deepgraph_gbm.data.graph import build_knn_graph  # noqa: E402
+from spatial_niche_gbm.data.graph import build_knn_graph  # noqa: E402
 
 CLASSES = ["cellular", "infiltrative", "necrotic", "mvp", "normal"]
 SNUH_AF_MAP = {"CT": "cellular", "IT": "infiltrative", "PAN": "necrotic", "PNZ": "necrotic",

@@ -1,4 +1,4 @@
-"""Train DeepGraph-GBM.
+"""Train spatial-niche-gbm.
 
 Usage: python scripts/03_train.py --config configs/default.yaml --data <processed_dir>
 """
@@ -16,12 +16,12 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from deepgraph_gbm.models.multitask import DeepGraphGBM
-from deepgraph_gbm.training.evaluate import evaluate_graphs
-from deepgraph_gbm.training.train import train_model
-from deepgraph_gbm.utils import load_config, load_json, save_json, set_seed, setup_logging
+from spatial_niche_gbm.models.multitask import MultiTaskGNN
+from spatial_niche_gbm.training.evaluate import evaluate_graphs
+from spatial_niche_gbm.training.train import train_model
+from spatial_niche_gbm.utils import load_config, load_json, save_json, set_seed, setup_logging
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 
 def main():
@@ -53,7 +53,7 @@ def main():
     )
 
     in_dim = data_list[0].x.shape[1]
-    model = DeepGraphGBM(
+    model = MultiTaskGNN(
         in_dim=in_dim,
         hidden_dims=cfg["model"]["hidden_dims"],
         dropout=cfg["model"]["dropout"],

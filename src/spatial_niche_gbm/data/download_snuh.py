@@ -12,7 +12,7 @@ import logging
 import urllib.request
 from pathlib import Path
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 BASE = "https://cells.ucsc.edu/multiomic-gbm/spatial"
 FILES = [

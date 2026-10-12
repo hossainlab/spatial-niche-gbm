@@ -23,12 +23,12 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from deepgraph_gbm.data.graph import build_knn_graph
-from deepgraph_gbm.models.multitask import DeepGraphGBM
-from deepgraph_gbm.training.evaluate import NICHE_CLASSES
-from deepgraph_gbm.utils import load_config, save_json, set_seed, setup_logging
+from spatial_niche_gbm.data.graph import build_knn_graph
+from spatial_niche_gbm.models.multitask import MultiTaskGNN
+from spatial_niche_gbm.training.evaluate import NICHE_CLASSES
+from spatial_niche_gbm.utils import load_config, save_json, set_seed, setup_logging
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 # Neftel et al. 2019 MES1 + MES2 meta-module markers (subset robust in Visium)
 NEFTEL_MES = [
@@ -134,7 +134,7 @@ def main():
 
     hvg_genes = json.loads(Path(args.hvg).read_text())
 
-    model = DeepGraphGBM(
+    model = MultiTaskGNN(
         in_dim=len(hvg_genes),
         hidden_dims=cfg["model"]["hidden_dims"],
         dropout=cfg["model"]["dropout"],

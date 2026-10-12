@@ -31,7 +31,7 @@ and a DOI that the journal submission can reference.
    require it for the corresponding author. Add to the author block once you have the identifier.
 2. **Merge and push the repository.** The revision work (v6 through the v7.2 cleanup) is on the
    local branch `revision-v6`, which is ahead of `main` and `origin/main`; `origin` is
-   `https://github.com/hossainlab/deepgraph-gbm.git`, which matches the URL printed in the
+   `https://github.com/hossainlab/spatial-niche-gbm.git`, which matches the URL printed in the
    manuscript. Nothing is pushed yet — the data-availability statement is only true once it is,
    and readers will land on `main`, so merge before posting. The v7.2 cleanup stopped tracking
    `results/figures/` (intermediate renders), which reduces the tracked size; check the total

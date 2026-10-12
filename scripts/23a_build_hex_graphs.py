@@ -24,7 +24,7 @@ import numpy as np
 import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from deepgraph_gbm.data.graph import build_knn_graph  # noqa: E402
+from spatial_niche_gbm.data.graph import build_knn_graph  # noqa: E402
 
 HEX_SCALE = np.array([0.5, np.sqrt(3) / 2])
 

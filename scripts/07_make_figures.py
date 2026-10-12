@@ -1,4 +1,4 @@
-"""Render the full DeepGraph-GBM figure set into results/figures.
+"""Render the full spatial-niche-gbm figure set into results/figures.
 
 Figures (PNG + SVG, Liberation Sans, colorblind-safe):
   1. Niche spatial maps (true vs predicted) per test section
@@ -32,18 +32,18 @@ from sklearn.metrics import auc, confusion_matrix, roc_curve
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from deepgraph_gbm.interpret.spatial_maps import (
+from spatial_niche_gbm.interpret.spatial_maps import (
     NICHE_CLASSES,
     NICHE_COLORS,
     plot_embedding,
     plot_mes_map,
     plot_niche_map,
 )
-from deepgraph_gbm.models.multitask import DeepGraphGBM
-from deepgraph_gbm.training.evaluate import predict_graphs
-from deepgraph_gbm.utils import load_config, load_json, set_seed, setup_logging
+from spatial_niche_gbm.models.multitask import MultiTaskGNN
+from spatial_niche_gbm.training.evaluate import predict_graphs
+from spatial_niche_gbm.utils import load_config, load_json, set_seed, setup_logging
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 # publication style: no embedded titles, 300 dpi, editable SVG text, Liberation Sans
 matplotlib.rcParams.update({
@@ -197,7 +197,7 @@ def main():
     test_data = [d for d in data_list if d.patient in splits["test"]]
     log.info("test sections: %s", [d.section for d in test_data])
 
-    model = DeepGraphGBM(
+    model = MultiTaskGNN(
         in_dim=data_list[0].x.shape[1],
         hidden_dims=cfg["model"]["hidden_dims"],
         dropout=cfg["model"]["dropout"],

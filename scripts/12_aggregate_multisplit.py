@@ -27,9 +27,9 @@ import numpy as np
 from scipy import stats
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from deepgraph_gbm.utils import save_json, setup_logging
+from spatial_niche_gbm.utils import save_json, setup_logging
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 SPLITS = [f"split{i}" for i in range(6)]
 SEEDS = [42, 7, 123]

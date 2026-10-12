@@ -102,7 +102,7 @@ def lopo_folds(graphs, min_val_class=100) -> dict:
 
 
 def edges_for_k(coords: np.ndarray, k: int):
-    from deepgraph_gbm.data.graph import build_knn_graph
+    from spatial_niche_gbm.data.graph import build_knn_graph
     ei, _ = build_knn_graph(coords, k=k)
     return ei
 

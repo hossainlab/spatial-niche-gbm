@@ -1,4 +1,4 @@
-# DeepGraph-GBM
+# spatial-niche-gbm
 
 **Comparing graph-based and graph-free models for spatial niche prediction in glioblastoma
 Visium data.**
@@ -38,7 +38,7 @@ Leave-one-patient-out evaluation, 13 patients, 3 seeds:
 ## Getting started
 
 ```bash
-git clone https://github.com/hossainlab/deepgraph-gbm && cd deepgraph-gbm
+git clone https://github.com/hossainlab/spatial-niche-gbm && cd spatial-niche-gbm
 python -m venv .venv && .venv/bin/pip install -e ".[dev]"
 PYTHONPATH=src .venv/bin/pytest -q tests        # quick check, no data needed
 ```

@@ -9,7 +9,7 @@ from .encoder import GATEncoder, GraphSAGEEncoder
 from .heads import MESRegressor, NicheClassifier, SurvivalRiskHead
 
 
-class DeepGraphGBM(nn.Module):
+class MultiTaskGNN(nn.Module):
     def __init__(
         self,
         in_dim: int,

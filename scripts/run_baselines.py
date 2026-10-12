@@ -23,13 +23,13 @@ from sklearn.metrics import average_precision_score, f1_score, roc_auc_score
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from deepgraph_gbm.models.baselines import LogisticBaseline, MLPBaseline
-from deepgraph_gbm.models.multitask import multitask_loss
-from deepgraph_gbm.training.evaluate import NICHE_CLASSES, classification_metrics, mes_metrics
-from deepgraph_gbm.training.train import make_class_weights
-from deepgraph_gbm.utils import load_config, load_json, save_json, set_seed, setup_logging
+from spatial_niche_gbm.models.baselines import LogisticBaseline, MLPBaseline
+from spatial_niche_gbm.models.multitask import multitask_loss
+from spatial_niche_gbm.training.evaluate import NICHE_CLASSES, classification_metrics, mes_metrics
+from spatial_niche_gbm.training.train import make_class_weights
+from spatial_niche_gbm.utils import load_config, load_json, save_json, set_seed, setup_logging
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 
 def _stack(data_list):

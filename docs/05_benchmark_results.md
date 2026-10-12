@@ -1,6 +1,6 @@
 # Chapter 5: Benchmark results on the SNUH cohort
 
-All numbers in this chapter are those of manuscript v7.1 (`preprint/deepgraph-gbm.tex`).
+All numbers in this chapter are those of manuscript v7.1 (`preprint/spatial-niche-gbm.tex`).
 `scripts/28_verify_manuscript_numbers.py` and `scripts/29_code_audit_checks.py` re-derive them
 from `results/`.
 

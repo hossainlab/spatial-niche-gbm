@@ -3,7 +3,7 @@
 import numpy as np
 import torch
 
-from deepgraph_gbm.data.graph import build_knn_graph
+from spatial_niche_gbm.data.graph import build_knn_graph
 
 
 def _hex_grid(n_rows=10, n_cols=10, spacing=100.0):

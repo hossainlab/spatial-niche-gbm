@@ -11,7 +11,7 @@ import numpy as np
 import torch
 import yaml
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 
 def setup_logging(level: str = "INFO") -> None:

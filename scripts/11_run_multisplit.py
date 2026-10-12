@@ -26,14 +26,14 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from deepgraph_gbm.models.baselines import LogisticBaseline
-from deepgraph_gbm.models.multitask import DeepGraphGBM
-from deepgraph_gbm.training.evaluate import evaluate_graphs
-from deepgraph_gbm.training.train import train_model
-from deepgraph_gbm.utils import load_config, load_json, save_json, set_seed, setup_logging
+from spatial_niche_gbm.models.baselines import LogisticBaseline
+from spatial_niche_gbm.models.multitask import MultiTaskGNN
+from spatial_niche_gbm.training.evaluate import evaluate_graphs
+from spatial_niche_gbm.training.train import train_model
+from spatial_niche_gbm.utils import load_config, load_json, save_json, set_seed, setup_logging
 from run_baselines_multiseed import _metrics_tuned, _mlp_prob, _stack, _train_mlp
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 
 def main():
@@ -80,7 +80,7 @@ def main():
     if args.model == "gnn":
         encoder_type = args.encoder or cfg["model"].get("encoder", "graphsage")
         set_seed(args.seed)
-        model = DeepGraphGBM(in_dim=data_list[0].x.shape[1],
+        model = MultiTaskGNN(in_dim=data_list[0].x.shape[1],
                              hidden_dims=cfg["model"]["hidden_dims"],
                              dropout=cfg["model"]["dropout"], aggr=cfg["model"]["aggr"],
                              encoder_type=encoder_type)

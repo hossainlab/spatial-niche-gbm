@@ -5,8 +5,8 @@ Section 2.1,labeled spots,7.57e+04,7.57e+04,True,data/preprocessed/*_spot_labels
 Section 2.1,total spots,1.005e+05,1.005e+05,True,data/preprocessed/*_spot_labels.csv
 Methods,fraction of 6-NN edges joining non-adjacent spots,0.24,0.2441,True,data/preprocessed/*_coords.npy
 Methods,"of those, fraction of all edges in the second ring",0.2441,0.242,True,data/preprocessed/*_coords.npy
-Methods,graphsage parameter count,1.752e+06,1.752e+06,True,src/deepgraph_gbm/models
-Methods,gat parameter count,9.859e+05,9.859e+05,True,src/deepgraph_gbm/models
+Methods,graphsage parameter count,1.752e+06,1.752e+06,True,src/spatial_niche_gbm/models
+Methods,gat parameter count,9.859e+05,9.859e+05,True,src/spatial_niche_gbm/models
 Table 2,"pooled LOPO macro-F1, logistic",0.691,0.6911,True,results/revision/preds
 Table 2,"pooled LOPO macro-F1, mlp",0.655,0.6547,True,results/revision/preds
 Table 2,"pooled LOPO macro-F1, mlpnbr",0.637,0.6367,True,results/revision/preds

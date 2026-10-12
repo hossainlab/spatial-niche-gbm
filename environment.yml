@@ -1,4 +1,4 @@
-name: deepgraph-gbm
+name: spatial-niche-gbm
 channels:
   - pytorch
   - pyg

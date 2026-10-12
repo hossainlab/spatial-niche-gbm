@@ -107,7 +107,7 @@ def homophily():
     import sys
     if sys_path not in sys.path:
         sys.path.insert(0, sys_path)
-    from deepgraph_gbm.data.graph import build_knn_graph
+    from spatial_niche_gbm.data.graph import build_knn_graph
     lab = {os.path.basename(f).replace("_spot_labels.csv", ""): pd.read_csv(f, index_col=0)
            for f in glob.glob(str(ROOT / "data/preprocessed/*_spot_labels.csv"))}
     classes = ["immune_cold", "immune_hot", "normal", "necrotic"]
@@ -220,18 +220,18 @@ def records():
 def architecture():
     import sys
     sys.path.insert(0, str(ROOT / "src"))
-    from deepgraph_gbm.models.multitask import DeepGraphGBM
+    from spatial_niche_gbm.models.multitask import MultiTaskGNN
     for enc, v in [("graphsage", 1751815), ("gat", 985863)]:
-        m = DeepGraphGBM(in_dim=3000, encoder_type=enc)
+        m = MultiTaskGNN(in_dim=3000, encoder_type=enc)
         chk("Methods", f"{enc} parameter count", v, sum(p.numel() for p in m.parameters()), 0,
-            "src/deepgraph_gbm/models")
+            "src/spatial_niche_gbm/models")
 
 
 def labels_and_geometry():
     import sys
     sys.path.insert(0, str(ROOT / "src"))
-    from deepgraph_gbm.data.graph import build_knn_graph
-    from deepgraph_gbm.data.labels import assign_niche_labels, mes_target
+    from spatial_niche_gbm.data.graph import build_knn_graph
+    from spatial_niche_gbm.data.labels import assign_niche_labels, mes_target
     meta = pd.read_csv(ROOT / "data/raw/snuh/meta.tsv", sep="\t", index_col=0, low_memory=False)
     rules = yaml.safe_load(open(ROOT / "configs/labels.yaml"))
     lab = assign_niche_labels(meta, rules)

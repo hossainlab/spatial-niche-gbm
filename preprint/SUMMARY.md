@@ -1,10 +1,10 @@
-# DeepGraph-GBM manuscript: summary (v7.1; repository cleaned in v7.2, 2026-10-13)
+# spatial-niche-gbm manuscript: summary (v7.1; repository cleaned in v7.2, 2026-10-13)
 
 ## Deliverables (`preprint/`)
 
 | File | Content |
 |---|---|
-| `deepgraph-gbm.tex` / `.pdf` | Current manuscript (v7.1; 40 pages, 53 references, 10 main and 7 supplementary figures plus the graphical abstract, 3 main and 13 supplementary tables) |
+| `spatial-niche-gbm.tex` / `.pdf` | Current manuscript (v7.1; 40 pages, 53 references, 10 main and 7 supplementary figures plus the graphical abstract, 3 main and 13 supplementary tables) |
 | `archive/` | Version snapshots v1–v7 with their bibliographies, and the pre-pivot manuscript (`manuscript_v1_prepivot.md/.pdf`) and graphical abstract |
 | `SUBMISSION.md` | bioRxiv-first submission checklist |
 | `PEER_REVIEW.md` | Independent review of v6, the v7 response, and the v7.1 code audit |
@@ -53,7 +53,7 @@ The complete, script-by-script guide is `docs/WORKFLOW.md`. The commands below r
 analyses that read only `results/` and `data/preprocessed*`.
 
 ```bash
-cd deepgraph-gbm
+cd spatial-niche-gbm
 .venv/bin/python -m pytest -q tests                        # 18 tests
 .venv/bin/python scripts/17_revision_analysis.py           # SNUH LOPO, ablations, markers (~15 min)
 .venv/bin/python scripts/17_revision_analysis.py --figures-only
@@ -72,7 +72,7 @@ cd deepgraph-gbm
 .venv/bin/python scripts/28_verify_manuscript_numbers.py   # checks every v7 number against its source
 PYTHONPATH=src .venv/bin/python scripts/29_code_audit_checks.py  # 99 independent re-derivations
 
-cd preprint && tectonic deepgraph-gbm.tex                  # compile (pdflatex is not installed)
+cd preprint && tectonic spatial-niche-gbm.tex                  # compile (pdflatex is not installed)
 ```
 
 To rerun the benchmark from scratch, use the worker queue (finished runs are skipped):

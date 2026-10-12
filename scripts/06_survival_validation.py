@@ -17,10 +17,10 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from deepgraph_gbm.training.survival import cox_validation, signature_scores
-from deepgraph_gbm.utils import save_json, setup_logging
+from spatial_niche_gbm.training.survival import cox_validation, signature_scores
+from spatial_niche_gbm.utils import save_json, setup_logging
 
-log = logging.getLogger("deepgraph_gbm")
+log = logging.getLogger("spatial_niche_gbm")
 
 
 def main():
