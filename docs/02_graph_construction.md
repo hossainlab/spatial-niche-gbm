@@ -1,84 +1,85 @@
-# Chapter 2: Graph Construction & Patient Splits
+# Chapter 2: Spatial graphs, homophily and patient splits
 
-## 1. Turning a Tissue Slice into a Graph
+## 1. A section as a graph
 
-A 10x Visium glass slide contains a grid of microscopic spots arranged in a **hexagonal honeycomb pattern** (~100 micrometers apart).
+Each Visium section becomes one graph:
+- **nodes** are spots, each carrying its 3,000-gene feature vector;
+- **edges** join each spot to its k nearest spots by coordinate.
 
-In graph terminology:
-- **Nodes (Vertices)**: The individual spatial spots. Each node carries a vector of 3,000 numbers (its gene expression counts).
-- **Edges (Connections)**: Lines connecting neighboring spots that are physically close to each other.
+Edges are symmetrised, so a spot can end up with more than k neighbours. The builder is
+[`src/deepgraph_gbm/data/graph.py`](../src/deepgraph_gbm/data/graph.py) (`build_knn_graph`), and
+the default is k = 6, because an interior spot on a hexagonal grid has six immediate neighbours.
 
-```
-       Hexagonal Grid of Spots                     Connected Spatial Graph
-               ( )                                          (O)
-              /   \                                        / | \
-           ( )     ( )                                  (O)──┼──(O)
-            |   *   |          =======>                 / \  |  / \
-           ( )     ( )                                (O)──(O)──(O)
-              \   /                                        \ | /
-               ( )                                          (O)
-   (Spots on Visium Slide)                         (k=6 Spatial Graph)
-```
+Gaussian edge weights exp(−d² / 2·median(d)²) are computed and stored, **but neither encoder uses
+them**. GraphSAGE and GAT aggregate over the unweighted neighbour set.
 
----
+## 2. The array-index caveat, and the exact-hex sensitivity analysis
 
-## 2. How the $k=6$ kNN Graph is Built
+The SNUH atlas supplies spot positions as **Visium array indices**, in which the column index is
+doubled. On that grid, four of the six true neighbours are at distance √2 and the other two at
+distance 2. The latter tie with two second-ring spots, so **about 24% of 6-NN edges join
+second-ring rather than adjacent spots**. Every main analysis uses these graphs, as the manuscript
+states in its Methods.
 
-Because the Visium grid is hexagonal, every interior spot has exactly **6 immediate neighbors**.
+To check whether the geometry matters, the graphs were rebuilt on true hexagonal coordinates
+(column × ½, row × √3/2) with everything else unchanged:
 
-1. For each spot $i$, we calculate the Euclidean distance $d(i, j)$ to all other spots using their 2D physical coordinates.
-2. We connect spot $i$ to its 6 nearest neighbors ($k=6$).
-3. We make the connections mutual (symmetric).
-4. Boundary spots at the edge of the tissue slice naturally have fewer neighbors (average degree is ~5.96 edges per spot).
-
-### Gaussian Distance Edge Weighting
-Not all neighbors are equally close (especially around tissue folds or tears). We weight each connection using a Gaussian decay formula:
-
-$$W_{ij} = \exp\left(-\frac{d(i, j)^2}{2 \cdot \text{median}(d)^2}\right)$$
-
-- Immediate adjacent neighbors get a weight close to $1.0$.
-- Neighbors separated by a tear or gap get an exponentially lower weight.
-
----
-
-## 3. Patient-Level Splitting: Preventing "Data Leakage"
-
-One of the most dangerous mistakes in machine learning is **Data Leakage** (when an AI accidentally sees clues from the test set during training).
-
-### The Wrong Way: Random Spot Splitting
-If you randomly assign 80% of spots from a slide to the Training Set and 20% to the Test Set:
-- Neighboring spots on the same slide share almost identical biology and spatial context.
-- The AI will easily memorize the slide rather than learning general cancer biology.
-- The model will achieve a fake "99% accuracy" on test spots, but completely fail when given a new patient's tumor.
-
-```mermaid
-flowchart TD
-    subgraph Wrong["WRONG: Spot-Level Splitting (Severe Data Leakage)"]
-        W1["Patient A Slide"] --> W2["80% Spots into Train Set"]
-        W1 --> W3["20% Spots into Test Set"]
-        W2 -.->|"Neighbors share identical biology<br>(AI memorizes patient tissue)"| W3
-    end
-    subgraph Correct["CORRECT: Patient-Level Splitting (Strict Generalization)"]
-        P1["8 Patients (16 Slides)"] --> T["Training Cohort (AI learns cancer features)"]
-        P2["2 Patients (4 Slides)"] --> V["Validation Cohort (Threshold calibration)"]
-        P3["3 Patients (5 Slides)"] --> TE["Held-Out Test Cohort (Zero Leakage Evaluation)"]
-    end
+```bash
+python scripts/23a_build_hex_graphs.py      # data/preprocessed -> data/preprocessed_hex
 ```
 
-### Composition of the Standard Split (`configs/splits.json`):
-- **Train Set (8 Patients)**: `SNU17`, `SNU18`, `SNU21`, `SNU23`, `SNU25`, `SNU27`, `SNU43`, `SNU46` (16 slides, 23,284 spots).
-- **Validation Set (2 Patients)**: `SNU24`, `SNU51` (4 slides, 6,110 spots).
-- **Test Set (3 Patients)**: `SNU16`, `SNU33`, `SNU34` (5 slides, 5,594 spots).
+The final GraphSAGE and GAT LOPO runs were repeated on these graphs (78 runs). Exact geometry did
+not help: GraphSAGE 0.651 vs 0.652, GAT 0.611 vs 0.649
+([Chapter 5 §4](05_benchmark_results.md)). External cohorts (Greenwald, UKF) are built on their
+true hexagonal layouts.
+
+## 3. Are the labels spatially clustered? (homophily)
+
+A common reason a GNN fails is **heterophily**: neighbours carrying different labels, so that
+averaging them mixes classes ([Zhu et al., *NeurIPS* 2020](https://arxiv.org/abs/2006.11468)).
+That is not the case here. The edge homophily of the niche labels on 6-NN graphs is **0.80**.
+Per-class homophily is above the level expected after shuffling labels within sections:
+
+| Class | Same-label neighbour fraction | Chance |
+|---|---|---|
+| immune-cold | 0.82 | 0.67 |
+| immune-hot | 0.67 | 0.43 |
+| normal | 0.86 | 0.74 |
+| necrotic | 0.73 | 0.50 |
+
+Per-patient homophily ranges from 0.58 (SNU23) to 1.00 (SNU46). In principle, then, the graph is
+informative about the labels, which makes the null result more informative rather than less.
+These values are computed by `scripts/16_label_homophily.py` and stored in
+`results/revision/label_homophily.json`.
+
+## 4. Patient-level splitting
+
+Spots from one patient must never appear on both sides of a train/test boundary. Neighbouring
+spots are nearly identical, so a random spot-level split lets a model memorise the slide and
+report inflated accuracy. Every analysis here splits by **patient**.
+
+Three split schemes are used, from weakest to strongest:
+
+| Scheme | Design | Used for |
+|---|---|---|
+| **Primary split** (`configs/splits.json`) | train SNU17, 18, 21, 23, 25, 27, 43, 46; validation SNU24, 51; test SNU16, 33, 34 | Fixed-split models, Figures 1–3, Table 1 |
+| **Six splits** (`configs/splits_multisplit.json`) | split 0 = primary split; splits 1–5 from generator seeds 1001–1005, same 8/2/3 design | Variance decomposition only (see below) |
+| **Leave-one-patient-out** (`results/revision/folds.json`) | 13 folds, one held-out patient each; two validation patients per fold chosen from label counts only | **Primary analysis** |
+
+Two cautions about the six splits:
+- Their test sets differ but overlap. Six patients are tested twice and SNU43 never.
+- Each split tunes its thresholds on its own two validation patients. Four of the six tuning blocks
+  hold fewer than 20 immune-hot spots, and split 4 holds a single one.
+
+For those reasons the six-split benchmark is **not used to rank models**.
+
+In the LOPO folds, validation pairs are chosen without looking at model performance. Among pairs
+with at least 100 labelled spots of every class, the pair used least often so far is taken, so
+validation duty is spread across patients. Every LOPO tuning block holds at least 183 spots of
+every class.
 
 ---
 
-## 4. Multi-Split Benchmarking (6-Fold Patient Splits)
+## Next
 
-Because glioblastoma patients differ wildly from one another, testing on just one fixed group of 3 test patients could be lucky or unlucky.
-
-To ensure true scientific rigor, we designed a **6-split benchmark protocol** (`configs/splits_multisplit.json`) where every patient takes turns being in the held-out test set.
-
----
-
-## Next Step
-Continue to [**Chapter 3: Model Architecture & Deep Learning**](03_model_architecture_and_training.md) to explore how Graph Neural Networks process this spatial data.
+[Chapter 3: The models being compared](03_models_compared.md)

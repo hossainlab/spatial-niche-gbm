@@ -4,9 +4,17 @@ scripts/15_revision_benchmark.py run --task histology).
 E1  results/revision_ukf       leave-one-patient-out within the UKF cohort
                                (neuropathologist H&E labels), default
                                hyperparameters, 3 seeds (logistic: 1).
-E2  results/revision_transfer  train on SNUH (expression-derived AF labels),
+E2  results/revision_transfer_v2  train on SNUH (expression-derived AF labels),
                                validate on 2 SNUH patients, test on ALL UKF
                                patients (pathologist labels); 3 seeds.
+
+The E2 runs in the manuscript read data/preprocessed_histology/transfer_v2, in which
+UKF counts are scaled to 100,000 per spot to match the SNUH matrix. The current
+scripts/19_build_histology_graphs.py writes exactly that scaling to <out>/transfer
+(the v2 directory was made from the earlier CP10k build by the exact rescale
+log1p(10 * expm1(x)); the two agree to float precision). results/revision_transfer
+holds the earlier CP10k runs, reported in the manuscript only as a scaling
+sensitivity analysis.
 
 Usage: python scripts/20_make_histology_jobs.py --data data/preprocessed_histology
 """
@@ -76,7 +84,7 @@ def main():
     train = [p for p in sorted(counts) if p not in val]
     folds = {"SNUH_to_UKF": {"train": train, "val": list(val), "test": ukf_patients}}
     print("transfer val", val)
-    write(ROOT / "results" / "revision_transfer", folds, jobs_for(folds, seeds))
+    write(ROOT / "results" / "revision_transfer_v2", folds, jobs_for(folds, seeds))
 
 
 if __name__ == "__main__":

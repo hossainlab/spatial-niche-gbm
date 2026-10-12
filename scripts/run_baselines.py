@@ -1,6 +1,11 @@
-"""SUPERSEDED by run_baselines_multiseed.py, which is what Table 1 reports.
+"""Single-run baselines (logistic regression, MLP) on the primary split, scored by argmax.
 
-Train + evaluate baselines (logistic regression, MLP) against the GNN.
+Table 1 does NOT come from this script; it comes from run_baselines_multiseed.py.
+This script is kept because its re-run on the current features
+(results/baselines_original_protocol_rerun/baseline_metrics.json) supplies the
+logistic-regression argmax macro-F1 (0.541) cited in section 2.3 of the manuscript.
+It originally produced the "original protocol" baselines of the retracted
+protocol-reversal analysis (see preprint/ANALYSIS_AUDIT.md, finding 1).
 
 Usage: python scripts/run_baselines.py --config configs/default.yaml --data <processed_dir> --out results/baselines
 """

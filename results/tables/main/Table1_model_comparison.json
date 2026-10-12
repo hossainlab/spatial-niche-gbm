@@ -119,29 +119,50 @@
       "std": 6.798699777552591e-17
     }
   },
-  "paired_test_macro_f1": {
-    "gnn_vs_mlp": {
-      "mean_diff": -0.08926042970817533,
-      "df": 2,
-      "wilcoxon_p": 0.25,
-      "ci95": [
-        -0.10521337864954973,
-        -0.07330748076680092
-      ],
-      "t": -24.07433465460604,
-      "p": 0.001720953696540199
+  "gat_split0_macro_f1": {
+    "per_seed": {
+      "42": 0.5856526447231635,
+      "7": 0.5651890981176311,
+      "123": 0.46695526799374387
     },
-    "gnn_vs_logistic": {
-      "mean_diff": -0.06473190116239548,
-      "df": 2,
-      "wilcoxon_p": 0.25,
+    "mean": 0.5392656702781794,
+    "std": 0.06345301327613907
+  },
+  "tests_macro_f1": {
+    "mlp_vs_gnn": {
+      "test": "welch_t",
+      "mean_diff": 0.08926042970817527,
       "ci95": [
-        -0.1315774984343489,
-        0.0021136961095579443
+        0.03305709800645534,
+        0.1454637614098952
       ],
-      "t": -4.166600383644297,
-      "p": 0.05305903228286247
+      "t": 4.500824761211236,
+      "df": 3.8034053163492434,
+      "p": 0.012137355629461511
+    },
+    "logistic_vs_gnn": {
+      "test": "one_sample_t",
+      "mean_diff": 0.06473190116239547,
+      "ci95": [
+        -0.002113696109557958,
+        0.1315774984343489
+      ],
+      "t": 4.166600383644296,
+      "df": 2.0,
+      "p": 0.05305903228286249
+    },
+    "gat_vs_gnn": {
+      "test": "welch_t",
+      "mean_diff": 0.05027161529421986,
+      "ci95": [
+        -0.08481400520477728,
+        0.185357235793217
+      ],
+      "t": 1.2633375153372441,
+      "df": 2.6968282933490726,
+      "p": 0.3046456627338221
     }
   },
-  "note": "Under the matched training + identical tuned-threshold scoring protocol, the no-graph MLP OUTPERFORMS the GNN on macro-F1 on every seed. The earlier GNN>baseline result was an artifact of scoring baselines with default argmax. Paired-test p-values reflect seed-to-seed variability under a single fixed patient split (n=3, low power)."
+  "tests_note": "Seeds are not shared across models, so MLP and GAT are compared with GraphSAGE by Welch t-tests on per-seed macro-F1, and logistic regression (deterministic) by a one-sample t-test of the GraphSAGE seeds against its value. n = 3 seeds on one fixed patient split: p-values quantify training-seed variability only, not patient sampling. The seed-paired t-test used before v5 (p = 0.0017) was withdrawn.",
+  "note": "Matched protocol on the fixed primary split: the MLP had the highest macro-F1 and every MLP seed exceeded every GraphSAGE seed. This single-split comparison is secondary; the leave-one-patient-out benchmark (results/revision) is the primary analysis."
 }

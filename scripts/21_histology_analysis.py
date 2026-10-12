@@ -3,7 +3,7 @@
 E1 (results/revision_ukf): pooled leave-one-patient-out macro-F1 per model
    (mean +/- SD over seeds), per-patient paired tests vs GraphSAGE (n = 18
    patients), patient-bootstrap 95% CI of pooled differences.
-E2 (results/revision_transfer): SNUH-trained models tested on all UKF spots:
+E2 (results/revision_transfer_v2): SNUH-trained models tested on all UKF spots:
    macro-F1 with SNUH-tuned thresholds and with argmax, per-class AUROC.
 
 Usage: python scripts/21_histology_analysis.py --figdir results/figures/revision

@@ -1,12 +1,16 @@
-"""SUPERSEDED by the leave-one-patient-out decision-rule analysis in
-scripts/25_review_sensitivity.py (Supplementary Table S13), which compares argmax
-and tuned thresholds for every model rather than for the MLP alone.
+"""Fixed-split decision-rule control for the MLP.
 
-Controlled scoring-rule isolation on the fixed split: train the matched-protocol
-MLP (early stopping, 3 seeds) and report macro-F1 under BOTH argmax and tuned-threshold
-scoring. Combined with the deterministic logistic pair (Table S1 argmax vs Table 1
-tuned), this decomposes the protocol reversal into scoring-rule vs training-protocol
-contributions.
+Train the matched-protocol MLP (early stopping, 3 seeds) on the primary split and
+report macro-F1 under BOTH argmax and validation-tuned thresholds. The manuscript
+cites the result in section 2.3 (MLP 0.557 +/- 0.050 argmax vs 0.571 +/- 0.021
+tuned); the logistic counterpart (0.541 vs 0.557) comes from
+scripts/run_baselines.py (results/baselines_original_protocol_rerun) and
+results/baselines_multiseed_matched/logistic_decision_rule_control.json.
+
+The decision-rule analysis that the conclusions rest on is the leave-one-patient-out
+version for every model in scripts/25_review_sensitivity.py (Supplementary Table S13).
+This script originally supported the retracted "protocol reversal" claim; only the
+argmax-vs-tuned comparison is still used.
 
 Usage: python scripts/13_mlp_argmax_control.py --config configs/default.yaml \
     --data <processed_dir> --out results/baselines_multiseed_matched/mlp_argmax_control.json

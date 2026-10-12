@@ -1,5 +1,8 @@
 # Revision notes
 
+Version snapshots named below (`deepgraph-gbm.vN.tex`, `references.vN.bib`) live in
+`preprint/archive/` since v7.2.
+
 ## v4 (2026-10-09): `deepgraph-gbm.tex` (v3 snapshot: `deepgraph-gbm.v3.tex`, `references.v3.bib`)
 
 **New results** (all 338 ablation and marker-removal runs complete; `scripts/17_revision_analysis.py` rerun):
@@ -141,3 +144,57 @@ p = 0.0017. The figure/table map was updated from its v4-era form. Scripts 13, 1
 docstrings of 09 and 12; `configs/labels.yaml` no longer describes the MES target as a
 fraction; and `pyproject.toml` dropped two unused dependencies (`lab`, `jupyter`) and gained
 `umap-learn`, which Figure 1 needs.
+
+## v7.2 (2026-10-13): repository cleanup to the benchmark framing
+
+No analysis, number or manuscript text changed; the manuscript is still v7.1.
+
+**Documentation.** `docs/` chapters 00–07 were written for the original framing (a multi-task
+GNN presented as the method) and carried pre-audit facts: 23 sections / ~35,000 spots instead of
+28 / 100,488, an atlas citation with the wrong authors, MES r = 0.30 instead of 0.21, the
+retracted protocol reversal, the withdrawn seed-paired p = 0.0017, and a continuous MES target.
+All chapters were rewritten from the v7.1 manuscript and regrouped (03 models compared, 04
+evaluation protocol, 05 benchmark results, 06 pathologist/external/survival). `docs/WORKFLOW.md`
+was rewritten to cover every script (01–29), including the LOPO, UKF and review steps it lacked,
+and to map every manuscript figure and table to its file and script. Chapter 7 now lists only
+entries of `references.bib`.
+
+**Graphical abstract.** `assets/graphical_abstract.png`, shown at the top of the README, was still
+the pre-pivot graphic that presents the GNN as the method; it is now the data-driven abstract
+from `scripts/22`.
+
+**Reproducibility gap closed.** The exact-hex graphs (`data/preprocessed_hex`) had no builder in
+the repository. `scripts/23a_build_hex_graphs.py` now builds them and reproduces the published
+graphs bit for bit (edge sets, edge weights and coordinates).
+
+**Provenance corrections.** Scripts 13 and `run_baselines.py`, labelled superseded in v7.1,
+produce the argmax values in section 2.3 (MLP 0.557, logistic 0.541), and
+`results/revision_transfer` holds the CP10k transfer sensitivity quoted in the Results; all are
+kept and relabelled. Script 20 now writes E2 jobs to `results/revision_transfer_v2`, the published
+run; `01_download_data.sh` now defaults to `data/raw`, where the pipeline reads; stale default
+paths in 08, 09 and `run_baselines_multiseed.py` were corrected.
+
+**Table 1 statistics record corrected.** `results/tables/main/Table1_paired_test.json` and
+`Table1_model_comparison.json` still held the seed-paired t-test withdrawn in v5 (p = 0.0017)
+and a note restating the retracted protocol-reversal claim, and no tracked script produced the
+Welch statistics the manuscript reports. `scripts/08_paired_test.py` now computes exactly the
+reported tests (MLP vs GraphSAGE Welch t = 4.50, p = 0.012, 95% CI 0.033–0.145; logistic
+one-sample p = 0.053; GAT vs GraphSAGE Welch p = 0.30), and both files were regenerated. The
+macro-F1 means and Supplementary Table S5 are unchanged.
+
+**Archived** (moved, not deleted): manuscript snapshots v1–v7, their bibliographies and the
+pre-pivot `manuscript.md`/`.pdf` and graphical abstracts → `preprint/archive/`;
+`14_fig_protocol_reversal.py` → `scripts/archive/`; the unmatched multi-seed baselines, the
+original-protocol tables and the pre-fix CP10k Greenwald tables → `results/archive/`.
+`results/figures/` (intermediate renders, already in `.gitignore`) is no longer tracked.
+
+**Title.** Changed from *Spatial Graph Structure Does Not Improve Supervised Niche Prediction in
+Glioblastoma* to *Comparing Graph-Based and Graph-Free Models for Spatial Niche Prediction in Glioblastoma*: short, descriptive and free of negation or question form. It names the
+contrast the paper actually tests (two GNN encoders against matched graph-free models, not a
+survey of GNN architectures) and the task, leaving the finding to the abstract. Updated in the manuscript (and PDF
+metadata), `CITATION.cff`, `README.md` and `SUBMISSION.md`.
+
+**Metadata.** `pyproject.toml` and the package version now read 0.7.1, matching `CITATION.cff`, with
+a description of the benchmark rather than of a GNN method; `configs/default.yaml` documents that
+its `paths` block is informational. The notebooks were revised to the current results (see
+`notebooks/`).

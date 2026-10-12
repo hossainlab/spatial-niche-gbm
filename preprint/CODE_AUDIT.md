@@ -71,7 +71,9 @@ All eleven are fixed. Three known limitations remain open and are disclosed.
 8. **Superseded scripts were not labelled.** `14_fig_protocol_reversal.py` produces the
    withdrawn figure, `13_mlp_argmax_control.py` is subsumed by the decision-rule analysis
    in `25_review_sensitivity.py`, and `run_baselines.py` by `run_baselines_multiseed.py`.
-   *All three now say so in their docstrings.*
+   *All three now say so in their docstrings.* (v7.2 correction: 13 and `run_baselines.py` are
+   not fully superseded — they produce the argmax values quoted in section 2.3 — and their
+   docstrings now say that; only 14 was moved, to `scripts/archive/`.)
 
 9. **Stale supplementary numbering** in the docstrings of `09_make_table1.py` and
    `12_aggregate_multisplit.py` (Table S6/S7 under the old scheme). *Corrected.*

@@ -1,11 +1,13 @@
 # DeepGraph-GBM default configuration
 seed: 42
 
+# Informational only: every script takes its paths as command-line arguments
+# (see docs/WORKFLOW.md); nothing reads this block.
 paths:
-  data_root: data                 # raw downloads
-  processed: data/processed       # per-section AnnData + graphs
-  checkpoints: models
-  figures: results/figures
+  data_root: data/raw             # raw downloads
+  processed: data/preprocessed    # per-section PyG graphs, HVG panel, coordinates
+  checkpoints: results/models
+  figures: results/figures        # intermediate renders (published figures: preprint/figures)
 
 data:
   n_hvgs: 3000

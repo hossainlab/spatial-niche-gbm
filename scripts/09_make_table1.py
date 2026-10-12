@@ -1,9 +1,10 @@
 """Build Table 1 (model comparison, mean +/- SD across seeds) and Table S5
-(per-seed metrics) from per-seed metric JSONs, and embed the paired-test result.
+(per-seed metrics) from per-seed metric JSONs, and embed the significance tests of
+scripts/08_paired_test.py (Welch / one-sample t; see its docstring).
 
 Inputs:
   --gnn       results/models            (seed{s}/metrics.json or seed{s}_metrics.json)
-  --baselines results/baselines_multiseed_v2  (mlp_seed{s}.json, logistic_seed{s}.json)
+  --baselines results/baselines_multiseed_matched  (mlp_seed{s}.json, logistic_seed{s}.json)
   --paired    results/tables/main/Table1_paired_test.json
   --out-main  results/tables/main/Table1_model_comparison.json
   --out-supp  results/tables/supplement/TableS5_per_seed_metrics.csv
@@ -81,17 +82,12 @@ def main():
         "gnn_multiseed": _summarize(per_seed["GNN"]),
         "mlp_multiseed": _summarize(per_seed["MLP"]),
         "logistic_multiseed": _summarize(per_seed["Logistic"]),
-        "paired_test_macro_f1": {
-            comp: {k: paired[comp][k] for k in
-                   ("mean_diff", "t_stat", "df", "t_p", "wilcoxon_p", "ci95")}
-            for comp in ("gnn_vs_mlp", "gnn_vs_logistic")
-        },
+        "gat_split0_macro_f1": paired["gat"],
+        "tests_macro_f1": {comp: paired[comp] for comp in
+                           ("mlp_vs_gnn", "logistic_vs_gnn", "gat_vs_gnn")},
+        "tests_note": paired.get("notes", ""),
         "note": paired.get("table_note", ""),
     }
-    # normalize paired-test key names to the original Table 1 schema
-    for comp in table1["paired_test_macro_f1"].values():
-        comp["t"] = comp.pop("t_stat")
-        comp["p"] = comp.pop("t_p")
 
     out_main = Path(args.out_main)
     out_main.parent.mkdir(parents=True, exist_ok=True)

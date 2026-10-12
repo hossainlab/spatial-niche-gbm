@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
-# Download all datasets for DeepGraph-GBM.
+# Download the public datasets for DeepGraph-GBM into data/raw (the location the
+# pipeline scripts expect). Usage: bash scripts/01_download_data.sh [data/raw]
+#
+# The UKF (Freiburg) neuropathologist-annotated cohort is not fetched here: download
+# the SPATA objects from Dryad (doi:10.5061/dryad.h70rxwdmj) and Zenodo
+# (doi:10.5281/zenodo.14064047), then export them with scripts/18_export_spata_objects.R
+# into data/raw/ukf_spata (see docs/WORKFLOW.md, step B1).
 set -euo pipefail
-DATA_DIR=${1:-data}
+DATA_DIR=${1:-data/raw}
 
 echo "=== SNUH 2026 GBM atlas (UCSC Cell Browser) ==="
 python -m deepgraph_gbm.data.download_snuh "$DATA_DIR/snuh"

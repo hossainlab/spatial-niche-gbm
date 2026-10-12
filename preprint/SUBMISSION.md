@@ -7,7 +7,7 @@ and a DOI that the journal submission can reference.
 
 | | |
 |---|---|
-| Title | *Spatial Graph Structure Does Not Improve Supervised Niche Prediction in Glioblastoma* (11 words) |
+| Title | *Comparing Graph-Based and Graph-Free Models for Spatial Niche Prediction in Glioblastoma* (12 words) |
 | Abstract | 353 words |
 | Build | 40 pages, 53 references, 10 main + 7 supplementary figures, 3 main + 13 supplementary tables |
 | LaTeX log | no undefined or multiply-defined references, no missing graphics, no overfull boxes |
@@ -29,10 +29,13 @@ and a DOI that the journal submission can reference.
 
 1. **ORCID.** Not in the manuscript and not supplied. bioRxiv will ask for it, and most journals
    require it for the corresponding author. Add to the author block once you have the identifier.
-2. **Push the repository.** Four commits are staged locally on `main`; `origin` is
+2. **Merge and push the repository.** The revision work (v6 through the v7.2 cleanup) is on the
+   local branch `revision-v6`, which is ahead of `main` and `origin/main`; `origin` is
    `https://github.com/hossainlab/deepgraph-gbm.git`, which matches the URL printed in the
-   manuscript. Nothing is pushed yet — the data-availability statement is only true once it is.
-   Note the repository is ~96 MB tracked; confirm that is acceptable before pushing.
+   manuscript. Nothing is pushed yet — the data-availability statement is only true once it is,
+   and readers will land on `main`, so merge before posting. The v7.2 cleanup stopped tracking
+   `results/figures/` (intermediate renders), which reduces the tracked size; check the total
+   before pushing.
 3. **Confirm the licence of the released UKF annotation table.** Supplementary Table S9
    redistributes annotations derived from the Ravi et al. and Ritter et al. deposits. Check the
    terms of those deposits allow redistribution, or link rather than redistribute.

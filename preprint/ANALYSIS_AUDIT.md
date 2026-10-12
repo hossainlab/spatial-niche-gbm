@@ -28,7 +28,7 @@ This audit reviewed every analysis script (02, 05, 11–23, `src/`) against the 
 LOPO tables and tests, variance ratios, chosen configurations, homophily, ablations and marker removal, UKF E1 (all values and confusion fractions), multi-split statistics, fixed-split Table 1 values, the MLP argmax control, and the survival statistics. There is no test-label leakage: thresholds, early stopping, configuration selection and marker ranking use only training or validation patients.
 
 ## v6 note
-Section 2.4, Figure 4 and Table S1 (finding 1) were later removed from the manuscript because the earlier analysis was never public; the corrected numbers are kept in results/tables/archive/.
+Section 2.4, Figure 4 and Table S1 (finding 1) were later removed from the manuscript because the earlier analysis was never public; the corrected numbers are kept in results/tables/archive/ (moved to `results/archive/tables/` in v7.2).
 
 ## Still open
 

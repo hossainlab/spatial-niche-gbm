@@ -1,76 +1,95 @@
-# Chapter 1: Biology & Data Explained Simply
+# Chapter 1: Biology, data and labels
 
-## 1. What are Genes and Gene Expression?
+## 1. Gene expression and Visium in plain terms
 
-To understand spatial transcriptomics, think of human biology like a kitchen:
-- **DNA (The Master Cookbook)**: Present in every cell's nucleus, containing the complete recipes for every protein the body could ever make.
-- **RNA (Active Recipes / Orders)**: When a cell needs to perform a task, it copies the relevant recipe from DNA into temporary messenger RNA (mRNA).
-- **Gene Expression (Activity Level)**: If a spot has 5,000 copies of an immune gene's mRNA, that gene is "highly expressed" (the recipe is being cooked repeatedly). If it has 0 copies, that gene is silent.
+Every cell carries the same DNA, but at any moment it copies only some genes into messenger RNA.
+Counting those RNA copies per gene gives an **expression profile**: a readout of what the cell
+is doing. **10x Visium** ([Ståhl et al., *Science* 2016](https://doi.org/10.1126/science.aaf2403))
+places a tissue section on a slide covered with barcoded spots about 55 µm across, arranged on a
+hexagonal grid. Each spot captures RNA from roughly 1–10 cells, so one section yields thousands of
+expression profiles, each tied to an (x, y) position.
 
-In spatial transcriptomics ([Ståhl et al., *Science* 2016](https://doi.org/10.1126/science.aaf2403)), we count the number of mRNA copies for thousands of genes at every single physical spot on the tissue slice.
-
----
-
-## 2. The 4 Spatial Niches (Microenvironments)
-
-DeepGraph-GBM classifies every spot into one of four biologically distinct microenvironments defined by the SNUH 2026 Glioblastoma Atlas ([Shah, Park et al., *Nat Commun* 2026](https://doi.org/10.1038/s41467-026-69716-2)):
-
-```mermaid
-flowchart TD
-    GBM["Glioblastoma Microenvironments (Spatial Niches)"]
-    GBM --> N1["1. Immune Cold<br>Dense tumor core, immunosuppressive myeloids, no T cells (Worst Prognosis)"]
-    GBM --> N2["2. Immune Hot<br>Infiltrating T cells, active microglia/macrophages (~9% of spots) (Better Prognosis)"]
-    GBM --> N3["3. Normal Brain<br>Peritumoral non-neoplastic cortex and white matter (Baseline)"]
-    GBM --> N4["4. Necrotic Core<br>Ischemic dead core and hypoxic pseudopalisading borders (Poor Prognosis)"]
-```
-
-### The "Exclude" Category
-Tissue borders often contain ambiguous mixtures or tearing artifacts. To ensure reliable training, ambiguous spots (~9% of spots) are labeled as `exclude` and masked during training so the AI only learns from clear examples.
+A Visium **spot is not a cell**. It already averages a small neighbourhood, and this matters for
+the main result (see [Chapter 5 §5](05_benchmark_results.md)).
 
 ---
 
-## 3. Highly Variable Genes (HVG Selection)
+## 2. Glioblastoma niches
 
-A human cell can express over 20,000 genes, but most of them are "housekeeping genes"—routine genes that every cell uses just to stay alive (like *GAPDH*). These contain very little diagnostic information.
+GBM tissue is organised into recurring regions with different biology. The Ivy Glioblastoma Atlas
+defined anatomic features such as the leading edge, infiltrating tumour, cellular tumour,
+pseudopalisading cells around necrosis and microvascular proliferation
+([Puchalski et al., *Science* 2018](https://doi.org/10.1126/science.aaf2666)). Spatial
+transcriptomics then showed niches shaped by hypoxia and immune composition
+([Ravi et al., *Cancer Cell* 2022](https://doi.org/10.1016/j.ccell.2022.05.009);
+[Greenwald et al., *Cell* 2024](https://doi.org/10.1016/j.cell.2024.03.029)).
 
-### How We Select the Top 3,000 Genes
-We use the variance-stabilizing dispersion method from **Seurat v3** ([Stuart et al., *Cell* 2019](https://doi.org/10.1016/j.cell.2019.05.031)) implemented in **Scanpy** ([Wolf et al., *Genome Biol* 2018](https://doi.org/10.1186/s13059-017-1382-0)):
-1. We calculate how much each gene's expression varies across different tumor spots compared to its average level.
-2. We select the top **3,000 Highly Variable Genes (HVGs)**.
-3. Key glioblastoma oncogenes (*EGFR*, *VEGFA*, *CHI3L1*, *CD44*, *SOX2*, *OLIG2*) are retained, while noisy housekeeping genes are removed.
+This project predicts four niche classes for every spot of the SNUH cohort:
+
+| Class | Meaning | Rule (from atlas annotations) |
+|---|---|---|
+| `necrotic` | necrosis and its hypoxic rim | anatomical feature PAN or PNZ |
+| `immune_hot` | immune-infiltrated tissue | immune metaprogram, and anatomical feature not PAN/PNZ |
+| `normal` | non-neoplastic grey or white matter at the leading edge | anatomical feature LE_GM/LE_WM **and** metaprogram LE_GM/LE_WM |
+| `immune_cold` | tumour parenchyma without immune infiltration | anatomical feature CT, IT or IGN **and** metaprogram CT, IT or hypoxic |
+
+Rules are applied in priority order (necrotic → immune-hot → normal → immune-cold; first match
+wins). Spots matching no rule, including vascular features, are labelled `exclude` and masked from
+training and scoring. The rules live in [`configs/labels.yaml`](../configs/labels.yaml) and
+[`src/deepgraph_gbm/data/labels.py`](../src/deepgraph_gbm/data/labels.py), and the unit tests in
+`tests/test_labels.py` check them.
+
+Of 100,488 SNUH spots, **75,697 are labelled**; about 25% are excluded. The class balance differs
+sharply between patients. The three test patients of the primary split contribute 16,377 labelled
+spots, of which 67.9% are immune-cold and only 1.1% (185 spots) immune-hot.
+
+### These are silver-standard labels
+
+The labels are derived by rules from the atlas's own expression-based annotations. A model can
+therefore score well by reproducing the labelling rule rather than tissue structure. That is why
+the project also tests against **neuropathologist H&E annotations** in an independent cohort
+([Chapter 6](06_pathologist_external_survival.md)).
+
+### The MES target
+
+A second, binary target marks whether a spot's annotated malignant state is mesenchymal-like
+(`MES`, `MES.Hyp` or `MES.Ast`: 1; any other annotated state: 0; missing if unannotated). It is
+**binary, not a continuous fraction**. Older documentation described it wrongly.
 
 ---
 
-## 4. The Datasets Used in DeepGraph-GBM
+## 3. Features: 3,000 highly variable genes
 
-Our project leverages three distinct patient cohorts:
+Spots with fewer than 200 detected genes are removed. The SNUH matrix is stored as
+log1p(counts scaled to 100,000 per spot), so counts are reconstructed with `expm1`. Then 3,000
+highly variable genes are selected with scanpy's `seurat_v3` method
+([Stuart et al., *Cell* 2019](https://doi.org/10.1016/j.cell.2019.05.031);
+[Wolf et al., *Genome Biol* 2018](https://doi.org/10.1186/s13059-017-1382-0)). Dispersion-based
+selection on the normalised matrix returned mostly housekeeping genes and hurt cross-cohort
+transfer, so do not revert this step in `02_build_graphs.py`.
 
-### 1. The SNUH 2026 Atlas (Primary Dataset)
-- **Source**: Seoul National University Hospital ([Shah, Park et al., *Nat Commun* 2026](https://doi.org/10.1038/s41467-026-69716-2)).
-- **Accession**: NCBI BioProject [PRJNA1337938](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1337938) | UCSC Cell Browser: [cells.ucsc.edu/?ds=multiomic-gbm](https://cells.ucsc.edu/?ds=multiomic-gbm).
-- **Size**: 23 spatial tissue sections from 13 glioblastoma patients (~35,000 spots).
-- **Tissue Types**: Both Formalin-Fixed Paraffin-Embedded (FFPE) and fresh-frozen samples.
-- **Role**: Used for training, validation threshold tuning, and held-out test evaluation.
-
-### 2. The Greenwald et al. 2024 Cohort (External Validation)
-- **Source**: International glioblastoma spatial study ([Greenwald et al., *Cell* 2024](https://doi.org/10.1016/j.cell.2024.03.029)).
-- **Accession**: Zenodo Open Data [12624108](https://zenodo.org/records/12624108).
-- **Size**: 13 glioblastoma Visium sections.
-- **Role**: Tests whether our trained model works on data from completely different hospitals and lab protocols.
-
-### 3. TCGA-GBM (The Cancer Genome Atlas)
-- **Source**: National Cancer Institute GDC portal ([Brennan et al., *Cell* 2013](https://doi.org/10.1016/j.cell.2013.09.034)).
-- **Size**: 166 glioblastoma patients with matched gene expression and long-term survival records.
-- **Role**: Validates whether slide-level spatial risk scores correlate with overall patient survival.
+The panel is chosen once, without labels, on the eight training patients of the primary split, and
+reused for every fold. Each held-out patient's expression therefore contributed to choosing the
+panel, though its labels never did. This affects all models equally.
 
 ---
 
-## References & Further Reading
-- Stuart, T., et al. (2019). *Comprehensive Integration of Single-Cell Data.* **Cell**, 177(7): 1888–1902. [DOI: 10.1016/j.cell.2019.05.031](https://doi.org/10.1016/j.cell.2019.05.031).
-- Greenwald, A. C., et al. (2024). *Integrative spatial analysis reveals a multi-layered organization of glioblastoma.* **Cell**, 187(10): 2485–2501. [DOI: 10.1016/j.cell.2024.03.029](https://doi.org/10.1016/j.cell.2024.03.029).
-- See complete bibliography in [**Chapter 7: Scientific Evidence & Citations**](07_references_and_citations.md).
+## 4. The four cohorts
+
+| Cohort | Role | Size | Source |
+|---|---|---|---|
+| **SNUH spatial atlas** ([Park et al., *Nat Commun* 2026](https://doi.org/10.1038/s41467-026-69716-2)) | Training and the primary benchmark | 28 Visium sections (23 FFPE, 5 fresh-frozen), 13 IDH-wildtype GBM patients, 100,488 spots | UCSC Cell Browser `multiomic-gbm`; BioProject PRJNA1337938 |
+| **UKF (Freiburg)** ([Ravi et al., *Cancer Cell* 2022](https://doi.org/10.1016/j.ccell.2022.05.009); annotations per [Ritter et al., *Nat Cancer* 2025](https://doi.org/10.1038/s43018-024-00904-z)) | Neuropathologist H&E labels, used within-cohort and as a transfer target | 23 sections (16 tumour, 7 cortex) from 18 patients; 25,374 of 68,015 spots annotated | Dryad [10.5061/dryad.h70rxwdmj](https://doi.org/10.5061/dryad.h70rxwdmj); Zenodo [10.5281/zenodo.14064047](https://doi.org/10.5281/zenodo.14064047) |
+| **Greenwald et al.** ([*Cell* 2024](https://doi.org/10.1016/j.cell.2024.03.029)) | External cohort, no retraining | 13 GBM Visium samples, 25,488 spots, annotated by sampling region | Zenodo [10.5281/zenodo.12624108](https://doi.org/10.5281/zenodo.12624108) (CC-BY) |
+| **TCGA-GBM** ([TCGA Network, *Nature* 2008](https://doi.org/10.1038/nature07385)) | Bulk survival test of a niche-signature score | 166 tumour samples from 165 patients, 132 deaths | NCI Genomic Data Commons |
+
+For the UKF cohort, pathologist segments are mapped to five histology classes: cellular tumour,
+infiltrative tumour, necrosis, microvascular proliferation (MVP) and normal grey/white matter.
+Two non-GBM samples are dropped. The per-spot annotations used in the paper are released as
+[`results/tables/supplement/TableS9_ukf_pathologist_annotations.csv`](../results/tables/supplement/TableS9_ukf_pathologist_annotations.csv).
 
 ---
 
-## Next Step
-Continue to [**Chapter 2: Graph Construction & Patient Splits**](02_graph_construction.md) to see how physical coordinates are turned into connected spatial networks.
+## Next
+
+[Chapter 2: Graph construction, homophily and patient splits](02_graph_construction.md)

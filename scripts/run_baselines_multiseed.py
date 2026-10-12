@@ -7,7 +7,7 @@ thr=tune_thresholds(val) then applied to test, so baseline metrics are directly
 comparable to the GNN multi-seed summary in Table 1.
 
 Usage: python scripts/run_baselines_multiseed.py --config configs/default.yaml \
-           --data <processed_dir> --out results/baselines_multiseed
+           --data <processed_dir> --out results/baselines_multiseed_matched
 """
 
 from __future__ import annotations
@@ -139,7 +139,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/default.yaml")
     ap.add_argument("--data", required=True)
-    ap.add_argument("--out", default="results/baselines_multiseed")
+    ap.add_argument("--out", default="results/baselines_multiseed_matched")
     args = ap.parse_args()
 
     setup_logging()

@@ -1,13 +1,14 @@
-# DeepGraph-GBM manuscript: summary (v7, 2026-10-09)
+# DeepGraph-GBM manuscript: summary (v7.1; repository cleaned in v7.2, 2026-10-13)
 
 ## Deliverables (`preprint/`)
 
 | File | Content |
 |---|---|
-| `deepgraph-gbm.tex` / `.pdf` | Current manuscript (v7; 39 pages, 53 references, 10 main and 7 supplementary figures plus the graphical abstract, 3 main and 13 supplementary tables) |
-| `deepgraph-gbm.v1`–`v6.tex`, `references.v*.bib` | Version snapshots |
+| `deepgraph-gbm.tex` / `.pdf` | Current manuscript (v7.1; 40 pages, 53 references, 10 main and 7 supplementary figures plus the graphical abstract, 3 main and 13 supplementary tables) |
+| `archive/` | Version snapshots v1–v7 with their bibliographies, and the pre-pivot manuscript (`manuscript_v1_prepivot.md/.pdf`) and graphical abstract |
+| `SUBMISSION.md` | bioRxiv-first submission checklist |
 | `PEER_REVIEW.md` | Independent review of v6, the v7 response, and the v7.1 code audit |
-| `CODE_AUDIT.md` | Code, modeling and evaluation audit: 98/98 independent checks, 11 defects fixed |
+| `CODE_AUDIT.md` | Code, modeling and evaluation audit: 99/99 independent checks, 11 defects fixed |
 | `ANALYSIS_AUDIT.md` | Earlier scientific audit: errors found, reruns, disclosures |
 | `revision_notes.md` | What changed in each version |
 | `references.bib` | Bibliography (53 entries; DOIs checked against Crossref, non-DOI entries against arXiv) |
@@ -48,6 +49,9 @@ every new analysis is computed from the records below.
 
 ## Reproduce
 
+The complete, script-by-script guide is `docs/WORKFLOW.md`. The commands below re-run the
+analyses that read only `results/` and `data/preprocessed*`.
+
 ```bash
 cd deepgraph-gbm
 .venv/bin/python -m pytest -q tests                        # 18 tests
@@ -66,7 +70,7 @@ cd deepgraph-gbm
 .venv/bin/python scripts/26_survival_power.py              # Table 3
 .venv/bin/python scripts/27_fig_robustness.py              # Supplementary Figure S7
 .venv/bin/python scripts/28_verify_manuscript_numbers.py   # checks every v7 number against its source
-PYTHONPATH=src .venv/bin/python scripts/29_code_audit_checks.py  # 98 independent re-derivations
+PYTHONPATH=src .venv/bin/python scripts/29_code_audit_checks.py  # 99 independent re-derivations
 
 cd preprint && tectonic deepgraph-gbm.tex                  # compile (pdflatex is not installed)
 ```
@@ -76,7 +80,7 @@ To rerun the benchmark from scratch, use the worker queue (finished runs are ski
 
 ## Before submission
 
-1. Commit and push the code, results and preprint (nothing is committed yet).
+1. Push the repository (see `SUBMISSION.md` for the remaining author-side items).
 2. Decide whether to trim the abstract from 353 words if the target venue caps it at 350.
 3. Optional, and the one substantive item left open: repair the six-split
    threshold protocol by retraining its 72 models with thresholds tuned on pooled

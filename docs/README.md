@@ -1,52 +1,46 @@
-# DeepGraph-GBM Documentation
+# DeepGraph-GBM documentation
 
-Welcome to the complete, beginner-friendly documentation for **DeepGraph-GBM**!
+DeepGraph-GBM is a **benchmark**. It asks whether spatial graph neural networks improve supervised
+niche prediction in glioblastoma Visium data, compared with matched graph-free models. **They do
+not.** These chapters explain the biology, the design and the results for readers without a
+background in genomics or deep learning.
 
-This documentation is specifically written for readers who may not have a background in **biology**, **genomics**, or **deep learning**. It breaks down every concept—from cancer cells and DNA sequencing to graph algorithms and neural networks—using clear language, intuitive real-world analogies, visual diagrams, and rigorous scientific evidence.
+If you only read one page, read [Chapter 0](00_overview_and_roadmap.md). Its §5 explains how the
+project changed from "a GNN method" to "a benchmark of that method", which is the usual source of
+confusion when reading older material.
 
----
-
-## Documentation Navigation Guide
-
-Follow the documentation sequentially from start to finish, or jump directly to the topic you are interested in:
-
-| Chapter | Document | What You Will Learn |
+| Chapter | Document | What you will learn |
 |---|---|---|
-| **00** | [**Overview & Project Roadmap**](00_overview_and_roadmap.md) | What glioblastoma is, why it is so aggressive, what spatial transcriptomics does, and how this AI system helps understand brain tumors. |
-| **01** | [**Biology & Data Explained Simply**](01_biology_and_spatial_data.md) | The 4 cellular microenvironments ("niches"), gene expression as a cell's recipe book, highly variable genes, and the SNUH glioblastoma dataset. |
-| **02** | [**Graph Construction & Patient Splits**](02_graph_construction.md) | How tissue slides turn into spatial graphs (honeycomb lattice), distance-weighted edges, and why patient-level data splitting prevents "cheating" (leakage). |
-| **03** | [**Model Architecture & Deep Learning**](03_model_architecture_and_training.md) | How Graph Neural Networks work ("talking to neighbors"), GraphSAGE vs GAT, the multi-task neural network brain, and training dynamics. |
-| **04** | [**Model Evaluation & Spatial Predictions**](04_evaluation_and_spatial_maps.md) | How we measure AI accuracy, why rare classes need threshold tuning, and how the AI paints spatial maps of brain tumor tissue. |
-| **05** | [**External Cohorts & Survival Analysis**](05_external_validation_and_survival.md) | Testing the AI on data from different hospitals (Greenwald cohort), testing clinical patient survival (TCGA), and why honest negative findings matter. |
-| **06** | [**Benchmarking & Protocol Reversal**](06_benchmarks_and_protocol_reversal.md) | Comparing Graph AI against simpler machine learning baselines, uncovering the "Protocol Reversal" effect, and analyzing 72 experimental runs. |
-| **07** | [**Scientific Evidence & Citations**](07_references_and_citations.md) | The complete, peer-reviewed bibliography with DOIs, PMIDs, and data accession links supporting all claims in this project. |
+| **00** | [Overview](00_overview_and_roadmap.md) | The question, why it matters, the answer, and the project's history |
+| **01** | [Biology, data and labels](01_biology_and_spatial_data.md) | GBM niches, Visium, the four cohorts, how niche labels are derived, HVG features |
+| **02** | [Graphs, homophily and splits](02_graph_construction.md) | How sections become graphs, the array-index caveat, label homophily, patient-level splits |
+| **03** | [Models compared](03_models_compared.md) | Logistic regression, MLP, MLP + neighbours, GraphSAGE, GAT; heads; training; tuning grid |
+| **04** | [Evaluation protocol](04_evaluation_protocol.md) | One decision rule for all models, LOPO with nested tuning, metrics, statistics, ablations |
+| **05** | [Benchmark results](05_benchmark_results.md) | Fixed split, six-split variance, LOPO (primary), robustness checks, interpretation |
+| **06** | [Pathologist labels, external cohort, survival](06_pathologist_external_survival.md) | UKF within-cohort and transfer, Greenwald, TCGA, the slide-level head |
+| **07** | [References](07_references_and_citations.md) | Verified references from the manuscript bibliography |
+| — | [WORKFLOW.md](WORKFLOW.md) | Script-by-script reproduction, result-file layout, and the conventions that silently break re-analysis |
 
----
+Every number in these chapters comes from manuscript v7.1 (`preprint/deepgraph-gbm.tex`).
+`scripts/28_verify_manuscript_numbers.py` and `scripts/29_code_audit_checks.py` re-derive them
+from `results/`.
 
-## Scientific Grounding & Evidence
+## Glossary
 
-All computational choices and biological annotations in this project are anchored in published peer-reviewed studies:
-- **Spatial Glioblastoma Atlas**: Shah, Park, et al., *Nature Communications* (2026), DOI: [10.1038/s41467-026-69716-2](https://doi.org/10.1038/s41467-026-69716-2).
-- **External Spatial Validation**: Greenwald et al., *Cell* (2024), DOI: [10.1016/j.cell.2024.03.029](https://doi.org/10.1016/j.cell.2024.03.029).
-- **Single-Cell Cellular States**: Neftel et al., *Cell* (2019), DOI: [10.1016/j.cell.2019.06.024](https://doi.org/10.1016/j.cell.2019.06.024).
-- **Clinical Genomic Cohort**: TCGA Network (Brennan et al.), *Cell* (2013), DOI: [10.1016/j.cell.2013.09.034](https://doi.org/10.1016/j.cell.2013.09.034).
-- **Graph Neural Network Foundations**: Hamilton et al., *NeurIPS* (2017), [arXiv:1706.02216](https://arxiv.org/abs/1706.02216); Veličković et al., *ICLR* (2018), [arXiv:1710.10903](https://arxiv.org/abs/1710.10903).
-
-See [**Chapter 7: Scientific Evidence, References & Citations**](07_references_and_citations.md) for full details.
-
----
-
-## Quick Plain-English Glossary
-
-If you encounter technical terms anywhere in the repository, here is a quick cheat-sheet:
-
-- **Glioblastoma (GBM)**: The most common and aggressive type of primary brain cancer in adults.
-- **Microenvironment / Niche**: The local neighborhood of cells surrounding a tumor cell (including blood vessels, immune cells, and dead tissue).
-- **10x Visium**: A laboratory technology that places a thin slice of tissue on a glass slide with thousands of microscopic spots, measuring thousands of active genes at each physical spot.
-- **Spot**: A microscopic circle (~55 µm in diameter) on the Visium slide containing roughly 1 to 10 cells.
-- **Gene Expression**: The count of how active different genes are inside the cells of a spot.
-- **Graph**: A mathematical structure composed of **nodes** (points, here representing spots) connected by **edges** (lines, representing physical adjacency in the tissue).
-- **Graph Neural Network (GNN)**: An AI model that allows each node to update its knowledge by gathering messages from its neighboring nodes.
-- **Multi-Task Learning**: Training a single neural network to solve multiple related problems at once (e.g., finding the niche, predicting tumor state, and estimating risk).
-- **Macro-F1 Score**: An accuracy score between 0.0 and 1.0 that treats rare and common categories with equal importance.
-- **Data Leakage**: An evaluation flaw where information from the test set accidentally leaks into the training set, making an AI look deceptively accurate.
+- **Visium spot:** a ~55 µm capture area on a 10x Visium slide that measures RNA from roughly 1–10
+  cells at a known position.
+- **Niche:** a recurring tissue region with distinct biology. Here: immune-cold, immune-hot,
+  normal or necrotic (SNUH); cellular, infiltrative, necrotic, MVP or normal (UKF).
+- **Silver-standard label:** a label derived by rules from other annotations (here, expression-based
+  ones) rather than from an independent expert.
+- **Graph neural network (GNN):** a model that updates each node (spot) from its neighbours.
+  GraphSAGE averages neighbours; GAT weights them with learned attention.
+- **MLP:** a neural network applied to each spot independently, with no graph.
+- **Homophily:** the fraction of graph edges joining two nodes with the same label.
+- **Leave-one-patient-out (LOPO):** train on all patients but one, test on that one, repeat for each.
+- **Nested tuning:** choosing hyperparameters on validation patients inside each fold, never on the
+  test patient.
+- **Macro-F1:** the mean of per-class F1 scores, so rare classes count as much as common ones.
+- **Patient bootstrap:** a confidence interval obtained by resampling patients, not spots, with
+  replacement.
+- **Data leakage:** any path by which test information reaches training or tuning.

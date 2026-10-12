@@ -26,7 +26,7 @@ keywords:
   - neuropathology
 preferred-citation:
   type: article
-  title: "Spatial graph structure does not improve supervised niche prediction in glioblastoma"
+  title: "Comparing graph-based and graph-free models for spatial niche prediction in glioblastoma"
   authors:
     - family-names: Hossain
       given-names: Md. Jubayer

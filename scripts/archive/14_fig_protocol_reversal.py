@@ -1,4 +1,4 @@
-"""SUPERSEDED -- kept for provenance only.
+"""ARCHIVED -- kept for provenance only (moved to scripts/archive/ in v7.2).
 
 The protocol-reversal claim this figure supported was withdrawn in manuscript v5
 (the baselines came from a superseded feature set; see preprint/ANALYSIS_AUDIT.md,
@@ -13,8 +13,8 @@ current feature set. Panel B: the matched protocol (all models tuned thresholds,
 3-seed mean +/- SD, Table 1). Panel C: decision-rule isolation -- ONE logistic fit
 and the matched-protocol MLP, each scored by argmax and by tuned thresholds.
 
-Usage: python scripts/14_fig_protocol_reversal.py \
-    --table-s1 results/tables/archive/baseline_original_protocol_metrics.json \
+Usage: python scripts/archive/14_fig_protocol_reversal.py \
+    --table-s1 results/archive/tables/baseline_original_protocol_metrics.json \
     --table1 results/tables/main/Table1_model_comparison.json \
     --control results/baselines_multiseed_matched/mlp_argmax_control.json \
     --out results/figures/main/Figure_protocol_reversal
@@ -33,7 +33,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 from deepgraph_gbm.utils import setup_logging
 
 log = logging.getLogger("deepgraph_gbm")

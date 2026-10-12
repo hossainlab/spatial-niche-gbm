@@ -88,6 +88,11 @@ The full pipeline, step by step, is in [`docs/WORKFLOW.md`](docs/WORKFLOW.md). T
 published numbers without retraining anything, run `scripts/28` and `scripts/29`; both read the
 records in `results/` (see [`results/README.md`](results/README.md)).
 
+New to the project? Start with [`docs/00_overview_and_roadmap.md`](docs/00_overview_and_roadmap.md).
+It explains the question, the design and the result without assuming a background in genomics or
+deep learning, and why the repository began as a GNN *method* before becoming a benchmark *of*
+that method.
+
 ## Datasets
 
 | Cohort | Use | Source |
@@ -104,14 +109,15 @@ The per-spot pathologist annotations used here are released as
 
 ```
 deepgraph-gbm/
-├── assets/                  # graphical abstract and documentation images
+├── assets/                  # graphical abstract shown above
 ├── configs/                 # model config, label rules, patient splits
 ├── data/                    # raw and preprocessed datasets (not tracked; see Datasets)
-├── docs/                    # WORKFLOW.md (step-by-step pipeline) and topic notes
-├── notebooks/               # exploratory notebooks (01-06)
-├── preprint/                # manuscript, figures, audit reports, revision history
-├── results/                 # tables, per-run metric records, trained weights
-├── scripts/                 # numbered pipeline, 01 to 29
+├── docs/                    # chapters 00-07 (plain-language guide) and WORKFLOW.md (reproduction)
+├── notebooks/               # walk-through notebooks 01-06, read-only over results/ and data/
+├── preprint/                # manuscript v7.1, figures, audits, revision history; archive/ = old versions
+├── results/                 # tables, per-run metric records, trained weights; archive/ = superseded
+├── scripts/                 # numbered pipeline 01-29 (+ 23a); archive/ = retracted analysis
+├── sources/                 # saved literature and dataset lookups used to verify references
 ├── src/deepgraph_gbm/       # library: data, models, training, interpret
 └── tests/                   # pytest suite (labels, graphs, model shapes, splits)
 ```
@@ -129,8 +135,7 @@ deepgraph-gbm/
 
 ## Citation
 
-Hossain MJ. *Spatial graph structure does not improve supervised niche prediction in
-glioblastoma.* Preprint, 2026. See [`CITATION.cff`](CITATION.cff).
+Hossain MJ. *Comparing graph-based and graph-free models for spatial niche prediction in glioblastoma.* Preprint, 2026. See [`CITATION.cff`](CITATION.cff).
 
 ## License
 

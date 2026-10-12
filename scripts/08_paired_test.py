@@ -1,14 +1,21 @@
-"""Paired significance test: GNN vs baselines across seeds.
+"""Significance tests for Table 1 (fixed primary split, seeds 42/7/123).
 
-Loads per-seed test macro-F1 for GNN (seeds 42/7/123), MLP, and logistic regression,
-then computes a paired t-test and Wilcoxon signed-rank test on the per-seed
-differences (GNN - baseline). Reports mean difference, 95% CI (t-based), t statistic,
-df, and p-values, plus the Wilcoxon statistic/p. n=3 seeds => df=2, low power;
-Wilcoxon min achievable two-sided p at n=3 is 0.25.
+Seeds are NOT shared units across models (seed 42 of the MLP has nothing in common
+with seed 42 of GraphSAGE), so per-seed results are compared as independent samples:
+
+  * GraphSAGE vs MLP and GraphSAGE vs GAT: Welch t-test on per-seed test macro-F1,
+    with a Welch-Satterthwaite 95% CI of the difference in means;
+  * GraphSAGE vs logistic regression: one-sample t-test of the GraphSAGE seeds against
+    the deterministic logistic value (logistic regression has no seed variance).
+
+These are the tests reported in the manuscript (Table 1 caption and section 2.3). The
+seed-PAIRED t-test used before v5 (p = 0.0017) treated seeds as shared units and was
+withdrawn (preprint/ANALYSIS_AUDIT.md, finding 5). With three seeds on one split,
+every p-value here reflects training-seed variability only, not patient sampling.
 
 Usage: python scripts/08_paired_test.py \
-    --gnn results/models --baselines results/baselines_multiseed \
-    --out results/tables/main/Table1_paired_test.json
+    --gnn results/models --baselines results/baselines_multiseed_matched \
+    --gat results/multisplit --out results/tables/main/Table1_paired_test.json
 """
 
 from __future__ import annotations
@@ -53,42 +60,39 @@ def _load_baseline_macro_f1(bdir: Path, model: str) -> dict:
     return out
 
 
-def _paired(gnn: np.ndarray, base: np.ndarray) -> dict:
-    diff = gnn - base
-    n = len(diff)
-    md = float(np.mean(diff))
-    sd = float(np.std(diff, ddof=1))
-    se = sd / np.sqrt(n)
-    # paired t-test
-    t_stat, t_p = stats.ttest_rel(gnn, base)
-    ci = stats.t.interval(0.95, df=n - 1, loc=md, scale=se) if sd > 0 else (md, md)
-    # Wilcoxon signed-rank (fails if all diffs are 0)
-    try:
-        w_stat, w_p = stats.wilcoxon(gnn, base)
-        w_stat, w_p = float(w_stat), float(w_p)
-    except ValueError as e:
-        w_stat, w_p = None, None
-        log.warning("Wilcoxon failed: %s", e)
-    return {
-        "n_seeds": n,
-        "df": n - 1,
-        "gnn_per_seed": gnn.tolist(),
-        "baseline_per_seed": base.tolist(),
-        "diff_per_seed": diff.tolist(),
-        "mean_diff": md,
-        "sd_diff": sd,
-        "ci95": [float(ci[0]), float(ci[1])],
-        "t_stat": float(t_stat),
-        "t_p": float(t_p),
-        "wilcoxon_stat": w_stat,
-        "wilcoxon_p": w_p,
-    }
+def _load_gat_macro_f1(ms_dir: Path) -> dict:
+    """Table 1's GAT row is split 0 of the six-split benchmark (= the primary split)."""
+    return {s: float(json.load(open(ms_dir / f"gat_split0_seed{s}.json"))["test"]["macro_f1"])
+            for s in SEEDS}
+
+
+def _welch(a: np.ndarray, b: np.ndarray) -> dict:
+    """Welch t-test of mean(a) - mean(b) with a Welch-Satterthwaite 95% CI."""
+    va, vb = a.var(ddof=1) / len(a), b.var(ddof=1) / len(b)
+    se = float(np.sqrt(va + vb))
+    df = float((va + vb) ** 2 / (va ** 2 / (len(a) - 1) + vb ** 2 / (len(b) - 1)))
+    md = float(a.mean() - b.mean())
+    t = stats.ttest_ind(a, b, equal_var=False)
+    half = float(stats.t.ppf(0.975, df) * se)
+    return {"test": "welch_t", "mean_diff": md, "ci95": [md - half, md + half],
+            "t": float(t.statistic), "df": df, "p": float(t.pvalue)}
+
+
+def _one_sample(a: np.ndarray, value: float) -> dict:
+    """One-sample t-test of value - mean(a), for a deterministic comparator."""
+    t = stats.ttest_1samp(a, value)
+    md = float(value - a.mean())
+    half = float(stats.t.ppf(0.975, len(a) - 1) * a.std(ddof=1) / np.sqrt(len(a)))
+    return {"test": "one_sample_t", "mean_diff": md, "ci95": [md - half, md + half],
+            "t": float(-t.statistic), "df": float(len(a) - 1), "p": float(t.pvalue)}
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--gnn", required=True)
     ap.add_argument("--baselines", required=True)
+    ap.add_argument("--gat", default="results/multisplit",
+                    help="six-split run directory holding gat_split0_seed{s}.json")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
     setup_logging()
@@ -99,10 +103,12 @@ def main():
     gnn = _load_gnn_macro_f1(gnn_dir)
     mlp = _load_baseline_macro_f1(bdir, "mlp")
     logreg = _load_baseline_macro_f1(bdir, "logistic")
+    gat = _load_gat_macro_f1(Path(args.gat))
 
     gnn_arr = np.array([gnn[s] for s in SEEDS])
     mlp_arr = np.array([mlp[s] for s in SEEDS])
     logreg_arr = np.array([logreg[s] for s in SEEDS])
+    gat_arr = np.array([gat[s] for s in SEEDS])
 
     result = {
         "metric": "macro_f1",
@@ -113,36 +119,35 @@ def main():
                 "mean": float(mlp_arr.mean()), "std": float(mlp_arr.std(ddof=1))},
         "logistic": {"per_seed": {str(s): logreg[s] for s in SEEDS},
                      "mean": float(logreg_arr.mean()), "std": float(logreg_arr.std(ddof=1))},
-        "gnn_vs_mlp": _paired(gnn_arr, mlp_arr),
-        "gnn_vs_logistic": _paired(gnn_arr, logreg_arr),
+        "gat": {"per_seed": {str(s): gat[s] for s in SEEDS},
+                "mean": float(gat_arr.mean()), "std": float(gat_arr.std(ddof=1))},
+        # each contrast is (comparator - GraphSAGE); positive = comparator ahead
+        "mlp_vs_gnn": _welch(mlp_arr, gnn_arr),
+        "logistic_vs_gnn": _one_sample(gnn_arr, float(logreg_arr[0])),
+        "gat_vs_gnn": _welch(gat_arr, gnn_arr),
         "protocol": ("All models scored with per-class thresholds tuned on validation patients, "
                      "applied to test; seeds 42/7/123; single fixed patient-level split; MLP "
                      "trained with the same optimization protocol as the GNN (AdamW, cosine "
                      "schedule, boosted class weights, early stopping on validation macro-F1 "
                      "with best-checkpoint selection)."),
-        "notes": ("Paired t-test and Wilcoxon signed-rank on per-seed macro-F1 (GNN - baseline). "
-                  "n=3 seeds, df=2: very low power; a non-significant result does not imply no effect. "
-                  "Wilcoxon min achievable two-sided p at n=3 is 0.25. Two pre-specified comparisons; "
-                  "Bonferroni alpha=0.025 as sensitivity. IMPORTANT: all seeds share a single fixed "
-                  "patient-level split, so p-values quantify training-seed variability only, NOT "
-                  "patient-sampling (split) variability, which is likely the dominant source of "
-                  "uncertainty with three held-out patients."),
-        "table_note": ("Under the matched training + identical tuned-threshold scoring protocol, the "
-                       "no-graph MLP OUTPERFORMS the GNN on macro-F1 on every seed. The earlier "
-                       "GNN>baseline result was an artifact of scoring baselines with default argmax. "
-                       "Paired-test p-values reflect seed-to-seed variability under a single fixed "
-                       "patient split (n=3, low power)."),
+        "notes": ("Seeds are not shared across models, so MLP and GAT are compared with GraphSAGE "
+                  "by Welch t-tests on per-seed macro-F1, and logistic regression (deterministic) by "
+                  "a one-sample t-test of the GraphSAGE seeds against its value. n = 3 seeds on one "
+                  "fixed patient split: p-values quantify training-seed variability only, not "
+                  "patient sampling. The seed-paired t-test used before v5 (p = 0.0017) was withdrawn."),
+        "table_note": ("Matched protocol on the fixed primary split: the MLP had the highest macro-F1 and "
+                       "every MLP seed exceeded every GraphSAGE seed. This single-split comparison is "
+                       "secondary; the leave-one-patient-out benchmark (results/revision) is the primary "
+                       "analysis."),
     }
     save_json(result, args.out)
     log.info("GNN macro-F1: %.4f +/- %.4f", result["gnn"]["mean"], result["gnn"]["std"])
     log.info("MLP macro-F1: %.4f +/- %.4f", result["mlp"]["mean"], result["mlp"]["std"])
     log.info("logistic macro-F1: %.4f +/- %.4f", result["logistic"]["mean"], result["logistic"]["std"])
-    log.info("GNN vs MLP: mean diff %.4f, t=%.3f, p=%.4f, wilcoxon p=%s",
-             result["gnn_vs_mlp"]["mean_diff"], result["gnn_vs_mlp"]["t_stat"],
-             result["gnn_vs_mlp"]["t_p"], result["gnn_vs_mlp"]["wilcoxon_p"])
-    log.info("GNN vs logistic: mean diff %.4f, t=%.3f, p=%.4f, wilcoxon p=%s",
-             result["gnn_vs_logistic"]["mean_diff"], result["gnn_vs_logistic"]["t_stat"],
-             result["gnn_vs_logistic"]["t_p"], result["gnn_vs_logistic"]["wilcoxon_p"])
+    for comp in ("mlp_vs_gnn", "logistic_vs_gnn", "gat_vs_gnn"):
+        r = result[comp]
+        log.info("%s: diff %.4f (95%% CI %.3f to %.3f), t=%.3f, p=%.4f (%s)", comp, r["mean_diff"],
+                 r["ci95"][0], r["ci95"][1], r["t"], r["p"], r["test"])
     log.info("saved -> %s", args.out)
 
 
