@@ -31,9 +31,13 @@ Leave-one-patient-out evaluation, 13 patients, 3 seeds:
 | GAT | 0.649 |
 | MLP + neighbours | 0.637 |
 
-- Per-spot expression was enough: no graph model beat the best graph-free model.
-- The same held against neuropathologist H&E annotations in an independent cohort of 18 patients.
-- Which patient was held out mattered far more than which model was used.
+- Logistic regression on per-spot expression scored highest, 0.039 above GraphSAGE (95% CI
+  0.009 to 0.076); GAT and the MLP were level with GraphSAGE.
+- Against neuropathologist H&E annotations (independent cohort, 18 patients), logistic regression
+  again ranked first within the cohort. After transfer from the training cohort, GraphSAGE was
+  ahead, but not significantly.
+- The held-out patient mattered more than the model: per-patient macro-F1 ranged from 0.03 to 0.72
+  for every model.
 
 ## Getting started
 
