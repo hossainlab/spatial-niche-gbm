@@ -98,7 +98,7 @@ The paper's recommendation for spatial deep-learning papers:
 The repository started in August 2026 as **"DeepGraph-GBM", a multi-task GNN** proposed as a
 method. It had three heads: spot niche, mesenchymal (MES) state, and slide-level survival risk.
 The matched baselines added during revision showed that graph-free models did as well or better,
-so the project was reframed as the benchmark described above. In order:
+so the project was reframed as the controlled comparison described above. In order:
 
 | Version | Change |
 |---|---|
@@ -107,7 +107,7 @@ so the project was reframed as the benchmark described above. In order:
 | v5 | Scientific audit ([`preprint/ANALYSIS_AUDIT.md`](../preprint/ANALYSIS_AUDIT.md)): **"protocol reversal" claim retracted**, external and transfer normalisation fixed, exact-hex sensitivity added |
 | v6 | Retracted material removed from the manuscript |
 | v7–v7.1 | Response to independent review; code audit; six-split benchmark demoted to variance decomposition only |
-| v7.2 | Repository cleanup: docs rewritten to the benchmark framing, superseded material moved to `archive/` folders |
+| v7.2 | Repository cleanup: docs rewritten to the comparison framing, superseded material moved to `archive/` folders |
 
 The multi-task architecture still exists in `src/` because the fixed-split models (Figures 1–3,
 Table 1) were trained with it. It is the **object being tested**, not the contribution. The

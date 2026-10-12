@@ -1,12 +1,13 @@
 # DeepGraph-GBM documentation
 
-DeepGraph-GBM is a **benchmark**. It asks whether spatial graph neural networks improve supervised
-niche prediction in glioblastoma Visium data, compared with matched graph-free models. **They do
+DeepGraph-GBM is a **controlled comparison of graph-based and graph-free models**. It asks whether
+spatial graph neural networks improve supervised niche prediction in glioblastoma Visium data over
+matched graph-free models. **They do
 not.** These chapters explain the biology, the design and the results for readers without a
 background in genomics or deep learning.
 
 If you only read one page, read [Chapter 0](00_overview_and_roadmap.md). Its §5 explains how the
-project changed from "a GNN method" to "a benchmark of that method", which is the usual source of
+project changed from "a GNN method" to "a comparison of that method with graph-free models", which is the usual source of
 confusion when reading older material.
 
 | Chapter | Document | What you will learn |

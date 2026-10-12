@@ -1,8 +1,8 @@
 cff-version: 1.2.0
-message: "If you use this software or the benchmark results, please cite it as below."
-title: "DeepGraph-GBM: a patient-level benchmark of spatial graph structure for supervised niche prediction in glioblastoma"
+message: "If you use this software or its results, please cite it as below."
+title: "DeepGraph-GBM: comparing graph-based and graph-free models for spatial niche prediction in glioblastoma"
 abstract: >-
-  Code, configurations, per-run metric records and manuscript for a controlled benchmark
+  Code, configurations, per-run metric records and manuscript for a controlled comparison
   testing whether spatial graph neural networks improve supervised niche prediction in
   glioblastoma Visium data over matched graph-free models. Under leave-one-patient-out
   evaluation with an equal tuning budget, they do not.
@@ -21,7 +21,7 @@ keywords:
   - spatial transcriptomics
   - Visium
   - graph neural network
-  - benchmarking
+  - model comparison
   - reproducibility
   - neuropathology
 preferred-citation:
